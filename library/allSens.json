@@ -1,0 +1,60 @@
+{
+  "s1": {
+    "modes": {
+      "SM": "Stripmap",
+      "IW": "Interferometric Wide Swath",
+      "EW": "Extra Wide Swath",
+      "WV": "Wave"
+    },
+    "products": {
+      "SLC": "Single Look Complex",
+      "GRDH": "Ground Range Detected High Resolution",
+      "GRDM": "Ground Range Detected Medium Resolution",
+      "OCN": "Ocean"
+    },
+    "resolutions": {
+      "FULL": "Full Resolution",
+      "HIGH": "High Resolution",
+      "MEDIUM": "Medium Resolution"
+    }
+  },
+  "s2": {
+    "instruments": {
+      "MSI": "Multispectral Instrument"
+    },
+    "levels": {
+      "L1C": "Level-1C",
+      "L2A": "Level-2A"
+    }
+  },
+  "s3": {
+    "instruments": {
+      "OLCI": "Ocean and Land Colour Instrument",
+      "SLSTR": "Sea and Land Surface Temperature Radiometer",
+      "SRAL": "Synthetic Aperture Radar Altimeter",
+      "SYSM": "System"
+    },
+    "levels": {
+      "L0": "Level 0",
+      "L1": "Level 1",
+      "L2": "Level 2"
+    },
+    "products": {
+      "EFR": "Full Resolution",
+      "ERR": "Reduced Resolution",
+      "NRR": "Near Real Time"
+    }
+  },
+  "s5p": {
+    "products": {
+      "SO2": "Sulfur Dioxide",
+      "NO2": "Nitrogen Dioxide",
+      "CO": "Carbon Monoxide",
+      "CH4": "Methane",
+      "O3": "Ozone",
+      "HCHO": "Formaldehyde",
+      "AER_AI": "Aerosol Index",
+      "CLOUD": "Cloud"
+    }
+  }
+}
