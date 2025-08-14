@@ -5,10 +5,11 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "filenamingapi"
 version = "0.1.0"
-description = "Filename validators & parsers for EO products (Sentinel, Landsat, )"
+description = "Filename validators & parsers for EO products (Sentinel, Landsat)"
 readme = "README.md"
 requires-python = ">=3.9"
-license = { text = "MIT" }
+license = { text = "EUPL >= 1.2" }
+authors = [{ name = "Matteo Mattiuzzi", email = "matteo@mattiuzzi.com" }]
 
 [tool.setuptools.packages.find]
 where = ["src"]
