@@ -1,0 +1,18 @@
+{
+  "instruments": {
+    "OLCI": "Ocean and Land Colour Instrument",
+    "SLSTR": "Sea and Land Surface Temperature Radiometer",
+    "SRAL": "Synthetic Aperture Radar Altimeter",
+    "SYSM": "System"
+  },
+  "levels": {
+    "L0": "Level 0",
+    "L1": "Level 1",
+    "L2": "Level 2"
+  },
+  "products": {
+    "EFR": "Full Resolution",
+    "ERR": "Reduced Resolution",
+    "NRR": "Near Real Time"
+  }
+}

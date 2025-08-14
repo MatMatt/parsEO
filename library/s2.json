@@ -1,0 +1,9 @@
+{
+  "instruments": {
+    "MSI": "Multispectral Instrument"
+  },
+  "levels": {
+    "L1C": "Level-1C",
+    "L2A": "Level-2A"
+  }
+}
