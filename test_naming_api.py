@@ -1,6 +1,4 @@
-import pytest
 from naming_api import generate_sentinel_filename, parse_sentinel_filename_verbose
-
 
 def test_generate_sentinel1_filename_round_trip():
     filename = generate_sentinel_filename(
