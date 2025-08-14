@@ -1,0 +1,11 @@
+LICENSE.txt
+README.md
+pyproject.toml
+src/filenamingapi/__init__.py
+src/filenamingapi/cli.py
+src/filenamingapi/parser.py
+src/filenamingapi.egg-info/PKG-INFO
+src/filenamingapi.egg-info/SOURCES.txt
+src/filenamingapi.egg-info/dependency_links.txt
+src/filenamingapi.egg-info/top_level.txt
+tests/test_parser.py

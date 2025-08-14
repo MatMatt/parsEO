@@ -1,21 +1,3 @@
-﻿[build-system]
+[build-system]
 requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.build_meta"
-
-[project]
-name = "filenamingapi"
-version = "0.1.0"
-description = "API to assemble and decompose filenames of EO data and EO derived products."
-readme = "README.md"
-requires-python = ">=3.9"
-license = { text = "EUPL >= 1.2" }
-authors = [{ name = "Matteo Mattiuzzi", email = "matteo@mattiuzzi.com" }]
-
-[tool.setuptools.packages.find]
-where = ["src"]
-
-[tool.setuptools.package-data]
-filenamingapi = ["schemas/**/*.json"]
-
-[project.scripts]
-filenaming-parse = "filenamingapi.cli:main"
