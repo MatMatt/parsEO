@@ -1,6 +1,4 @@
-# 1. Overwrite README.md with the new content
-
-\@" \# filenamingAPI
+# filenamingAPI
 
 [![CI](https://github.com/MatMatt/filenamingAPI/actions/workflows/python-package.yml/badge.svg)](https://github.com/MatMatt/filenamingAPI/actions/workflows/python-package.yml) ![License](https://img.shields.io/badge/License-EUPL%201.2%2B-lightgrey.svg) ![Python](https://img.shields.io/badge/python-3.9%20%7C%203.10%20%7C%203.11%20%7C%203.12-blue)
 
