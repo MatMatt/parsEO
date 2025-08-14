@@ -4,27 +4,32 @@ import json
 from typing import Optional, Any
 from fastapi import FastAPI, HTTPException
 
-LOOKUPS_DIR = Path(__file__).resolve().parent / "lookups"
+# Directory containing satellite lookup JSON files
+LOOKUPS_DIR = Path(__file__).resolve().parent / "library"
 
-with open(LOOKUPS_DIR / "s1.json") as f:
-    _s1 = json.load(f)
+
+def _load_lookup(name: str) -> dict[str, Any]:
+    """Load a lookup JSON file from the library directory."""
+    with open(LOOKUPS_DIR / f"{name}.json", "r", encoding="utf-8") as f:
+        return json.load(f)
+
+
+# Load individual lookups
+_s1 = _load_lookup("s1")
 S1_MODES = _s1["modes"]
 S1_PRODUCTS = _s1["products"]
 S1_RESOLUTIONS = _s1["resolutions"]
 
-with open(LOOKUPS_DIR / "s2.json") as f:
-    _s2 = json.load(f)
+_s2 = _load_lookup("s2")
 S2_INSTRUMENTS = _s2["instruments"]
 S2_LEVELS = _s2["levels"]
 
-with open(LOOKUPS_DIR / "s3.json") as f:
-    _s3 = json.load(f)
+_s3 = _load_lookup("s3")
 S3_INSTRUMENTS = _s3["instruments"]
 S3_LEVELS = _s3["levels"]
 S3_PRODUCTS = _s3["products"]
 
-with open(LOOKUPS_DIR / "s5p.json") as f:
-    _s5p = json.load(f)
+_s5p = _load_lookup("s5p")
 S5P_PRODUCTS = _s5p["products"]
 
 app = FastAPI()
