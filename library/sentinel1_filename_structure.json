@@ -1,0 +1,44 @@
+{
+  "mission": {
+    "pattern": "^(S1A|S1B|S1C)$",
+    "description": "Satellite & mission number (Sentinel-1A, Sentinel-1B, or Sentinel-1C)"
+  },
+  "instrument_mode": {
+    "pattern": "^(SM|IW|EW|WV)$",
+    "description": "Acquisition mode: SM=Stripmap, IW=Interferometric Wide swath, EW=Extra Wide swath, WV=Wave mode"
+  },
+  "product_segment": {
+    "pattern": "^(?:SLC__|OCN__|GRD[FMH]_)$",
+    "description": "Product type combined with resolution class: SLC__ (underscore resolution), OCN__ (underscore resolution), GRDF_/GRDH_/GRDM_ (Full/High/Medium resolution for GRD)",
+    "notes": "Processing level can be inferred: SLC__=L1 SLC, GRDx_=L1 GRD, OCN__=L2 OCN"
+  },
+  "polarisation": {
+    "pattern": ^(1(SH|SV|DH|DV)|2SDV)$",
+    "description": "Polarisation field including processing level: First digit = Level (1 or 2), followed by polarisation code: SH=Single HH, SV=Single VV, DH=Dual HH+HV, DV=Dual VV+VH"
+  },
+  "sensing_datetime": {
+    "pattern": "^(?:19|20)\\d\\d(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\\d|3[01])T(?:[01]\\d|2[0-3])(?:[0-5]\\d){2}$",
+    "description": "UTC date and time when acquisition started in format YYYYMMDDThhmmss"
+  },
+  "stop_datetime": {
+    "pattern": "^(?:19|20)\\d\\d(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\\d|3[01])T(?:[01]\\d|2[0-3])(?:[0-5]\\d){2}$",
+    "description": "UTC date and time when acquisition ended, format YYYYMMDDThhmmss, with valid ranges for year, month, day, hour, minute, and second"
+  },
+  "absolute_orbit": {
+    "pattern": "^A\\d{6}$",
+    "description": "Absolute orbit number (A + 6 digits)"
+  },
+  "mission_datatake": {
+    "pattern": "^D\\d{6}$",
+    "description": "Mission datatake identifier (D + 6 digits)"
+  },
+  "product_unique_id": {
+    "pattern": "^[0-9A-F]{4,6}$",
+    "description": "Unique product identifier (hexadecimal, length 4\u20136)"
+  },
+  "extension": {
+    "pattern": "^\\.SAFE$",
+    "description": "Sentinel SAFE format container"
+  },
+  "valid_example": "S1A_IW_SLC__1SDV_20250105T053021_20250105T053048_A054321_D068F2E_ABC123.SAFE"
+}

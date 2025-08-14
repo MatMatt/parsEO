@@ -1,0 +1,47 @@
+{
+  "mission": {
+    "pattern": "^(S3A|S3B)$",
+    "description": "Satellite & mission number (Sentinel-3A or Sentinel-3B)"
+  },
+  "instrument": {
+    "pattern": "^(OLCI|SLSTR|SRAL|MWR)$",
+    "description": "Instrument: OLCI=Ocean and Land Colour Instrument, SLSTR=Sea and Land Surface Temperature Radiometer, SRAL=SAR Radar Altimeter, MWR=Microwave Radiometer"
+  },
+  "processing_level": {
+    "pattern": "^(L1|L2)$",
+    "description": "Processing level: L1=Level-1, L2=Level-2"
+  },
+  "product_type": {
+    "pattern": "^[A-Z0-9_]{3,15}$",
+    "description": "Product type identifier, varies by instrument (e.g., 'EFR' for OLCI full resolution)"
+  },
+  "start_datetime": {
+    "pattern": "^(?:19|20)\\d\\d(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\\d|3[01])T(?:[01]\\d|2[0-3])(?:[0-5]\\d){2}$",
+    "description": "UTC date and time when acquisition started, format YYYYMMDDThhmmss, valid ranges enforced"
+  },
+  "stop_datetime": {
+    "pattern": "^(?:19|20)\\d\\d(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\\d|3[01])T(?:[01]\\d|2[0-3])(?:[0-5]\\d){2}$",
+    "description": "UTC date and time when acquisition ended, format YYYYMMDDThhmmss, valid ranges enforced"
+  },
+  "absolute_orbit": {
+    "pattern": "^\\d{6}$",
+    "description": "Absolute orbit number (6 digits)"
+  },
+  "cycle_number": {
+    "pattern": "^\\d{3}$",
+    "description": "Cycle number (3 digits)"
+  },
+  "track_number": {
+    "pattern": "^\\d{3}$",
+    "description": "Track number within the cycle (3 digits)"
+  },
+  "product_unique_id": {
+    "pattern": "^[0-9A-F]{4,8}$",
+    "description": "Unique product identifier (hexadecimal, length 4\u20138)"
+  },
+  "extension": {
+    "pattern": "^\\.SEN3$",
+    "description": "Sentinel-3 product package format"
+  },
+  "valid_example": "S3A_OLCI_L2_20250105T103021_20250105T103321_123456_045_0789_ABCD.SEN3"
+}
