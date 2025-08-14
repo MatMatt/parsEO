@@ -1,7 +1,7 @@
 {
   "mission": {
-    "pattern": "^(S1A|S1B|S1C)$",
-    "description": "Satellite & mission number (Sentinel-1A, Sentinel-1B, or Sentinel-1C)"
+    "pattern": "^(S1A|S1B)$",
+    "description": "Satellite & mission number (Sentinel-1A or Sentinel-1B)"
   },
   "instrument_mode": {
     "pattern": "^(SM|IW|EW|WV)$",
@@ -13,16 +13,16 @@
     "notes": "Processing level can be inferred: SLC__=L1 SLC, GRDx_=L1 GRD, OCN__=L2 OCN"
   },
   "polarisation": {
-    "pattern": ^(1(SH|SV|DH|DV)|2SDV)$",
+    "pattern": "^[12](SH|SV|DH|DV)$",
     "description": "Polarisation field including processing level: First digit = Level (1 or 2), followed by polarisation code: SH=Single HH, SV=Single VV, DH=Dual HH+HV, DV=Dual VV+VH"
   },
   "sensing_datetime": {
-    "pattern": "^(?:19|20)\\d\\d(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\\d|3[01])T(?:[01]\\d|2[0-3])(?:[0-5]\\d){2}$",
+    "pattern": "^\\d{8}T\\d{6}$",
     "description": "UTC date and time when acquisition started in format YYYYMMDDThhmmss"
   },
   "stop_datetime": {
-    "pattern": "^(?:19|20)\\d\\d(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\\d|3[01])T(?:[01]\\d|2[0-3])(?:[0-5]\\d){2}$",
-    "description": "UTC date and time when acquisition ended, format YYYYMMDDThhmmss, with valid ranges for year, month, day, hour, minute, and second"
+    "pattern": "^\\d{8}T\\d{6}$",
+    "description": "UTC date and time when acquisition ended in format YYYYMMDDThhmmss"
   },
   "absolute_orbit": {
     "pattern": "^A\\d{6}$",
@@ -40,5 +40,18 @@
     "pattern": "^\\.SAFE$",
     "description": "Sentinel SAFE format container"
   },
-  "valid_example": "S1A_IW_SLC__1SDV_20250105T053021_20250105T053048_A054321_D068F2E_ABC123.SAFE"
+  "valid_example": "S1A_IW_SLC__1SDV_20250105T053021_20250105T053048_A054321_D068F2E_ABC123.SAFE",
+  "filename_pattern": "^(?P<mission>S1A|S1B)_(?P<instrument_mode>SM|IW|EW|WV)_(?P<product_segment>SLC__|OCN__|GRD[FMH]_)(?P<polarisation>1(?:SH|SV|DH|DV)|2SDV)_(?P<sensing_datetime>(?:19|20)\\d\\d(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\\d|3[01])T(?:[01]\\d|2[0-3])(?:[0-5]\\d){2})_(?P<stop_datetime>(?:19|20)\\d\\d(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\\d|3[01])T(?:[01]\\d|2[0-3])(?:[0-5]\\d){2})_(?P<absolute_orbit>A\\d{6})_(?P<mission_datatake>D[0-9A-F]{6,7})_(?P<product_unique_id>[0-9A-F]{4,12})(?P<extension>\\.SAFE)$",
+  "fields_order": [
+    "mission",
+    "instrument_mode",
+    "product_segment",
+    "polarisation",
+    "sensing_datetime",
+    "stop_datetime",
+    "absolute_orbit",
+    "mission_datatake",
+    "product_unique_id",
+    "extension"
+  ]
 }

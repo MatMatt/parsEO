@@ -1,11 +1,11 @@
 {
   "mission": {
-    "pattern": "^(S3A|S3B)$",
-    "description": "Satellite & mission number (Sentinel-3A or Sentinel-3B)"
+    "pattern": "^(S6A|S6B)$",
+    "description": "Sentinel-6 mission (Michael Freilich for S6A, Sentinel-6B)"
   },
   "instrument": {
-    "pattern": "^(OLCI|SLSTR|SRAL|MWR)$",
-    "description": "Instrument: OLCI=Ocean and Land Colour Instrument, SLSTR=Sea and Land Surface Temperature Radiometer, SRAL=SAR Radar Altimeter, MWR=Microwave Radiometer"
+    "pattern": "^(POSEIDON-4|AMR-C)$",
+    "description": "POSEIDON-4 = Radar Altimeter, AMR-C = Advanced Microwave Radiometer \u2013 Climate"
   },
   "processing_level": {
     "pattern": "^(L0|L1A|L1B|L1C|L2A)$",
@@ -16,8 +16,8 @@
     }
   },
   "product_type": {
-    "pattern": "^[A-Z0-9_]{3,15}$",
-    "description": "Product type identifier, varies by instrument (e.g., 'EFR' for OLCI full resolution)"
+    "pattern": "^[A-Z0-9_]{3,20}$",
+    "description": "Product type identifier, varies by measurement (e.g., NTC, STC) and processing chain"
   },
   "start_datetime": {
     "pattern": "^(?:19|20)\\d\\d(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\\d|3[01])T(?:[01]\\d|2[0-3])(?:[0-5]\\d){2}$",
@@ -40,15 +40,15 @@
     "description": "Track number within the cycle (3 digits)"
   },
   "product_unique_id": {
-    "pattern": "^[0-9A-F]{4,8}$",
-    "description": "Unique product identifier (hexadecimal, length 4\u20138)"
+    "pattern": "^[0-9A-F]{4,12}$",
+    "description": "Unique product identifier (hexadecimal, length 4\u201312)"
   },
   "extension": {
-    "pattern": "^\\.SEN3$",
-    "description": "Sentinel-3 product package format"
+    "pattern": "^\\.S6PROD$",
+    "description": "Sentinel-6 product package format"
   },
-  "valid_example": "S3A_OLCI_L2_20250105T103021_20250105T103321_123456_045_0789_ABCD.SEN3",
-  "filename_pattern": "^(?P<mission>S3A|S3B)_(?P<instrument>OLCI|SLSTR|SRAL|MWR)_(?P<processing_level>L1|L2)_(?P<product_type>[A-Z0-9_]{3,15})_(?P<start_datetime>(?:19|20)\\d\\d(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\\d|3[01])T(?:[01]\\d|2[0-3])(?:[0-5]\\d){2})_(?P<stop_datetime>(?:19|20)\\d\\d(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\\d|3[01])T(?:[01]\\d|2[0-3])(?:[0-5]\\d){2})_(?P<absolute_orbit>\\d{6})_(?P<cycle_number>\\d{3})_(?P<track_number>\\d{3})_(?P<product_unique_id>[0-9A-F]{4,8})(?P<extension>\\.SEN3)$",
+  "valid_example": "S6A_POSEIDON-4_L2_NTC_20250105T103021_20250105T105021_012345_045_078_ABCDEF12.S6PROD",
+  "filename_pattern": "^(?P<mission>S6A|S6B)_(?P<instrument>POSEIDON-4|AMR-C)_(?P<processing_level>L1|L2)_(?P<product_type>[A-Z0-9_]{3,20})_(?P<start_datetime>(?:19|20)\\d\\d(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\\d|3[01])T(?:[01]\\d|2[0-3])(?:[0-5]\\d){2})_(?P<stop_datetime>(?:19|20)\\d\\d(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\\d|3[01])T(?:[01]\\d|2[0-3])(?:[0-5]\\d){2})_(?P<absolute_orbit>\\d{6})_(?P<cycle_number>\\d{3})_(?P<track_number>\\d{3})_(?P<product_unique_id>[0-9A-F]{4,12})(?P<extension>\\.S6PROD)$",
   "fields_order": [
     "mission",
     "instrument",
