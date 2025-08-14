@@ -1,9 +1,128 @@
-# filanemaingAPI
-Python port of: https://github.com/MatMatt/filenaming. API to assemble and decompose filenames of satellite data and derived products.
+# 1. Overwrite README.md with the new content
 
-## Run API
+\@" \# filenamingAPI
 
+[![CI](https://github.com/MatMatt/filenamingAPI/actions/workflows/python-package.yml/badge.svg)](https://github.com/MatMatt/filenamingAPI/actions/workflows/python-package.yml) ![License](https://img.shields.io/badge/License-EUPL%201.2%2B-lightgrey.svg) ![Python](https://img.shields.io/badge/python-3.9%20%7C%203.10%20%7C%203.11%20%7C%203.12-blue)
+
+A lightweight, schema-driven filename parser for **Copernicus Sentinel** and **USGS Landsat** products.
+
+The parser uses JSON schema definitions to match and extract fields from product filenames, ensuring consistent and maintainable parsing logic.\
+Schemas are bundled with the package and include field descriptions, code lists, and regular expressions.
+
+------------------------------------------------------------------------
+
+## ✨ Features
+
+-   **Schema-based parsing** for Sentinel-1 to Sentinel-6, Sentinel-5P, Landsat 4–9
+-   **Named capture groups** for clean, descriptive field extraction
+-   **Unified Sentinel-1 schema** covering L0/L1/L2 product families
+-   **Both Python API and CLI support**
+-   **Bundled JSON schemas** (offline-friendly)
+-   **Extensible** — add your own schemas for new missions
+
+------------------------------------------------------------------------
+
+## 📦 Installation
+
+### From source (editable for development)
+
+``` bash
+git clone https://github.com/MatMatt/filenamingAPI.git
+cd filenamingAPI
+python -m pip install -e .
 ```
-pip install fastapi uvicorn
-uvicorn naming_api:app --reload
+
+## Usage
+
+``` python
+from filenamingapi.parser import parse_auto
+
+# Sentinel-2 example
+name = "S2B_MSIL2A_20241123T224759_N0511_R101_T03VUL_20241123T230829.SAFE"
+result = parse_auto(name)
+
+if result:
+    print("Matched schema:", result.schema_name)
+    print("Fields:", result.fields)
+else:
+    print("No schema matched ❌")
 ```
+
+``` text
+Matched schema: sentinel/sentinel2_filename_structure.json
+Fields: {
+  'mission': 'S2B',
+  'instrument_processing': 'MSIL2A',
+  'sensing_datetime': '20241123T224759',
+  'processing_baseline': 'N0511',
+  'relative_orbit': 'R101',
+  'tile_id': 'T03VUL',
+  'generation_datetime': '20241123T230829',
+  'extension': '.SAFE'
+}
+```
+
+``` bash
+# Module form (works everywhere)
+python -m filenamingapi.cli S2B_MSIL2A_20241123T224759_N0511_R101_T03VUL_20241123T230829.SAFE
+
+# Console script (if your Scripts/ is on PATH)
+filenaming-parse S2B_MSIL2A_20241123T224759_N0511_R101_T03VUL_20241123T230829.SAFE
+```
+
+| Family | Missions | Typical products (examples) | Schema file (bundled) | Notes |
+|--------------|--------------|--------------|--------------|-----------------|
+| Sentinel-1 | S1A, S1B | `SLC__`, `GRD[F/M/H]_`, `OCN__` | `sentinel1_filename_structure_unified.json` | **Unified** S1 schema; supports polarisation tokens like `1SDV`, `2SDV` |
+| Sentinel-2 | S2A, S2B | `MSIL1C`, `MSIL2A` | `sentinel2_filename_structure.json` | MGRS tile IDs (`TxxYYY`) parsed |
+| Sentinel-3 | S3A, S3B | OLCI/SLSTR/SRAL product names | `sentinel3_filename_structure.json` | Key metadata fields captured |
+| Sentinel-4 | S4 (MTG-S) | Atmospheric composition products | `sentinel4_filename_structure.json` | Pre-operational formats supported |
+| Sentinel-5 | S5 (MetOp-SG A/B) | Atmospheric composition products | `sentinel5_filename_structure.json` | Distinct from S5P |
+| Sentinel-5P | S5P (TROPOMI) | L1B/L2 TROPOMI products | `sentinel5p_filename_structure.json` | TROPOMI-specific patterns |
+| Sentinel-6 | S6A, S6B | Poseidon altimetry products | `sentinel6_filename_structure.json` | Core filename fields parsed |
+| Landsat | 4 | L1/L2 scene IDs | `landsat4_filename_structure.json` |  |
+| Landsat | 5 | L1/L2 scene IDs | `landsat5_filename_structure.json` |  |
+| Landsat | 7 | L1/L2 scene IDs | `landsat7_filename_structure.json` |  |
+| Landsat | 8 | `L1TP`, `L1GT`, `L1GS`, `L2SP`, `L2SR` | `landsat8_filename_structure.json` | Processing-level switches included |
+| Landsat | 9 | `L1TP`, `L1GT`, `L1GS`, `L2SP`, `L2SR` | `landsat9_filename_structure.json` | Processing-level switches included |
+
+The parser tries all bundled schemas in order and returns the first match with named capture groups.
+
+``` bash
+filenamingAPI/
+├── src/filenamingapi/
+│   ├── __init__.py
+│   ├── parser.py           # Core parser logic
+│   ├── cli.py              # CLI entry point
+│   └── schemas/
+│       ├── sentinel/
+│       │   ├── sentinel1_filename_structure_unified.json
+│       │   ├── sentinel2_filename_structure.json
+│       │   └── ...
+│       └── landsat/
+│           ├── landsat4_filename_structure.json
+│           ├── landsat5_filename_structure.json
+│           └── ...
+├── tests/
+│   ├── data/
+│   └── test_parser.py
+├── pyproject.toml (or setup.cfg)
+└── README.md
+```
+
+## 🛠 Add a new schema
+
+1.  Drop a JSON file in src/filenamingapi/schemas/<mission>/.
+
+2.  Include:
+
+    -   filename_pattern with named capture groups (e.g., (?P<mission>...))
+
+    -   Per-field definitions (pattern, optional codes, description, details)
+
+3.  Reinstall in editable mode: python -m pip install -e .
+
+## 📜 License
+
+Licensed under the European Union Public Licence (EUPL), Version 1.2 or later. See LICENSE.txt or read the licence online:
+
+https://joinup.ec.europa.eu/collection/eupl/eupl-text-11-12
