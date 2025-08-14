@@ -1,0 +1,12 @@
+{
+  "products": {
+    "AER_AI": "Aerosol Index",
+    "CH4": "Methane",
+    "CLOUD": "Cloud",
+    "CO": "Carbon Monoxide",
+    "HCHO": "Formaldehyde",
+    "NO2": "Nitrogen Dioxide",
+    "O3": "Ozone",
+    "SO2": "Sulfur Dioxide"
+  }
+}
