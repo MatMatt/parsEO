@@ -23,7 +23,7 @@ def parse_with_schema(filename: str, schema: Dict[str, Any]) -> Optional[Dict[st
     m = rx.match(filename)
     return m.groupdict() if m else None
 
-def iter_bundled_schemas() -> List[Tuple[str, str]]:
+def iter_bundled_schemas():
     return [
         ("sentinel", "sentinel1_filename_structure_unified.json"),
         ("sentinel", "sentinel2_filename_structure.json"),
@@ -32,7 +32,6 @@ def iter_bundled_schemas() -> List[Tuple[str, str]]:
         ("sentinel", "sentinel5_filename_structure.json"),
         ("sentinel", "sentinel5p_filename_structure.json"),
         ("sentinel", "sentinel6_filename_structure.json"),
-        ("landsat",  "landsat_filename_structure.json"),
         ("landsat",  "landsat4_filename_structure.json"),
         ("landsat",  "landsat5_filename_structure.json"),
         ("landsat",  "landsat7_filename_structure.json"),
