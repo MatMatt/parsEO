@@ -1,6 +1,6 @@
 # filenamingAPI
 
-[![CI](https://github.com/MatMatt/filenamingAPI/actions/workflows/python-package.yml/badge.svg)](https://github.com/MatMatt/filenamingAPI/actions/workflows/python-package.yml) ![License](https://img.shields.io/badge/License-EUPL%201.2%2B-lightgrey.svg) ![Python](https://img.shields.io/badge/python-3.9%20%7C%203.10%20%7C%203.11%20%7C%203.12-blue)
+[![CI](https://github.com/MatMatt/filenamingAPI/actions/workflows/python-package.yml/badge.svg)](https://github.com/MatMatt/filenamingAPI/actions/workflows/python-package.yml) ![License: EUPL 1.2](https://img.shields.io/badge/License-EUPL%201.2-green.svg) ![Python](https://img.shields.io/badge/python-3.9%20%7C%203.10%20%7C%203.11%20%7C%203.12-blue)
 
 A lightweight, schema-driven filename parser currently supporting:
 
@@ -210,5 +210,4 @@ filenaming-parse S2B_MSIL2A_20241123T224759_N0511_R101_T03VUL_20241123T230829.SA
 ## 📜 License
 
 This project is licensed under the **European Union Public Licence (EUPL)**, Version 1.2 or later.  
-You can read the full text in the [LICENSE.txt](LICENSE.txt) file or online at:  
-<https://joinup.ec.europa.eu/collection/eupl/eupl-text-11-12>
+You can read the full text in the [LICENSE.txt](LICENSE.txt) file or in the [European Commission website](https://joinup.ec.europa.eu/collection/eupl/eupl-text-11-12).
