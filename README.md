@@ -201,14 +201,14 @@ python -m pip install -e .
 ``` bash
 # Module form
 python -m filenamingapi.cli S2B_MSIL2A_20241123T224759_N0511_R101_T03VUL_20241123T230829.SAFE
-
+```
+``` bash
 # Or console script if on PATH
 filenaming-parse S2B_MSIL2A_20241123T224759_N0511_R101_T03VUL_20241123T230829.SAFE
 ```
 
-
 ## 📜 License
 
-Licensed under the European Union Public Licence (EUPL), Version 1.2 or later. See LICENSE.txt or read the licence online:
-
-https://joinup.ec.europa.eu/collection/eupl/eupl-text-11-12
+This project is licensed under the **European Union Public Licence (EUPL)**, Version 1.2 or later.  
+You can read the full text in the [LICENSE.txt](LICENSE.txt) file or online at:  
+<https://joinup.ec.europa.eu/collection/eupl/eupl-text-11-12>
