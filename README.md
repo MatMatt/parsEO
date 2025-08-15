@@ -115,17 +115,97 @@ filenamingAPI/
 └── README.md
 ```
 
-## 🛠 Add a new schema
+## 📄 Add a new schema
 
-1.  Drop a JSON file in src/filenamingapi/schemas/<mission>/.
+Follow these steps to add support for another mission or product family.
 
-2.  Include:
+### Create the schema file  
+   Place a JSON file in `src/filenamingapi/schemas/<family>/`.  
+   Example: src/filenamingapi/schemas/sentinel/sentinel2_filename_structure.json
 
-    -   filename_pattern with named capture groups (e.g., (?P<mission>...))
+### Define the pattern and fields 
+Use **named capture groups** in `filename_pattern` (e.g., `(?P<tile_id>T\d{2}[A-Z]{3})`) and document each field.  
+Example (Sentinel-2):
 
-    -   Per-field definitions (pattern, optional codes, description, details)
+```json
+{
+  "mission": {
+    "codes": [
+      "S2A",
+      "S2B",
+      "S2C"
+    ],
+    "description": "Satellite & mission number (Sentinel-2A, Sentinel-2B, or Sentinel-2C)"
+  },
+  "instrument_processing": {
+    "codes": [
+      "MSIL1C",
+      "MSIL2A"
+    ],
+    "description": "Instrument + Processing Level",
+    "details": {
+      "MSIL1C": "MultiSpectral Instrument, Level-1C (Top-Of-Atmosphere reflectance)",
+      "MSIL2A": "MultiSpectral Instrument, Level-2A (Bottom-Of-Atmosphere reflectance, atmospherically corrected)"
+    }
+  },
+  "sensing_datetime": {
+    "format": "YYYYMMDDThhmmss",
+    "description": "UTC date and time when acquisition started"
+  },
+  "processing_baseline": {
+    "format": "Nxxxx",
+    "description": "Processing baseline version (e.g., N0511)"
+  },
+  "relative_orbit": {
+    "format": "Rxxx",
+    "range": "R001\u2013R143",
+    "description": "Relative orbit number (repeats every 10 days for Sentinel-2)"
+  },
+  "tile_id": {
+    "format": "T<zone><lat_band><grid_square>",
+    "description": "MGRS tile ID (e.g., T32TMT) covering 100\u00d7100 km area",
+    "notes": "Zone = 2 digits, Latitude band = 1 letter, Grid square = 2 letters"
+  },
+  "generation_datetime": {
+    "format": "YYYYMMDDThhmmss",
+    "description": "UTC date and time when the product was generated"
+  },
+  "extension": {
+    "codes": [
+      ".SAFE"
+    ],
+    "description": "Sentinel SAFE format container"
+  },
+  "valid_examples": [
+    "S2A_MSIL1C_20250105T103021_N0511_R080_T32TMT_20250105T120021.SAFE",
+    "S2B_MSIL2A_20241123T224759_N0511_R101_T03VUL_20241123T230829.SAFE"
+  ],
+  "filename_pattern": "^(?P<mission>S2A|S2B)_(?P<instrument_processing>MSIL1C|MSIL2A)_(?P<sensing_datetime>(?:19|20)\\d\\d(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\\d|3[01])T(?:[01]\\d|2[0-3])(?:[0-5]\\d){2})_(?P<processing_baseline>N\\d{4})_(?P<relative_orbit>R\\d{3})_(?P<tile_id>T\\d{2}[C-HJ-NP-X][A-Z]{2})_(?P<generation_datetime>(?:19|20)\\d\\d(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\\d|3[01])T(?:[01]\\d|2[0-3])(?:[0-5]\\d){2})(?P<extension>\\.SAFE)$",
+  "fields_order": [
+    "mission",
+    "instrument_processing",
+    "sensing_datetime",
+    "processing_baseline",
+    "relative_orbit",
+    "tile_id",
+    "generation_datetime",
+    "extension"
+  ]
+}
+```
+### Install in editable mode (for development)
+``` bash
+python -m pip install -e .
+```
+### Test your schema
+``` bash
+# Module form
+python -m filenamingapi.cli S2B_MSIL2A_20241123T224759_N0511_R101_T03VUL_20241123T230829.SAFE
 
-3.  Reinstall in editable mode: python -m pip install -e .
+# Or console script if on PATH
+filenaming-parse S2B_MSIL2A_20241123T224759_N0511_R101_T03VUL_20241123T230829.SAFE
+```
+
 
 ## 📜 License
 
