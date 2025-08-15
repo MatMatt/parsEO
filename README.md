@@ -2,7 +2,11 @@
 
 [![CI](https://github.com/MatMatt/filenamingAPI/actions/workflows/python-package.yml/badge.svg)](https://github.com/MatMatt/filenamingAPI/actions/workflows/python-package.yml) ![License](https://img.shields.io/badge/License-EUPL%201.2%2B-lightgrey.svg) ![Python](https://img.shields.io/badge/python-3.9%20%7C%203.10%20%7C%203.11%20%7C%203.12-blue)
 
-A lightweight, schema-driven filename parser for **Copernicus Sentinel** and **USGS Landsat** products.
+A lightweight, schema-driven filename parser currently supporting:
+
+-   **Copernicus Sentinel** and
+
+-   **USGS Landsat** products.
 
 The parser uses JSON schema definitions to match and extract fields from product filenames, ensuring consistent and maintainable parsing logic.\
 Schemas are bundled with the package and include field descriptions, code lists, and regular expressions.
@@ -30,7 +34,7 @@ cd filenamingAPI
 python -m pip install -e .
 ```
 
-## Usage
+## 🤨 Usage
 
 ``` python
 from filenamingapi.parser import parse_auto
@@ -68,8 +72,10 @@ python -m filenamingapi.cli S2B_MSIL2A_20241123T224759_N0511_R101_T03VUL_2024112
 filenaming-parse S2B_MSIL2A_20241123T224759_N0511_R101_T03VUL_20241123T230829.SAFE
 ```
 
+# 💪 Currently supported
+
 | Family | Missions | Typical products (examples) | Schema file (bundled) | Notes |
-|--------------|--------------|--------------|--------------|-----------------|
+|---------------|---------------|---------------|---------------|---------------|
 | Sentinel-1 | S1A, S1B | `SLC__`, `GRD[F/M/H]_`, `OCN__` | `sentinel1_filename_structure_unified.json` | S1 schema; supports polarisation tokens like `1SDV`, `2SDV` |
 | Sentinel-2 | S2A, S2B | `MSIL1C`, `MSIL2A` | `sentinel2_filename_structure.json` | MGRS tile IDs (`TxxYYY`) parsed |
 | Sentinel-3 | S3A, S3B | OLCI/SLSTR/SRAL product names | `sentinel3_filename_structure.json` | Key metadata fields captured |
@@ -84,6 +90,8 @@ filenaming-parse S2B_MSIL2A_20241123T224759_N0511_R101_T03VUL_20241123T230829.SA
 | Landsat | 9 | `L1TP`, `L1GT`, `L1GS`, `L2SP`, `L2SR` | `landsat9_filename_structure.json` | Processing-level switches included |
 
 The parser tries all bundled schemas in order and returns the first match with named capture groups.
+
+## 🏗️ Project structure
 
 ``` bash
 filenamingAPI/
