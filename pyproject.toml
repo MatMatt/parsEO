@@ -1,3 +1,29 @@
 [build-system]
 requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.build_meta"
+
+[project]
+name = "filenamingapi"
+version = "0.1.0"
+description = "Filename validation schemas and tools for CLMS products"
+readme = "README.md"
+requires-python = ">=3.9"
+authors = [{ name = "Matteo Mattiuzzi" }]
+license = { file = "LICENSE" }           # EUPL 1.2 text in this file
+# Alternatively, you can use the SPDX expression:
+# license = { text = "EUPL-1.2" }
+dependencies = [
+  "jsonschema>=4.0.0",
+]
+classifiers = [
+  "License :: OSI Approved :: European Union Public Licence 1.2 (EUPL 1.2)",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+filenamingapi = ["schemas/**/*.schema.json"]
+
+[project.scripts]
+generate-clms-schemas = "filenamingapi.tools.generate_schemas_from_clms:main"
