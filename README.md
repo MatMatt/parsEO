@@ -76,7 +76,7 @@ filenaming-parse S2B_MSIL2A_20241123T224759_N0511_R101_T03VUL_20241123T230829.SA
 
 | Family | Missions | Typical products (examples) | Schema file (bundled) | Notes |
 |---------------|---------------|---------------|---------------|---------------|
-| Sentinel-1 | S1A, S1B | `SLC__`, `GRD[F/M/H]_`, `OCN__` | `sentinel1_filename_structure_unified.json` | S1 schema; supports polarisation tokens like `1SDV`, `2SDV` |
+| Sentinel-1 | S1A, S1B | `SLC__`, `GRD[F/M/H]_`, `OCN__` | `sentinel1_filename_structure.json` | S1 schema; supports polarisation tokens like `1SDV`, `2SDV` |
 | Sentinel-2 | S2A, S2B | `MSIL1C`, `MSIL2A` | `sentinel2_filename_structure.json` | MGRS tile IDs (`TxxYYY`) parsed |
 | Sentinel-3 | S3A, S3B | OLCI/SLSTR/SRAL product names | `sentinel3_filename_structure.json` | Key metadata fields captured |
 | Sentinel-4 | S4 (MTG-S) | Atmospheric composition products | `sentinel4_filename_structure.json` | Pre-operational formats supported |
