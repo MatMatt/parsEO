@@ -207,6 +207,11 @@ python -m parseo.cli S2B_MSIL2A_20241123T224759_N0511_R101_T03VUL_20241123T23082
 parseo S2B_MSIL2A_20241123T224759_N0511_R101_T03VUL_20241123T230829.SAFE
 ```
 
+If you want to scan a directory instead:
+``` bash
+parseo --scan ./data
+``` 
+
 ## 📜 License
 
 This project is licensed under the **European Union Public Licence (EUPL)**, Version 1.2 or later.  
