@@ -1,0 +1,63 @@
+﻿{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Sentinel-2 Fields",
+  "$defs": {
+    "satellite": {
+      "type": "string",
+      "values": [ { "code": "S2", "label": "Sentinel-2 mission" } ],
+      "description": "Mission family"
+    },
+    "platform": {
+      "type": "string",
+      "values": [
+        { "code": "A", "label": "Unit A" },
+        { "code": "B", "label": "Unit B" },
+        { "code": "C", "label": "Unit C" }
+      ],
+      "description": "Spacecraft unit"
+    },
+    "instrument": {
+      "type": "string",
+      "values": [ { "code": "MSI", "label": "Multispectral Instrument" } ],
+      "description": "Instrument identifier"
+    },
+    "processing_level": {
+      "type": "string",
+      "values": [
+        { "code": "L1C", "label": "Level-1C" },
+        { "code": "L2A", "label": "Level-2A" }
+      ],
+      "description": "Processing level"
+    },
+    "sensing_datetime": {
+      "type": "string",
+      "pattern": "^\\d{8}T\\d{6}$",
+      "description": "Acquisition datetime (UTC, YYYYMMDDTHHMMSS)"
+    },
+    "processing_baseline": {
+      "type": "string",
+      "pattern": "^N\\d{4}$",
+      "description": "Processing baseline (e.g., N0511)"
+    },
+    "relative_orbit": {
+      "type": "string",
+      "pattern": "^R\\d{3}$",
+      "description": "Relative orbit (3 digits with leading 'R')"
+    },
+    "mgrs_tile": {
+      "type": "string",
+      "pattern": "^T[0-9A-Z]{5}$",
+      "description": "MGRS tile (e.g., T03VUL)"
+    },
+    "generation_datetime": {
+      "type": "string",
+      "pattern": "^\\d{8}T\\d{6}$",
+      "description": "Processing completion datetime (UTC)"
+    },
+    "extension": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9]+$",
+      "description": "File extension without leading dot (e.g., SAFE, tif, tiff, zip)"
+    }
+  }
+}

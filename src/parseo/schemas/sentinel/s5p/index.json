@@ -1,0 +1,11 @@
+﻿{
+    "$schema":  "https://json-schema.org/draft/2020-12/schema",
+    "family":  "S5P",
+    "versions":  [
+                     {
+                         "status":  "current",
+                         "file":  "s5p_filename_v1_0_0.json",
+                         "version":  "1.0.0"
+                     }
+                 ]
+}

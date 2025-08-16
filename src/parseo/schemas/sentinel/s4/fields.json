@@ -1,0 +1,49 @@
+﻿{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Sentinel-4 Fields",
+  "$defs": {
+    "satellite": {
+      "type": "string",
+      "values": [ { "code": "S4", "label": "Sentinel-4 mission" } ],
+      "description": "Mission family"
+    },
+    "platform": {
+      "type": "string",
+      "values": [
+        { "code": "A", "label": "Unit A" },
+        { "code": "B", "label": "Unit B" }
+      ],
+      "description": "Spacecraft unit"
+    },
+    "instrument": {
+      "type": "string",
+      "values": [
+        { "code": "UVN", "label": "Ultraviolet/Visible/Near-infrared (UVN)" }
+      ],
+      "description": "Instrument identifier"
+    },
+    "processing_level": {
+      "type": "string",
+      "values": [
+        { "code": "L1", "label": "Level-1" },
+        { "code": "L2", "label": "Level-2" }
+      ],
+      "description": "Processing level"
+    },
+    "sensing_datetime": {
+      "type": "string",
+      "pattern": "^\\d{8}T\\d{6}$",
+      "description": "Acquisition datetime (UTC, YYYYMMDDTHHMMSS)"
+    },
+    "tile": {
+      "type": "string",
+      "pattern": "^[A-Z0-9_\\-]{3,10}$",
+      "description": "Optional tile/coverage identifier"
+    },
+    "extension": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9]+$",
+      "description": "File extension without leading dot"
+    }
+  }
+}

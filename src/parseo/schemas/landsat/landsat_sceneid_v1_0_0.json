@@ -1,0 +1,53 @@
+﻿{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Landsat scene identifier (Collection 2)",
+  "type": "object",
+  "properties": { "name": { "type": "string" } },
+  "required": ["name"],
+
+  "x-parseo": {
+    "version": "1.0.0",
+
+    "valid_example": "LC08_L1TP_190026_20200101_20200114_02_T1.tar",
+
+    "parse_regex": "^(?P<mission_code>LT04|LT05|LE07|LC08|LC09)_(?P<processing_level>L1TP|L1GT|L1GS|L2SP|L2SR)_(?P<wrs_path>\\d{3})(?P<wrs_row>\\d{3})_(?P<acq_date>\\d{8})_(?P<proc_date>\\d{8})_(?P<collection_number>\\d{2})_(?P<tier>T1|T2|RT)(?:\\.(?P<extension>[A-Za-z0-9]+))?$",
+
+    "template": "{mission_code}_{processing_level}_{wrs_path}{wrs_row}_{acq_date}_{proc_date}_{collection_number}_{tier}{ext_opt}",
+
+    "requirements": {
+      "mission_code":      { "$ref": "fields.json#/$defs/mission_code" },
+      "processing_level":  { "$ref": "fields.json#/$defs/processing_level" },
+      "wrs_path":          { "$ref": "fields.json#/$defs/wrs_path" },
+      "wrs_row":           { "$ref": "fields.json#/$defs/wrs_row" },
+      "acq_date":          { "$ref": "fields.json#/$defs/acq_date" },
+      "proc_date":         { "$ref": "fields.json#/$defs/proc_date" },
+      "collection_number": { "$ref": "fields.json#/$defs/collection_number" },
+      "tier":              { "$ref": "fields.json#/$defs/tier" },
+      "extension":         { "$ref": "fields.json#/$defs/extension" }
+    },
+
+    "build_transforms": {
+      "mission_code": ["upper"],
+      "processing_level": ["upper"],
+      "wrs_path": [],
+      "wrs_row": [],
+      "acq_date": ["datetime:%Y%m%d"],
+      "proc_date": ["datetime:%Y%m%d"],
+      "collection_number": [],
+      "tier": ["upper"],
+      "extension": ["lower"],
+      "_compose:ext_opt": ["ifset:extension:prefix:."]
+    },
+
+    "parse_transforms": {
+      "mission_code": ["upper"],
+      "processing_level": ["upper"],
+      "tier": ["upper"]
+    },
+
+    "fields": {
+      "mission_code": {}, "processing_level": {}, "wrs_path": {}, "wrs_row": {},
+      "acq_date": {}, "proc_date": {}, "collection_number": {}, "tier": {}, "extension": {}
+    }
+  }
+}

@@ -1,0 +1,58 @@
+﻿{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Sentinel-3 Fields",
+  "$defs": {
+    "satellite": {
+      "type": "string",
+      "values": [ { "code": "S3", "label": "Sentinel-3 mission" } ],
+      "description": "Mission family"
+    },
+    "platform": {
+      "type": "string",
+      "values": [
+        { "code": "A", "label": "Unit A" },
+        { "code": "B", "label": "Unit B" },
+        { "code": "C", "label": "Unit C" }
+      ],
+      "description": "Spacecraft unit"
+    },
+    "instrument": {
+      "type": "string",
+      "values": [
+        { "code": "OLCI",  "label": "Ocean and Land Colour Instrument" },
+        { "code": "SLSTR", "label": "Sea and Land Surface Temperature Radiometer" },
+        { "code": "SRAL",  "label": "SAR Radar Altimeter" }
+      ],
+      "description": "Instrument identifier"
+    },
+    "processing_level": {
+      "type": "string",
+      "values": [
+        { "code": "L0", "label": "Level-0" },
+        { "code": "L1", "label": "Level-1" },
+        { "code": "L2", "label": "Level-2" }
+      ],
+      "description": "Processing level (coarse categories)"
+    },
+    "sensing_datetime": {
+      "type": "string",
+      "pattern": "^\\d{8}T\\d{6}$",
+      "description": "Acquisition datetime (UTC, YYYYMMDDTHHMMSS)"
+    },
+    "track": {
+      "type": "string",
+      "pattern": "^[0-9]{3}$",
+      "description": "Optional track/orbit-like number (3 digits)"
+    },
+    "segment": {
+      "type": "string",
+      "pattern": "^[A-Z0-9_\\-]{1,10}$",
+      "description": "Optional segment or product discriminator"
+    },
+    "extension": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9]+$",
+      "description": "File extension without leading dot"
+    }
+  }
+}

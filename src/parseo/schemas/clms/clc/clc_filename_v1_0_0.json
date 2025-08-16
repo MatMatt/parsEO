@@ -1,0 +1,41 @@
+﻿{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CLC filename",
+  "type": "object",
+  "properties": { "name": { "type": "string" } },
+  "required": ["name"],
+
+  "x-parseo": {
+    "version": "1.0.0",
+    "valid_example": "CLC2018_CLC2018_V2020_20u1.tif",
+
+    "parse_regex": "^(?P<project>CLC|U)(?P<reference_year>\\d{4})_(?P<product>[A-Z0-9]+)_(?P<version>V\\d{4})_(?P<resolution>[0-9A-Za-z]+)\\.(?P<extension>[A-Za-z0-9]+)$",
+
+    "template": "{project}{reference_year}_{product}_{version}_{resolution}.{extension}",
+
+    "requirements": {
+      "project":         { "$ref": "fields.json#/$defs/project" },
+      "reference_year":  { "$ref": "fields.json#/$defs/reference_year" },
+      "product":         { "$ref": "fields.json#/$defs/product" },
+      "version":         { "$ref": "fields.json#/$defs/version" },
+      "resolution":      { "$ref": "fields.json#/$defs/resolution" },
+      "extension":       { "$ref": "fields.json#/$defs/extension" }
+    },
+
+    "build_transforms": {
+      "project": ["upper"],
+      "version": ["upper"],
+      "resolution": ["lower"],
+      "extension": ["lower"]
+    },
+    "parse_transforms": {
+      "project": ["upper"],
+      "version": ["upper"]
+    },
+
+    "fields": {
+      "project": {}, "reference_year": {}, "product": {}, "version": {},
+      "resolution": {}, "extension": {}
+    }
+  }
+}

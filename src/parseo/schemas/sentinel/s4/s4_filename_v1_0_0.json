@@ -1,0 +1,107 @@
+﻿{
+    "$schema":  "https://json-schema.org/draft/2020-12/schema",
+    "title":  "Sentinel-4 filename",
+    "type":  "object",
+    "properties":  {
+                       "name":  {
+                                    "type":  "string"
+                                }
+                   },
+    "required":  [
+                     "name"
+                 ],
+    "x-parseo":  {
+                     "version":  "1.0.0",
+                     "parse_regex":  "^(?P\u003csatellite\u003eS4)(?P\u003cplatform\u003eA|B)_(?P\u003cinstrument\u003eUVN)_(?P\u003cprocessing_level\u003eL1|L2)_(?P\u003csensing_datetime\u003e\\d{8}T\\d{6})(?:_(?P\u003ctile\u003e[A-Z0-9_\\-]{3,10}))?\\.(?P\u003cextension\u003e[A-Za-z0-9]+)$",
+                     "template":  "{satellite}{platform}_{instrument}_{processing_level}_{sensing_datetime}{tile_opt}.{extension}",
+                     "requirements":  {
+                                          "satellite":  {
+                                                            "$ref":  "fields.json#/$defs/satellite"
+                                                        },
+                                          "platform":  {
+                                                           "$ref":  "fields.json#/$defs/platform"
+                                                       },
+                                          "instrument":  {
+                                                             "$ref":  "fields.json#/$defs/instrument"
+                                                         },
+                                          "processing_level":  {
+                                                                   "$ref":  "fields.json#/$defs/processing_level"
+                                                               },
+                                          "sensing_datetime":  {
+                                                                   "$ref":  "fields.json#/$defs/sensing_datetime"
+                                                               },
+                                          "tile":  {
+                                                       "$ref":  "fields.json#/$defs/tile"
+                                                   },
+                                          "extension":  {
+                                                            "$ref":  "fields.json#/$defs/extension"
+                                                        }
+                                      },
+                     "build_transforms":  {
+                                              "platform":  [
+                                                               "upper"
+                                                           ],
+                                              "instrument":  [
+                                                                 "upper"
+                                                             ],
+                                              "processing_level":  [
+                                                                       "upper"
+                                                                   ],
+                                              "sensing_datetime":  [
+                                                                       "datetime:%Y%m%dT%H%M%S"
+                                                                   ],
+                                              "extension":  [
+                                                                "lower"
+                                                            ],
+                                              "_compose:tile_opt":  [
+                                                                        "ifset:tile:prefix:_"
+                                                                    ]
+                                          },
+                     "parse_transforms":  {
+                                              "extension":  [
+                                                                "lower"
+                                                            ]
+                                          },
+                     "fields":  {
+                                    "satellite":  {
+
+                                                  },
+                                    "platform":  {
+
+                                                 },
+                                    "instrument":  {
+
+                                                   },
+                                    "processing_level":  {
+
+                                                         },
+                                    "sensing_datetime":  {
+
+                                                         },
+                                    "tile":  {
+
+                                             },
+                                    "extension":  {
+
+                                                  }
+                                },
+                     "map_to_canonical":  {
+                                              "mission":  "{satellite}{platform}",
+                                              "instrument":  "{instrument}",
+                                              "level":  "{processing_level}",
+                                              "acq_datetime":  "{sensing_datetime}",
+                                              "tile":  "{tile}",
+                                              "extension":  "{extension}"
+                                          },
+                     "map_from_canonical":  {
+                                                "satellite":  "{mission[:2]}",
+                                                "platform":  "{mission[2:3]}",
+                                                "instrument":  "{instrument}",
+                                                "processing_level":  "{level}",
+                                                "sensing_datetime":  "{acq_datetime}",
+                                                "tile":  "{tile}",
+                                                "extension":  "{extension}"
+                                            },
+                     "valid_example":  "S4A_UVN_L2_20250105T103021_EUROPE.tif"
+                 }
+}
