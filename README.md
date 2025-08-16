@@ -200,7 +200,7 @@ python -m pip install -e .
 ### Test your schema
 ``` bash
 # Module form
-python -m filenamingapi.cli S2B_MSIL2A_20241123T224759_N0511_R101_T03VUL_20241123T230829.SAFE
+python -m parseo.cli S2B_MSIL2A_20241123T224759_N0511_R101_T03VUL_20241123T230829.SAFE
 ```
 ``` bash
 # Or console script if on PATH
