@@ -1,6 +1,6 @@
-# filenamingAPI
+# parsEO
 
-[![CI](https://github.com/MatMatt/filenamingAPI/actions/workflows/python-package.yml/badge.svg)](https://github.com/MatMatt/filenamingAPI/actions/workflows/python-package.yml) ![License: EUPL 1.2](https://img.shields.io/badge/License-EUPL%201.2-green.svg) ![Python](https://img.shields.io/badge/python-3.9%20%7C%203.10%20%7C%203.11%20%7C%203.12-blue)
+[![CI](https://github.com/MatMatt/parseo/actions/workflows/python-package.yml/badge.svg)](https://github.com/MatMatt/parseo/actions/workflows/python-package.yml) ![License: EUPL 1.2](https://img.shields.io/badge/License-EUPL%201.2-green.svg) ![Python](https://img.shields.io/badge/python-3.9%20%7C%203.10%20%7C%203.11%20%7C%203.12-blue)
 
 A lightweight, schema-driven filename parser currently supporting:
 
@@ -29,15 +29,15 @@ Schemas are bundled with the package and include field descriptions, code lists,
 ### From source (editable for development)
 
 ``` bash
-git clone https://github.com/MatMatt/filenamingAPI.git
-cd filenamingAPI
+git clone https://github.com/MatMatt/parseo.git
+cd parseo
 python -m pip install -e .
 ```
 
 ## 🤨 Usage
 
 ``` python
-from filenamingapi.parser import parse_auto
+from parseo.parser import parse_auto
 
 # Sentinel-2 example
 name = "S2B_MSIL2A_20241123T224759_N0511_R101_T03VUL_20241123T230829.SAFE"
@@ -66,7 +66,7 @@ Fields: {
 
 ``` bash
 # Module form (works everywhere)
-python -m filenamingapi.cli S2B_MSIL2A_20241123T224759_N0511_R101_T03VUL_20241123T230829.SAFE
+python -m parseo.cli S2B_MSIL2A_20241123T224759_N0511_R101_T03VUL_20241123T230829.SAFE
 
 # Console script (if your Scripts/ is on PATH)
 filenaming-parse S2B_MSIL2A_20241123T224759_N0511_R101_T03VUL_20241123T230829.SAFE
