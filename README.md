@@ -94,8 +94,8 @@ The parser tries all bundled schemas in order and returns the first match with n
 ## 🏗️ Project structure
 
 ``` bash
-filenamingAPI/
-├── src/filenamingapi/
+parseo/
+├── src/parseo/
 │   ├── __init__.py
 │   ├── parser.py           # Core parser logic
 │   ├── cli.py              # CLI entry point
@@ -120,8 +120,8 @@ filenamingAPI/
 Follow these steps to add support for another mission or product family.
 
 ### Create the schema file  
-   Place a JSON file in `src/filenamingapi/schemas/<family>/`.  
-   Example: src/filenamingapi/schemas/sentinel/sentinel2_filename_structure.json
+   Place a JSON file in `src/parseo/schemas/<family>/`.  
+   Example: src/parseo/schemas/sentinel/sentinel2_filename_structure.json
 
 ### Define the pattern and fields 
 Use **named capture groups** in `filename_pattern` (e.g., `(?P<tile_id>T\d{2}[A-Z]{3})`) and document each field.  
