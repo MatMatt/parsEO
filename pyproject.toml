@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "parseo"
 version = "0.2.0"
 description = "Filename validation schemas and tools for CLMS products"
-readme = "README.md"
+readme = { file = "README.md", content-type = "text/markdown" }
 requires-python = ">=3.9"
 authors = [{ name = "Matteo Mattiuzzi" }]
 license = { file = "LICENSE" }
@@ -15,10 +15,17 @@ dependencies = [
 ]
 classifiers = [
   "License :: OSI Approved :: European Union Public Licence 1.2 (EUPL 1.2)",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
 ]
 
 [tool.setuptools]
 include-package-data = true
+license-files = ["LICENSE"]
 
 [tool.setuptools.packages.find]
 where = ["src"]
@@ -28,3 +35,4 @@ parseo = ["schemas/**/*.json"]
 
 [project.scripts]
 generate-clms-schemas = "parseo.tools.generate_schemas_from_clms:main"
+parseo = "parseo.cli:main"
