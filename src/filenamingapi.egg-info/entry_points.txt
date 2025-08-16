@@ -1,2 +1,0 @@
-[console_scripts]
-generate-clms-schemas = filenamingapi.tools.generate_schemas_from_clms:main
