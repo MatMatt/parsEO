@@ -101,7 +101,7 @@ filenamingAPI/
 │   ├── cli.py              # CLI entry point
 │   └── schemas/
 │       ├── sentinel/
-│       │   ├── sentinel1_filename_structure_unified.json
+│       │   ├── sentinel1_filename_structure.json
 │       │   ├── sentinel2_filename_structure.json
 │       │   └── ...
 │       └── landsat/
