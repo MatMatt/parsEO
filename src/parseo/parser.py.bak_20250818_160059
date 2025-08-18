@@ -1,6 +1,6 @@
-﻿from __future__ import annotations
-from pathlib import Path
-# src/parseo/parser.py
+﻿# src/parseo/parser.py
+from __future__ import annotations
+
 import json
 import re
 from dataclasses import dataclass
@@ -165,48 +165,3 @@ def parse_auto(name: str) -> ParseResult:
         "No schema matched the provided name. "
         "Ensure appropriate schemas exist under schemas/**/*.json"
     )
-from importlib.resources import files, as_file
-
-from typing import Iterator
-
-
-# --- BEGIN: recursive schema discovery (appended) ---
-SCHEMAS_ROOT = "schemas"
-
-def _iter_schema_paths(pkg: str) -> "Iterator[Path]":
-    """
-    Yield all JSON schema files recursively under `schemas/`.
-    Zip-safe for wheels via importlib.resources.
-    """
-    try:
-        root = files(pkg).joinpath(SCHEMAS_ROOT)
-    except ModuleNotFoundError:
-        return
-    try:
-        with as_file(root) as root_path:
-            root_fs = Path(root_path)
-            if not root_fs.exists():
-                return
-            for p in root_fs.rglob("*.json"):
-                if p.is_file():
-                    yield p
-    except FileNotFoundError:
-        return
-
-def _find_schema_by_hints(pkg: str, product: str | None):
-    if not product:
-        return None
-    tokens = {
-        "S1": ("sentinel1", "s1_"),
-        "S2": ("sentinel2", "s2_"),
-        "LANDSAT": ("landsat",),
-    }.get(product, tuple())
-    for p in _iter_schema_paths(pkg):
-        name = p.name.lower()
-        if any(t in name for t in tokens):
-            return p
-    return None
-# --- END: recursive schema discovery ---
-
-
-
