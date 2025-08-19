@@ -1,0 +1,60 @@
+{
+  "prefix": {
+    "codes": [
+      "CLMS_WSI"
+    ]
+  },
+  "product": {
+    "codes": [
+      "WDS"
+    ]
+  },
+  "pixel_spacing": {
+    "codes": [
+      "060m"
+    ]
+  },
+  "tile_id": {
+    "format": "T<zone><lat_band><grid_square>"
+  },
+  "sensing_datetime": {
+    "format": "YYYYMMDDThhmmss"
+  },
+  "platform": {
+    "codes": [
+      "S1A",
+      "S1B"
+    ]
+  },
+  "version": {
+    "format": "VXYZ"
+  },
+  "file_id": {
+    "codes": [
+      "SSC",
+      "SSC-QA",
+      "MTD"
+    ]
+  },
+  "extension": {
+    "codes": [
+      ".tif",
+      ".xml"
+    ]
+  },
+  "filename_pattern": "^(?P<prefix>CLMS_WSI)_(?P<product>WDS)_(?P<pixel_spacing>060m)_(?P<tile_id>T\\d{2}[C-HJ-NP-X][A-Z]{2})_(?P<sensing_datetime>(?:19|20)\\d\\d(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\\d|3[01])T(?:[01]\\d|2[0-3])(?:[0-5]\\d){2})_(?P<platform>S1A|S1B)_(?P<version>V\\d{3})_(?P<file_id>SSC|SSC-QA|MTD)(?P<extension>\\.(?:tif|xml))$",
+  "fields_order": [
+    "prefix",
+    "product",
+    "pixel_spacing",
+    "tile_id",
+    "sensing_datetime",
+    "platform",
+    "version",
+    "file_id",
+    "extension"
+  ],
+  "valid_examples": [
+    "CLMS_WSI_WDS_060m_T32TNS_20210217T053159_S1B_V100_SSC.tif"
+  ]
+}

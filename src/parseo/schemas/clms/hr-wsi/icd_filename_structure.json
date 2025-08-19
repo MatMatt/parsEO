@@ -1,0 +1,64 @@
+{
+  "prefix": {
+    "codes": [
+      "CLMS_WSI"
+    ]
+  },
+  "product": {
+    "codes": [
+      "ICD"
+    ]
+  },
+  "pixel_spacing": {
+    "codes": [
+      "020m",
+      "100m"
+    ]
+  },
+  "tile_id": {
+    "format": "TxxYYY or EXXNXX"
+  },
+  "period_start": {
+    "format": "YYYYMMDDP1Y"
+  },
+  "combination": {
+    "codes": [
+      "COMB"
+    ]
+  },
+  "version": {
+    "format": "VXYZ"
+  },
+  "file_id": {
+    "codes": [
+      "ICD",
+      "NOBS1",
+      "NOBS2",
+      "ICD-QA",
+      "MTD"
+    ]
+  },
+  "extension": {
+    "codes": [
+      ".tif",
+      ".xml"
+    ]
+  },
+  "filename_pattern": "^(?P<prefix>CLMS_WSI)_(?P<product>ICD)_(?P<pixel_spacing>020m|100m)_(?P<tile_id>(?:T\\d{2}[C-HJ-NP-X][A-Z]{2}|E\\d{2}N\\d{2}))_(?P<period_start>(?:19|20)\\d\\d(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\\d|3[01]))P1Y_(?P<combination>COMB)_(?P<version>V\\d{3})_(?P<file_id>ICD|NOBS1|NOBS2|ICD-QA|MTD)(?P<extension>\\.(?:tif|xml))$",
+  "fields_order": [
+    "prefix",
+    "product",
+    "pixel_spacing",
+    "tile_id",
+    "period_start",
+    "combination",
+    "version",
+    "file_id",
+    "extension"
+  ],
+  "valid_examples": [
+    "CLMS_WSI_ICD_020m_T31TCH_20160901P1Y_COMB_V100_ICD-QA.tif",
+    "CLMS_WSI_ICD_020m_E70N20_20160901P1Y_COMB_V100_ICD-QA.tif",
+    "CLMS_WSI_ICD_100m_E70N20_20160901P1Y_COMB_V100_ICD-QA.tif"
+  ]
+}

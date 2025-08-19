@@ -1,0 +1,60 @@
+{
+  "prefix": {
+    "codes": [
+      "CLMS_WSI"
+    ]
+  },
+  "product": {
+    "codes": [
+      "WIC"
+    ]
+  },
+  "pixel_spacing": {
+    "codes": [
+      "020m"
+    ]
+  },
+  "tile_id": {
+    "format": "T<zone><lat_band><grid_square>"
+  },
+  "period_start": {
+    "format": "YYYYMMDDTHH0000P12H"
+  },
+  "combination": {
+    "codes": [
+      "COMB"
+    ]
+  },
+  "version": {
+    "format": "VXYZ"
+  },
+  "file_id": {
+    "codes": [
+      "WIC",
+      "QAFLAGS",
+      "WIC-QA",
+      "MTD"
+    ]
+  },
+  "extension": {
+    "codes": [
+      ".tif",
+      ".xml"
+    ]
+  },
+  "filename_pattern": "^(?P<prefix>CLMS_WSI)_(?P<product>WIC)_(?P<pixel_spacing>020m)_(?P<tile_id>T\\d{2}[C-HJ-NP-X][A-Z]{2})_(?P<period_start>(?:19|20)\\d\\d(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\\d|3[01])T(?:00|12)0000P12H)_(?P<combination>COMB)_(?P<version>V\\d{3})_(?P<file_id>WIC|QAFLAGS|WIC-QA|MTD)(?P<extension>\\.(?:tif|xml))$",
+  "fields_order": [
+    "prefix",
+    "product",
+    "pixel_spacing",
+    "tile_id",
+    "period_start",
+    "combination",
+    "version",
+    "file_id",
+    "extension"
+  ],
+  "valid_examples": [
+    "CLMS_WSI_WIC_020m_T31TCH_20160720T120000P12H_COMB_V100_WIC-QA.tif"
+  ]
+}
