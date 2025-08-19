@@ -3,14 +3,9 @@
     "family":  "S2",
     "versions":  [
                      {
-                         "status":  "legacy",
+                         "status":  "current",
                          "file":  "s2_filename_v1_0_0.json",
                          "version":  "1.0.0"
-                     },
-                     {
-                         "status":  "current",
-                         "file":  "s2_filename_v1_0_1.json",
-                         "version":  "1.0.1"
                      }
                  ]
 }
