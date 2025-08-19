@@ -1,118 +1,113 @@
-﻿from __future__ import annotations
+﻿# src/parseo/parser.py
+from __future__ import annotations
+
+from dataclasses import dataclass
+from importlib.resources import files, as_file
 from pathlib import Path
-# src/parseo/parser.py
+from typing import Dict, Iterator, Optional
 import json
 import re
-from dataclasses import dataclass
-from importlib import resources
-from jsonschema import validate, ValidationError
+from functools import lru_cache
 
+# Root folder inside the package where JSON schemas live
 SCHEMAS_ROOT = "schemas"
 
 
-@dataclass
+@dataclass(frozen=True)
 class ParseResult:
-    fields: dict
-    schema_path: str | None
+    """Result of a parsing attempt."""
     valid: bool
-    match_family: str | None = None
+    fields: Dict[str, str]
+    schema_path: str
+    match_family: Optional[str] = None  # e.g., "S1", "S2", "LANDSAT"
 
 
-def _iter_schema_paths(package: str):
-    root = resources.files(package).joinpath(SCHEMAS_ROOT)
-    if not root.exists():
-        return
-    for p in root.rglob("*.json"):
-        if p.is_file():
-            yield p
+# ---------------------------
+# Schema discovery (recursive)
+# ---------------------------
+
+def _iter_schema_paths(pkg: str) -> Iterator[Path]:
+    """
+    Yield all *.json schema files recursively under `schemas/`.
+    Zip-safe via importlib.resources so it works from wheels and editable installs.
+    """
+    root = files(pkg).joinpath(SCHEMAS_ROOT)
+    # as_file gives us a real filesystem path even if resources are zipped
+    with as_file(root) as root_path:
+        base = Path(root_path)
+        if not base.exists():
+            return
+        yield from (p for p in base.rglob("*.json") if p.is_file())
 
 
-def _find_schema_by_hints(package: str, *, product: str | None = None):
-    family_patterns = {
-        "S1": (r"(^|/)sentinel/", r"^sentinel1_.*\.json$"),
-        "S2": (r"(^|/)sentinel/", r"^sentinel2_.*\.json$"),
-        "LANDSAT": (r"(^|/)landsat/", r"^landsat[0-9]_.*\.json$"),
-    }
-
-    if product is None:
+def _find_schema_by_hints(pkg: str, product: Optional[str]) -> Optional[Path]:
+    """
+    Prefer a schema whose filename hints at the requested family (S1/S2/LANDSAT),
+    but still search recursively.
+    """
+    if not product:
         return None
-
-    hint = product.upper()
-    if hint.startswith("SENTINEL-1"):
-        hint = "S1"
-    elif hint.startswith("SENTINEL-2"):
-        hint = "S2"
-    elif hint.startswith("LANDSAT"):
-        hint = "LANDSAT"
-    elif hint.startswith("S1"):
-        hint = "S1"
-    elif hint.startswith("S2"):
-        hint = "S2"
-
-    fam = family_patterns.get(hint)
-    if not fam:
-        return None
-
-    subdir_re, filename_re = fam
-    subdir_rx = re.compile(subdir_re.replace("/", r"[\\/]"))
-    fname_rx = re.compile(filename_re, re.IGNORECASE)
-
-    for p in _iter_schema_paths(__package__):
-        rel = str(p)
-        if subdir_rx.search(rel) and fname_rx.search(p.name):
+    tokens = {
+        "S1": ("sentinel1", "s1_"),
+        "S2": ("sentinel2", "s2_"),
+        "LANDSAT": ("landsat",),
+    }.get(product, tuple())
+    for p in _iter_schema_paths(pkg):
+        name = p.name.lower()
+        if any(tok in name for tok in tokens):
             return p
     return None
 
 
-def _load_json_from_path(path_obj):
-    with path_obj.open("r", encoding="utf-8") as f:
+# ---------------------------
+# Core helpers
+# ---------------------------
+
+@lru_cache(maxsize=256)
+def _load_json_from_path(path: Path) -> Dict:
+    with open(path, "r", encoding="utf-8") as f:
         return json.load(f)
 
 
-def _try_validate(name: str, schema_dict: dict) -> bool:
-    try:
-        validate(instance={"name": name}, schema=schema_dict)
-        return True
-    except ValidationError:
-        return False
+@lru_cache(maxsize=512)
+def _compile_pattern(pattern: str) -> re.Pattern:
+    return re.compile(pattern)
 
 
-def _extract_fields(name: str) -> dict:
+def _match_filename(name: str, schema: Dict) -> Optional[re.Match]:
+    patt = schema.get("filename_pattern")
+    if not isinstance(patt, str) or not patt:
+        return None
+    rx = _compile_pattern(patt)
+    return rx.match(name)
+
+
+def _extract_fields(name: str, schema: Dict) -> Dict[str, str]:
     """
-    Extract minimal fields needed by tests from the filename prefix.
-
-    Examples:
-      S2B_MSIL2A_20241123T224759_... -> mission=S2B, instrument_processing=MSIL2A
-      S1A_IW_SLC__1SDV_20250105T...  -> mission=S1A, instrument_mode=IW
+    Extract named groups as fields from 'name' using the schema's regex.
+    If the regex doesn't match, return an empty dict.
     """
-    fields: dict[str, str] = {}
+    m = _match_filename(name, schema)
+    return m.groupdict() if m else {}
 
-    # Common mission code first token (e.g., S2B, S1A)
-    m = re.match(r"^([A-Z0-9]{3})_", name)
-    if m:
-        fields["mission"] = m.group(1)
 
-    # Sentinel-2: mission 'S2A' or 'S2B' then instrument/processing (e.g., MSIL2A)
-    m_s2 = re.match(r"^(S2[AB])_([A-Z0-9]+)_", name)
-    if m_s2:
-        fields.setdefault("mission", m_s2.group(1))
-        fields["instrument_processing"] = m_s2.group(2)
-        return fields  # done
+def _try_validate(name: str, schema: Dict) -> bool:
+    return _match_filename(name, schema) is not None
 
-    # Sentinel-1: mission 'S1A' or 'S1B' then instrument mode (e.g., IW)
-    m_s1 = re.match(r"^(S1[AB])_([A-Z]{2,3})_", name)
-    if m_s1:
-        fields.setdefault("mission", m_s1.group(1))
-        fields["instrument_mode"] = m_s1.group(2)
-        return fields  # done
 
-    # If neither matched, just return what we have (mission if present)
-    return fields
+# ---------------------------
+# Public API
+# ---------------------------
 
 def parse_auto(name: str) -> ParseResult:
-    pkg = __package__  # "parseo"
+    """
+    Try to parse `name` by matching it against any schema under schemas/**.json.
+    A quick 'family' hint is derived from the filename prefix (S1/S2/LANDSAT).
+    Returns a ParseResult on success; raises RuntimeError if nothing matches.
+    """
+    pkg = __package__  # e.g., "parseo"
 
-    # Determine quick family hint
+    # Quick family hint
     u = name.upper()
     if u.startswith(("S1", "SENTINEL-1")):
         product_hint = "S1"
@@ -123,28 +118,29 @@ def parse_auto(name: str) -> ParseResult:
     else:
         product_hint = None
 
-    # Try hinted schema first
+    # Try hinted schema first (if any)
     hinted = _find_schema_by_hints(pkg, product=product_hint)
     if hinted and hinted.exists():
         try:
             schema = _load_json_from_path(hinted)
             if _try_validate(name, schema):
                 return ParseResult(
-                    fields=_extract_fields(name),
-                    schema_path=str(hinted),
                     valid=True,
+                    fields=_extract_fields(name, schema),
+                    schema_path=str(hinted),
                     match_family=product_hint,
                 )
         except Exception:
-            # Fall through to brute-force if schema unreadable
+            # If hinted schema is unreadable, fall back to brute force
             pass
 
-    # Fallback: brute-force across all schemas
+    # Fallback: brute-force across all schemas (recursive)
     candidates = list(_iter_schema_paths(pkg))
     if not candidates:
+        # No schema files packaged at all
         raise FileNotFoundError(f"No schemas packaged under {pkg}/{SCHEMAS_ROOT}.")
 
-    first_error = None
+    first_error: Optional[Exception] = None
     for p in candidates:
         try:
             schema = _load_json_from_path(p)
@@ -154,59 +150,18 @@ def parse_auto(name: str) -> ParseResult:
             continue
         if _try_validate(name, schema):
             return ParseResult(
-                fields=_extract_fields(name),
-                schema_path=str(p),
                 valid=True,
+                fields=_extract_fields(name, schema),
+                schema_path=str(p),
                 match_family=product_hint,
             )
 
-    # Nothing matched
+    # Nothing matched — provide a helpful error listing what we saw
+    with as_file(files(pkg).joinpath(SCHEMAS_ROOT)) as rp:
+        base = Path(rp)
+        seen = [str(q.relative_to(base)) for q in base.rglob("*.json")] if base.exists() else []
     raise RuntimeError(
         "No schema matched the provided name. "
-        "Ensure appropriate schemas exist under schemas/**/*.json"
+        f"Looked recursively under {pkg}/{SCHEMAS_ROOT}/ and found "
+        f"{len(seen)} file(s): {seen[:8]}{'…' if len(seen) > 8 else ''}"
     )
-from importlib.resources import files, as_file
-
-from typing import Iterator
-
-
-# --- BEGIN: recursive schema discovery (appended) ---
-SCHEMAS_ROOT = "schemas"
-
-def _iter_schema_paths(pkg: str) -> "Iterator[Path]":
-    """
-    Yield all JSON schema files recursively under `schemas/`.
-    Zip-safe for wheels via importlib.resources.
-    """
-    try:
-        root = files(pkg).joinpath(SCHEMAS_ROOT)
-    except ModuleNotFoundError:
-        return
-    try:
-        with as_file(root) as root_path:
-            root_fs = Path(root_path)
-            if not root_fs.exists():
-                return
-            for p in root_fs.rglob("*.json"):
-                if p.is_file():
-                    yield p
-    except FileNotFoundError:
-        return
-
-def _find_schema_by_hints(pkg: str, product: str | None):
-    if not product:
-        return None
-    tokens = {
-        "S1": ("sentinel1", "s1_"),
-        "S2": ("sentinel2", "s2_"),
-        "LANDSAT": ("landsat",),
-    }.get(product, tuple())
-    for p in _iter_schema_paths(pkg):
-        name = p.name.lower()
-        if any(t in name for t in tokens):
-            return p
-    return None
-# --- END: recursive schema discovery ---
-
-
-
