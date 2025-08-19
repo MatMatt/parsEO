@@ -1,147 +1,17 @@
-﻿{
-    "$schema":  "https://json-schema.org/draft/2020-12/schema",
-    "title":  "Sentinel-1 filename",
-    "type":  "object",
-    "properties":  {
-                       "name":  {
-                                    "type":  "string"
-                                }
-                   },
-    "required":  [
-                     "name"
+{
+    "prefix":  {
+                   "codes":  [
+                                 "S1"
+                             ]
+               },
+    "notes":  [
+                  "Sentinel-1 SAFE root name (e.g., IW SLC). Purely schema-driven; no Python hard-coding."
+              ],
+    "examples":  [
+                     "S1A_IW_SLC__1SDV_20250105T053021_20250105T053048_A054321_D068F2E_ABC123.SAFE"
                  ],
-    "x-parseo":  {
-                     "version":  "1.0.0",
-                     "parse_regex":  "^(?P\u003csatellite\u003eS1)(?P\u003cplatform\u003eA|B|C)_(?P\u003cmode\u003eSM|IW|EW|WV)_(?P\u003cproduct\u003eSLC__|OCN__|GRD[FMH]_)_(?P\u003clevel\u003e\\d[A-Z]{2})_(?P\u003cpol\u003eVV|HH|VH|HV)_(?P\u003cstart\u003e\\d{8}T\\d{6})_(?P\u003cstop\u003e\\d{8}T\\d{6})_(?P\u003corbit\u003eA\\d{6})_(?P\u003cdatatake\u003eD[0-9A-F]{6,7})_(?P\u003cproductid\u003e[0-9A-F]{4,12})\\.(?P\u003cextension\u003e[A-Za-z0-9]+)$",
-                     "template":  "{satellite}{platform}_{mode}_{product}_{level}_{pol}_{start}_{stop}_{orbit}_{datatake}_{productid}.{extension}",
-                     "requirements":  {
-                                          "satellite":  {
-                                                            "$ref":  "fields.json#/$defs/satellite"
-                                                        },
-                                          "platform":  {
-                                                           "$ref":  "fields.json#/$defs/platform"
-                                                       },
-                                          "mode":  {
-                                                       "$ref":  "fields.json#/$defs/mode"
-                                                   },
-                                          "product":  {
-                                                          "$ref":  "fields.json#/$defs/product"
-                                                      },
-                                          "level":  {
-                                                        "$ref":  "fields.json#/$defs/level"
-                                                    },
-                                          "pol":  {
-                                                      "$ref":  "fields.json#/$defs/pol"
-                                                  },
-                                          "start":  {
-                                                        "$ref":  "fields.json#/$defs/datetime_compact"
-                                                    },
-                                          "stop":  {
-                                                       "$ref":  "fields.json#/$defs/datetime_compact"
-                                                   },
-                                          "orbit":  {
-                                                        "$ref":  "fields.json#/$defs/abs_orbit"
-                                                    },
-                                          "datatake":  {
-                                                           "$ref":  "fields.json#/$defs/datatake"
-                                                       },
-                                          "productid":  {
-                                                            "$ref":  "fields.json#/$defs/product_id"
-                                                        },
-                                          "extension":  {
-                                                            "$ref":  "fields.json#/$defs/extension"
-                                                        }
-                                      },
-                     "build_transforms":  {
-                                              "platform":  [
-                                                               "upper"
-                                                           ],
-                                              "mode":  [
-                                                           "upper"
-                                                       ],
-                                              "pol":  [
-                                                          "upper"
-                                                      ],
-                                              "start":  [
-                                                            "datetime:%Y%m%dT%H%M%S"
-                                                        ],
-                                              "stop":  [
-                                                           "datetime:%Y%m%dT%H%M%S"
-                                                       ],
-                                              "extension":  [
-                                                                "lower"
-                                                            ]
-                                          },
-                     "parse_transforms":  {
-                                              "extension":  [
-                                                                "lower"
-                                                            ]
-                                          },
-                     "fields":  {
-                                    "satellite":  {
+    "capture":  {
 
-                                                  },
-                                    "platform":  {
-
-                                                 },
-                                    "mode":  {
-
-                                             },
-                                    "product":  {
-
-                                                },
-                                    "level":  {
-
-                                              },
-                                    "pol":  {
-
-                                            },
-                                    "start":  {
-
-                                              },
-                                    "stop":  {
-
-                                             },
-                                    "orbit":  {
-
-                                              },
-                                    "datatake":  {
-
-                                                 },
-                                    "productid":  {
-
-                                                  },
-                                    "extension":  {
-
-                                                  }
-                                },
-                     "map_to_canonical":  {
-                                              "mission":  "{satellite}{platform}",
-                                              "mode":  "{mode}",
-                                              "product":  "{product}",
-                                              "level":  "{level}",
-                                              "pol":  "{pol}",
-                                              "acq_start":  "{start}",
-                                              "acq_stop":  "{stop}",
-                                              "abs_orbit":  "{orbit}",
-                                              "datatake":  "{datatake}",
-                                              "productid":  "{productid}",
-                                              "extension":  "{extension}"
-                                          },
-                     "map_from_canonical":  {
-                                                "satellite":  "{mission[:2]}",
-                                                "platform":  "{mission[2:3]}",
-                                                "mode":  "{mode}",
-                                                "product":  "{product}",
-                                                "level":  "{level}",
-                                                "pol":  "{pol}",
-                                                "start":  "{acq_start}",
-                                                "stop":  "{acq_stop}",
-                                                "orbit":  "{abs_orbit}",
-                                                "datatake":  "{datatake}",
-                                                "productid":  "{productid}",
-                                                "extension":  "{extension}"
-                                            },
-                     "valid_example":  "S1A_IW_GRDH_1SDV_20250105T053021_20250105T053048_A054321_D068F2E_ABC123.SAFE"
-                 }
+                },
+    "regex":  "^S1[AB]_[A-Z]{2}_[A-Z]{3}__[0-9][A-Z][A-Z]{2}_[0-9]{8}T[0-9]{6}_[0-9]{8}T[0-9]{6}_A[0-9]{6}_D[0-9A-F]{6}_[A-Z0-9]{6}\\.SAFE$"
 }

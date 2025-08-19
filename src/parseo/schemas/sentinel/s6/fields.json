@@ -1,14 +1,67 @@
-﻿{
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "Sentinel-6 Fields",
-  "$defs": {
-    "satellite": { "type": "string", "values": [ { "code": "S6", "label": "Sentinel-6 mission" } ] },
-    "platform":  { "type": "string", "values": [ { "code": "A", "label": "Unit A" }, { "code": "B", "label": "Unit B" } ] },
-    "instrument": { "type": "string", "values": [ { "code": "P4", "label": "Poseidon-4 Radar Altimeter" } ] },
-    "sampling_rate": { "type": "string", "values": [ { "code": "1Hz" }, { "code": "2Hz" }, { "code": "20Hz" } ] },
-    "mode": { "type": "string", "pattern": "^[A-Z]$" },
-    "datetime_compact": { "type": "string", "pattern": "^\\d{8}T\\d{6}$" },
-    "segment": { "type": "string", "pattern": "^\\d{4}$" },
-    "extension": { "type": "string", "pattern": "^[A-Za-z0-9]+$" }
-  }
+{
+    "$schema":  "https://json-schema.org/draft/2020-12/schema",
+    "title":  "Sentinel-6 Fields",
+    "$defs":  {
+                  "satellite":  {
+                                    "type":  "string",
+                                    "values":  [
+                                                   {
+                                                       "code":  "S6",
+                                                       "label":  "Sentinel-6 mission"
+                                                   }
+                                               ]
+                                },
+                  "platform":  {
+                                   "type":  "string",
+                                   "values":  [
+                                                  {
+                                                      "code":  "A",
+                                                      "label":  "Unit A"
+                                                  },
+                                                  {
+                                                      "code":  "B",
+                                                      "label":  "Unit B"
+                                                  }
+                                              ]
+                               },
+                  "instrument":  {
+                                     "type":  "string",
+                                     "values":  [
+                                                    {
+                                                        "code":  "P4",
+                                                        "label":  "Poseidon-4 Radar Altimeter"
+                                                    }
+                                                ]
+                                 },
+                  "sampling_rate":  {
+                                        "type":  "string",
+                                        "values":  [
+                                                       {
+                                                           "code":  "1Hz"
+                                                       },
+                                                       {
+                                                           "code":  "2Hz"
+                                                       },
+                                                       {
+                                                           "code":  "20Hz"
+                                                       }
+                                                   ]
+                                    },
+                  "mode":  {
+                               "type":  "string",
+                               "pattern":  "^[A-Z]$"
+                           },
+                  "datetime_compact":  {
+                                           "type":  "string",
+                                           "pattern":  "^\\d{8}T\\d{6}$"
+                                       },
+                  "segment":  {
+                                  "type":  "string",
+                                  "pattern":  "^\\d{4}$"
+                              },
+                  "extension":  {
+                                    "type":  "string",
+                                    "pattern":  "^[A-Za-z0-9]+$"
+                                }
+              }
 }

@@ -1,66 +1,66 @@
 {
-  "prefix": {
-    "codes": [
-      "CLMS_WSI"
-    ]
-  },
-  "product": {
-    "codes": [
-      "SP"
-    ]
-  },
-  "pixel_spacing": {
-    "codes": [
-      "020m",
-      "100m"
-    ]
-  },
-  "tile_id": {
-    "format": "TxxYYY or EXXNXX"
-  },
-  "period_start": {
-    "format": "YYYYMMDDP1Y"
-  },
-  "source": {
-    "codes": [
-      "S2"
-    ]
-  },
-  "version": {
-    "format": "VXYZ"
-  },
-  "file_id": {
-    "codes": [
-      "SCD",
-      "SCO",
-      "SCM",
-      "NOBS",
-      "QAFLAGS",
-      "SCD-QA",
-      "SCO-QA",
-      "SCM-QA",
-      "MTD"
-    ]
-  },
-  "extension": {
-    "codes": [
-      ".tif",
-      ".xml"
-    ]
-  },
-  "filename_pattern": "^(?P<prefix>CLMS_WSI)_(?P<product>SP)_(?P<pixel_spacing>020m|100m)_(?P<tile_id>(?:T\\d{2}[C-HJ-NP-X][A-Z]{2}|E\\d{2}N\\d{2}))_(?P<period_start>(?:19|20)\\d\\d(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\\d|3[01]))P1Y_(?P<source>S2)_(?P<version>V\\d{3})_(?P<file_id>SCD|SCO|SCM|NOBS|QAFLAGS|SCD-QA|SCO-QA|SCM-QA|MTD)(?P<extension>\\.(?:tif|xml))$",
-  "fields_order": [
-    "prefix",
-    "product",
-    "pixel_spacing",
-    "tile_id",
-    "period_start",
-    "source",
-    "version",
-    "file_id",
-    "extension"
-  ],
-  "valid_examples": [
-    "CLMS_WSI_SP_020m_T38TKL_20200901P1Y_S2_V100_SCD.tif"
-  ]
+    "prefix":  {
+                   "codes":  [
+                                 "CLMS_WSI"
+                             ]
+               },
+    "product":  {
+                    "codes":  [
+                                  "SP"
+                              ]
+                },
+    "pixel_spacing":  {
+                          "codes":  [
+                                        "020m",
+                                        "100m"
+                                    ]
+                      },
+    "tile_id":  {
+                    "format":  "TxxYYY or EXXNXX"
+                },
+    "period_start":  {
+                         "format":  "YYYYMMDDP1Y"
+                     },
+    "source":  {
+                   "codes":  [
+                                 "S2"
+                             ]
+               },
+    "version":  {
+                    "format":  "VXYZ"
+                },
+    "file_id":  {
+                    "codes":  [
+                                  "SCD",
+                                  "SCO",
+                                  "SCM",
+                                  "NOBS",
+                                  "QAFLAGS",
+                                  "SCD-QA",
+                                  "SCO-QA",
+                                  "SCM-QA",
+                                  "MTD"
+                              ]
+                },
+    "extension":  {
+                      "codes":  [
+                                    ".tif",
+                                    ".xml"
+                                ]
+                  },
+    "filename_pattern":  "^(?P\u003cprefix\u003eCLMS_WSI)_(?P\u003cproduct\u003eSP)_(?P\u003cpixel_spacing\u003e020m|100m)_(?P\u003ctile_id\u003e(?:T\\d{2}[C-HJ-NP-X][A-Z]{2}|E\\d{2}N\\d{2}))_(?P\u003cperiod_start\u003e(?:19|20)\\d\\d(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\\d|3[01]))P1Y_(?P\u003csource\u003eS2)_(?P\u003cversion\u003eV\\d{3})_(?P\u003cfile_id\u003eSCD|SCO|SCM|NOBS|QAFLAGS|SCD-QA|SCO-QA|SCM-QA|MTD)(?P\u003cextension\u003e\\.(?:tif|xml))$",
+    "fields_order":  [
+                         "prefix",
+                         "product",
+                         "pixel_spacing",
+                         "tile_id",
+                         "period_start",
+                         "source",
+                         "version",
+                         "file_id",
+                         "extension"
+                     ],
+    "valid_examples":  [
+                           "CLMS_WSI_SP_020m_T38TKL_20200901P1Y_S2_V100_SCD.tif"
+                       ]
 }

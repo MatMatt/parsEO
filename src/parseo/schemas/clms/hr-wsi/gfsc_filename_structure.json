@@ -1,60 +1,60 @@
 {
-  "prefix": {
-    "codes": [
-      "CLMS_WSI"
-    ]
-  },
-  "product": {
-    "codes": [
-      "GFSC"
-    ]
-  },
-  "pixel_spacing": {
-    "codes": [
-      "060m"
-    ]
-  },
-  "tile_id": {
-    "format": "T<zone><lat_band><grid_square>"
-  },
-  "period": {
-    "format": "YYYYMMDDP7D"
-  },
-  "combination": {
-    "codes": [
-      "COMB"
-    ]
-  },
-  "version": {
-    "format": "VXYZ"
-  },
-  "file_id": {
-    "codes": [
-      "GF",
-      "GF-QA",
-      "QAFLAGS",
-      "MTD"
-    ]
-  },
-  "extension": {
-    "codes": [
-      ".tif",
-      ".xml"
-    ]
-  },
-  "filename_pattern": "^(?P<prefix>CLMS_WSI)_(?P<product>GFSC)_(?P<pixel_spacing>060m)_(?P<tile_id>T\\d{2}[C-HJ-NP-X][A-Z]{2})_(?P<period>(?:19|20)\\d\\d(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\\d|3[01])P7D)_(?P<combination>COMB)_(?P<version>V\\d{3})_(?P<file_id>GF|GF-QA|QAFLAGS|MTD)(?P<extension>\\.(?:tif|xml))$",
-  "fields_order": [
-    "prefix",
-    "product",
-    "pixel_spacing",
-    "tile_id",
-    "period",
-    "combination",
-    "version",
-    "file_id",
-    "extension"
-  ],
-  "valid_examples": [
-    "CLMS_WSI_GFSC_060m_T32TNS_20211018P7D_COMB_V100_GF-QA.tif"
-  ]
+    "prefix":  {
+                   "codes":  [
+                                 "CLMS_WSI"
+                             ]
+               },
+    "product":  {
+                    "codes":  [
+                                  "GFSC"
+                              ]
+                },
+    "pixel_spacing":  {
+                          "codes":  [
+                                        "060m"
+                                    ]
+                      },
+    "tile_id":  {
+                    "format":  "T\u003czone\u003e\u003clat_band\u003e\u003cgrid_square\u003e"
+                },
+    "period":  {
+                   "format":  "YYYYMMDDP7D"
+               },
+    "combination":  {
+                        "codes":  [
+                                      "COMB"
+                                  ]
+                    },
+    "version":  {
+                    "format":  "VXYZ"
+                },
+    "file_id":  {
+                    "codes":  [
+                                  "GF",
+                                  "GF-QA",
+                                  "QAFLAGS",
+                                  "MTD"
+                              ]
+                },
+    "extension":  {
+                      "codes":  [
+                                    ".tif",
+                                    ".xml"
+                                ]
+                  },
+    "filename_pattern":  "^(?P\u003cprefix\u003eCLMS_WSI)_(?P\u003cproduct\u003eGFSC)_(?P\u003cpixel_spacing\u003e060m)_(?P\u003ctile_id\u003eT\\d{2}[C-HJ-NP-X][A-Z]{2})_(?P\u003cperiod\u003e(?:19|20)\\d\\d(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\\d|3[01])P7D)_(?P\u003ccombination\u003eCOMB)_(?P\u003cversion\u003eV\\d{3})_(?P\u003cfile_id\u003eGF|GF-QA|QAFLAGS|MTD)(?P\u003cextension\u003e\\.(?:tif|xml))$",
+    "fields_order":  [
+                         "prefix",
+                         "product",
+                         "pixel_spacing",
+                         "tile_id",
+                         "period",
+                         "combination",
+                         "version",
+                         "file_id",
+                         "extension"
+                     ],
+    "valid_examples":  [
+                           "CLMS_WSI_GFSC_060m_T32TNS_20211018P7D_COMB_V100_GF-QA.tif"
+                       ]
 }

@@ -1,134 +1,17 @@
-﻿{
-    "$schema":  "https://json-schema.org/draft/2020-12/schema",
-    "title":  "Sentinel-2 filename",
-    "type":  "object",
-    "properties":  {
-                       "name":  {
-                                    "type":  "string"
-                                }
-                   },
-    "required":  [
-                     "name"
+{
+    "prefix":  {
+                   "codes":  [
+                                 "S2"
+                             ]
+               },
+    "notes":  [
+                  "Sentinel-2 SAFE root name (L1C/L2A). Purely schema-driven; no Python hard-coding."
+              ],
+    "examples":  [
+                     "S2B_MSIL2A_20241123T224759_N0511_R101_T03VUL_20241123T230829.SAFE"
                  ],
-    "x-parseo":  {
-                     "version":  "1.0.0",
-                     "parse_regex":  "^(?P\u003csatellite\u003eS2)(?P\u003cplatform\u003eA|B|C)_(?P\u003cinstrument\u003eMSI)(?P\u003cprocessing_level\u003eL1C|L2A)_(?P\u003csensing_datetime\u003e\\d{8}T\\d{6})_(?P\u003cprocessing_baseline\u003eN\\d{4})_(?P\u003crelative_orbit\u003eR\\d{3})_(?P\u003cmgrs_tile\u003eT[0-9A-Z]{5})_(?P\u003cgeneration_datetime\u003e\\d{8}T\\d{6})\\.(?P\u003cextension\u003e[A-Za-z0-9]+)$",
-                     "template":  "{satellite}{platform}_{instrument}{processing_level}_{sensing_datetime}_{processing_baseline}_{relative_orbit}_{mgrs_tile}_{generation_datetime}.{extension}",
-                     "requirements":  {
-                                          "satellite":  {
-                                                            "$ref":  "fields.json#/$defs/satellite"
-                                                        },
-                                          "platform":  {
-                                                           "$ref":  "fields.json#/$defs/platform"
-                                                       },
-                                          "instrument":  {
-                                                             "$ref":  "fields.json#/$defs/instrument"
-                                                         },
-                                          "processing_level":  {
-                                                                   "$ref":  "fields.json#/$defs/processing_level"
-                                                               },
-                                          "sensing_datetime":  {
-                                                                   "$ref":  "fields.json#/$defs/sensing_datetime"
-                                                               },
-                                          "processing_baseline":  {
-                                                                      "$ref":  "fields.json#/$defs/processing_baseline"
-                                                                  },
-                                          "relative_orbit":  {
-                                                                 "$ref":  "fields.json#/$defs/relative_orbit"
-                                                             },
-                                          "mgrs_tile":  {
-                                                            "$ref":  "fields.json#/$defs/mgrs_tile"
-                                                        },
-                                          "generation_datetime":  {
-                                                                      "$ref":  "fields.json#/$defs/generation_datetime"
-                                                                  },
-                                          "extension":  {
-                                                            "$ref":  "fields.json#/$defs/extension"
-                                                        }
-                                      },
-                     "build_transforms":  {
-                                              "platform":  [
-                                                               "upper"
-                                                           ],
-                                              "processing_level":  [
-                                                                       "upper"
-                                                                   ],
-                                              "relative_orbit":  [
-                                                                     "upper"
-                                                                 ],
-                                              "mgrs_tile":  [
-                                                                "upper"
-                                                            ],
-                                              "sensing_datetime":  [
-                                                                       "datetime:%Y%m%dT%H%M%S"
-                                                                   ],
-                                              "generation_datetime":  [
-                                                                          "datetime:%Y%m%dT%H%M%S"
-                                                                      ],
-                                              "extension":  [
-                                                                "lower"
-                                                            ]
-                                          },
-                     "parse_transforms":  {
-                                              "extension":  [
-                                                                "lower"
-                                                            ]
-                                          },
-                     "fields":  {
-                                    "satellite":  {
+    "capture":  {
 
-                                                  },
-                                    "platform":  {
-
-                                                 },
-                                    "instrument":  {
-
-                                                   },
-                                    "processing_level":  {
-
-                                                         },
-                                    "sensing_datetime":  {
-
-                                                         },
-                                    "processing_baseline":  {
-
-                                                            },
-                                    "relative_orbit":  {
-
-                                                       },
-                                    "mgrs_tile":  {
-
-                                                  },
-                                    "generation_datetime":  {
-
-                                                            },
-                                    "extension":  {
-
-                                                  }
-                                },
-                     "map_to_canonical":  {
-                                              "mission":  "{satellite}{platform}",
-                                              "instrument":  "{instrument}",
-                                              "level":  "{processing_level}",
-                                              "acq_datetime":  "{sensing_datetime}",
-                                              "baseline":  "{processing_baseline}",
-                                              "relative_orbit_num":  "{relative_orbit}",
-                                              "mgrs_tile":  "{mgrs_tile}",
-                                              "proc_datetime":  "{generation_datetime}",
-                                              "extension":  "{extension}"
-                                          },
-                     "map_from_canonical":  {
-                                                "satellite":  "{mission[:2]}",
-                                                "platform":  "{mission[2:3]}",
-                                                "instrument":  "{instrument}",
-                                                "processing_level":  "{level}",
-                                                "sensing_datetime":  "{acq_datetime}",
-                                                "processing_baseline":  "{baseline}",
-                                                "relative_orbit":  "{relative_orbit_num}",
-                                                "mgrs_tile":  "{mgrs_tile}",
-                                                "generation_datetime":  "{proc_datetime}",
-                                                "extension":  "{extension}"
-                                            },
-                     "valid_example":  "S2B_MSIL2A_20241123T224759_N0511_R101_T03VUL_20241123T230829.SAFE"
-                 }
+                },
+    "regex":  "^S2[AB]_MSI(L1C|L2A)_[0-9]{8}T[0-9]{6}_N[0-9]{4}_R[0-9]{3}_T[0-9]{2}[A-Z]{3}_[0-9]{8}T[0-9]{6}\\.SAFE$"
 }

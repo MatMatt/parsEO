@@ -1,51 +1,106 @@
-﻿{
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "Landsat Fields (Collection 2)",
-  "$defs": {
-    "mission_code": {
-      "type": "string",
-      "values": [
-        { "code": "LT04", "label": "Landsat 4 TM" },
-        { "code": "LT05", "label": "Landsat 5 TM" },
-        { "code": "LE07", "label": "Landsat 7 ETM+" },
-        { "code": "LC08", "label": "Landsat 8 OLI/TIRS" },
-        { "code": "LC09", "label": "Landsat 9 OLI-2/TIRS-2" }
-      ],
-      "description": "Platform + sensor code prefix"
-    },
-    "processing_level": {
-      "type": "string",
-      "values": [
-        { "code": "L1TP", "label": "Level-1 Terrain Precision" },
-        { "code": "L1GT", "label": "Level-1 Systematic Terrain" },
-        { "code": "L1GS", "label": "Level-1 Systematic" },
-        { "code": "L2SP", "label": "Level-2 Surface Reflectance/Surface Temperature (Precision terrain)" },
-        { "code": "L2SR", "label": "Level-2 Surface Reflectance" }
-      ],
-      "description": "Processing level (C2)"
-    },
-    "wrs_path":  { "type": "string", "pattern": "^\\d{3}$", "description": "WRS-2 path (3 digits)" },
-    "wrs_row":   { "type": "string", "pattern": "^\\d{3}$", "description": "WRS-2 row (3 digits)" },
-    "acq_date":  { "type": "string", "pattern": "^\\d{8}$", "description": "Acquisition date (YYYYMMDD)" },
-    "proc_date": { "type": "string", "pattern": "^\\d{8}$", "description": "Processing date (YYYYMMDD)" },
-    "collection_number": {
-      "type": "string",
-      "pattern": "^\\d{2}$",
-      "description": "Collection number (e.g., 01, 02)"
-    },
-    "tier": {
-      "type": "string",
-      "values": [
-        { "code": "T1", "label": "Tier 1" },
-        { "code": "T2", "label": "Tier 2" },
-        { "code": "RT", "label": "Real-Time" }
-      ],
-      "description": "Tier classification"
-    },
-    "extension": {
-      "type": "string",
-      "pattern": "^[A-Za-z0-9]+$",
-      "description": "File extension (no dot), e.g. tar, tif"
-    }
-  }
+{
+    "$schema":  "https://json-schema.org/draft/2020-12/schema",
+    "title":  "Landsat Fields (Collection 2)",
+    "$defs":  {
+                  "mission_code":  {
+                                       "type":  "string",
+                                       "values":  [
+                                                      {
+                                                          "code":  "LT04",
+                                                          "label":  "Landsat 4 TM"
+                                                      },
+                                                      {
+                                                          "code":  "LT05",
+                                                          "label":  "Landsat 5 TM"
+                                                      },
+                                                      {
+                                                          "code":  "LE07",
+                                                          "label":  "Landsat 7 ETM+"
+                                                      },
+                                                      {
+                                                          "code":  "LC08",
+                                                          "label":  "Landsat 8 OLI/TIRS"
+                                                      },
+                                                      {
+                                                          "code":  "LC09",
+                                                          "label":  "Landsat 9 OLI-2/TIRS-2"
+                                                      }
+                                                  ],
+                                       "description":  "Platform + sensor code prefix"
+                                   },
+                  "processing_level":  {
+                                           "type":  "string",
+                                           "values":  [
+                                                          {
+                                                              "code":  "L1TP",
+                                                              "label":  "Level-1 Terrain Precision"
+                                                          },
+                                                          {
+                                                              "code":  "L1GT",
+                                                              "label":  "Level-1 Systematic Terrain"
+                                                          },
+                                                          {
+                                                              "code":  "L1GS",
+                                                              "label":  "Level-1 Systematic"
+                                                          },
+                                                          {
+                                                              "code":  "L2SP",
+                                                              "label":  "Level-2 Surface Reflectance/Surface Temperature (Precision terrain)"
+                                                          },
+                                                          {
+                                                              "code":  "L2SR",
+                                                              "label":  "Level-2 Surface Reflectance"
+                                                          }
+                                                      ],
+                                           "description":  "Processing level (C2)"
+                                       },
+                  "wrs_path":  {
+                                   "type":  "string",
+                                   "pattern":  "^\\d{3}$",
+                                   "description":  "WRS-2 path (3 digits)"
+                               },
+                  "wrs_row":  {
+                                  "type":  "string",
+                                  "pattern":  "^\\d{3}$",
+                                  "description":  "WRS-2 row (3 digits)"
+                              },
+                  "acq_date":  {
+                                   "type":  "string",
+                                   "pattern":  "^\\d{8}$",
+                                   "description":  "Acquisition date (YYYYMMDD)"
+                               },
+                  "proc_date":  {
+                                    "type":  "string",
+                                    "pattern":  "^\\d{8}$",
+                                    "description":  "Processing date (YYYYMMDD)"
+                                },
+                  "collection_number":  {
+                                            "type":  "string",
+                                            "pattern":  "^\\d{2}$",
+                                            "description":  "Collection number (e.g., 01, 02)"
+                                        },
+                  "tier":  {
+                               "type":  "string",
+                               "values":  [
+                                              {
+                                                  "code":  "T1",
+                                                  "label":  "Tier 1"
+                                              },
+                                              {
+                                                  "code":  "T2",
+                                                  "label":  "Tier 2"
+                                              },
+                                              {
+                                                  "code":  "RT",
+                                                  "label":  "Real-Time"
+                                              }
+                                          ],
+                               "description":  "Tier classification"
+                           },
+                  "extension":  {
+                                    "type":  "string",
+                                    "pattern":  "^[A-Za-z0-9]+$",
+                                    "description":  "File extension (no dot), e.g. tar, tif"
+                                }
+              }
 }

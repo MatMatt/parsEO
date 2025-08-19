@@ -4,16 +4,63 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "parseo"
-version = "0.2.0"
+version = "0.2.0"  # or remove this and use setuptools-scm below
 description = "Filename parser/assembler for satellite data"
+readme = "README.md"
+license = { text = "MIT" }  # or {file = "LICENSE"}
 requires-python = ">=3.9"
-dependencies = ["jsonschema>=4.0.0"]
+dependencies = [
+  "jsonschema>=4,<5"
+]
+authors = [{ name = "Your Name", email = "you@example.com" }]
+keywords = ["satellite", "remote-sensing", "filenames", "sentinel", "parsing"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Science/Research",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Operating System :: OS Independent",
+  "Topic :: Scientific/Engineering :: GIS",
+]
+
+[project.urls]
+Homepage = "https://github.com/your-org/parseo"
+Repository = "https://github.com/your-org/parseo.git"
+Issues = "https://github.com/your-org/parseo/issues"
+Changelog = "https://github.com/your-org/parseo/releases"
 
 [project.scripts]
 parseo = "parseo.cli:main"
 
-[tool.setuptools.packages.find]
-where = ["src"]
+# If you want optional extras:
+[project.optional-dependencies]
+dev = ["build", "twine", "ruff", "mypy", "pytest", "pytest-cov"]
 
 [tool.setuptools]
-include-package-data = true
+include-package-data = true  # ensure MANIFEST.in if you ship data
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["parseo*"]
+exclude = ["tests*", "docs*", "examples*"]
+
+# If you ship package data (e.g., *.json inside parseo/):
+# [tool.setuptools.package-data]
+# "parseo" = ["data/*.json"]
+
+# --- Alternative: tag-based versioning via setuptools-scm ---
+# (uncomment these blocks and remove project.version above)
+# [build-system]
+# requires = ["setuptools>=69", "wheel", "setuptools-scm>=8"]
+# build-backend = "setuptools.build_meta"
+#
+# [project]
+# dynamic = ["version"]
+#
+# [tool.setuptools_scm]
+# version_scheme = "release-branch-semver"
+# local_scheme = "no-local-version"
