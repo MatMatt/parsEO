@@ -1,5 +1,6 @@
 from parseo.parser import parse_auto
 import parseo.parser as parser
+import pytest
 
 def test_s2_example():
     name = "S2B_MSIL2A_20241123T224759_N0511_R101_T03VUL_20241123T230829.SAFE"
@@ -52,3 +53,18 @@ def test_parse_bom_schema(tmp_path, monkeypatch):
     res = parse_auto("ABC.SAFE")
     assert res.valid
     assert res.fields["id"] == "ABC"
+
+
+def test_malformed_schema_surfaces_error(tmp_path, monkeypatch):
+    bad_path = tmp_path / "bad.json"
+    bad_path.write_text("not-json", encoding="utf-8")
+
+    def fake_iter(pkg: str):
+        yield bad_path
+
+    monkeypatch.setattr(parser, "_iter_schema_paths", fake_iter)
+    parser._get_schema_paths.cache_clear()
+
+    with pytest.raises(RuntimeError) as exc:
+        parse_auto("whatever.SAFE")
+    assert "Expecting value" in str(exc.value)
