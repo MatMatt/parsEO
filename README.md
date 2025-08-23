@@ -29,10 +29,12 @@ Currently included schemas cover:
 
 - **Sentinel missions**: S1, S2, S3, S4, S5P, S6  
 - **Landsat**: LT04, LT05, LE07, LC08, LC09  
-- **NASA MODIS**: Terra/Aqua MODIS products (see `src/parseo/schemas/nasa/modis`)
+- **NASA MODIS**: Terra/Aqua MODIS products
+- **EUMETSAT missions**: MTG, Metop
 - **Copernicus Land Monitoring Service (CLMS)**:
   - Corine Land Cover (CLC)  
   - High Resolution Water & Snow / Ice (HR-WSI)  
+  - High Resolution Vegetation Phenology & Productivity (HR-VPP)
   - High Resolution Layers: Grasslands  
 ---
 
@@ -222,6 +224,13 @@ parseo assemble \
   prefix=CLMS_WSI product=WIC pixel_spacing=020m tile_id=T33WXP \
   sensing_datetime=20201024T103021 platform=S2B processing_baseline=V100 file_id=WIC extension=tif
 # -> CLMS_WSI_WIC_020m_T33WXP_20201024T103021_S2B_V100_WIC.tif
+```
+
+# Example: CLMS HR-VPP product (first field: prefix)
+parseo assemble \
+  prefix=CLMS_VPP product=FAPAR resolution=100m tile_id=T32TNS \
+  start_date=20210101 end_date=20210110 version=V100 file_id=FAPAR extension=tif
+# -> CLMS_VPP_FAPAR_100m_T32TNS_20210101_20210110_V100_FAPAR.tif
 ```
 
 ---
