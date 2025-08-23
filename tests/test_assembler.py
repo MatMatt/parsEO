@@ -4,7 +4,10 @@ from parseo import assemble, assemble_auto
 
 
 def test_assemble_clms_fsc_schema():
-    schema = Path(__file__).resolve().parents[1] / "src/parseo/schemas/copernicus/clms/hr-wsi/fsc_filename_structure.json"
+    schema = (
+        Path(__file__).resolve().parents[1]
+        / "src/parseo/schemas/copernicus/clms/hr-wsi/fsc_filename_v0_0_0.json"
+    )
     fields = {
         "prefix": "CLMS_WSI",
         "product": "FSC",
