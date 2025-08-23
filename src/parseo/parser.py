@@ -169,8 +169,12 @@ def parse_auto(name: str) -> ParseResult:
     with as_file(files(pkg).joinpath(SCHEMAS_ROOT)) as rp:
         base = Path(rp)
         seen = [str(q.relative_to(base)) for q in base.rglob("*.json")] if base.exists() else []
-    raise RuntimeError(
+    msg = (
         "No schema matched the provided name. "
         f"Looked recursively under {pkg}/{SCHEMAS_ROOT}/ and found "
         f"{len(seen)} file(s): {seen[:8]}{'…' if len(seen) > 8 else ''}"
     )
+    if first_error is not None:
+        msg += f". First error while reading schemas: {first_error}"
+        raise RuntimeError(msg) from first_error
+    raise RuntimeError(msg)
