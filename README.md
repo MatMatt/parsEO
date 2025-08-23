@@ -164,10 +164,53 @@ parseo assemble \
 
 ---
 
+## Creating a New Filename Schema
+
+Adding support for a new product requires only a JSON schema placed under
+`src/parseo/schemas/`. All field definitions live inside the schema file.
+
+1. **Create the product directory**
+   - Path: `src/parseo/schemas/<family>/<mission>/<product>/`
+   - Add an `index.json` pointing to the active schema file. The `version`
+     key in `index.json` is optional; `status` and `file` are required.
+
+2. **Write the versioned schema file**
+   - Filename: `<product>_filename_vX_Y_Z.json`
+   - Include top-level metadata such as `schema_id`, `schema_version`,
+     `stac_version`, optional `stac_extensions`, and a short `description`.
+
+3. **Define fields inline**
+   - Add a top-level `"fields"` object. Each field uses JSON Schema
+     keywords like `type`, `pattern` or `enum`, plus an optional
+     `description`.
+   - Mark required fields in a top-level `"required"` array. Any field not
+     listed there is optional.
+
+4. **Describe the filename structure**
+   - The `"filename_pattern"` regex stitches the fields together using
+     named groups: `(?P<name>{{name}})`.
+   - Field order is defined intrinsically by the order of these groups.
+   - Optional segments are wrapped in non‑capturing groups with `?` so their
+     preceding separators vanish when absent.
+
+5. **Provide examples**
+   - Include an `"examples"` array showing valid filenames with and without
+     optional components.
+
+6. **Maintain versions**
+   - When the schema evolves, create a new file with an incremented version
+     and update `index.json` to mark it as `current`.
+
+7. **Test the schema**
+   - Use `parseo parse <filename>` to check parsing and `parseo assemble`
+     with field dictionaries to ensure round-trip consistency.
+
+---
+
 ## Contributing
 
-- Add new schemas under `src/parseo/schemas/<product_family>/`  
-- Include at least one positive example in the schema file  
+- Add new schemas under `src/parseo/schemas/<product_family>/`
+- Include at least one positive example in the schema file
 - Run tests with `pytest`
 
 ---
