@@ -40,6 +40,16 @@ def _iter_schema_paths(pkg: str) -> Iterator[Path]:
         yield from (p for p in base.rglob("*.json") if p.is_file())
 
 
+@lru_cache(maxsize=32)
+def _get_schema_paths(pkg: str) -> list[Path]:
+    """Return all schema JSON paths for ``pkg``.
+
+    The result is cached to avoid repeated filesystem scans when parsing
+    multiple filenames.
+    """
+    return list(_iter_schema_paths(pkg))
+
+
 def _find_schema_by_hints(pkg: str, product: Optional[str]) -> Optional[Path]:
     """
     Prefer a schema whose filename hints at the requested family (S1/S2/LANDSAT),
@@ -52,7 +62,7 @@ def _find_schema_by_hints(pkg: str, product: Optional[str]) -> Optional[Path]:
         "S2": ("sentinel2", "s2_"),
         "LANDSAT": ("landsat",),
     }.get(product, tuple())
-    for p in _iter_schema_paths(pkg):
+    for p in _get_schema_paths(pkg):
         name = p.name.lower()
         if any(tok in name for tok in tokens):
             return p
@@ -135,7 +145,7 @@ def parse_auto(name: str) -> ParseResult:
             pass
 
     # Fallback: brute-force across all schemas (recursive)
-    candidates = list(_iter_schema_paths(pkg))
+    candidates = _get_schema_paths(pkg)
     if not candidates:
         # No schema files packaged at all
         raise FileNotFoundError(f"No schemas packaged under {pkg}/{SCHEMAS_ROOT}.")
