@@ -16,22 +16,67 @@ def _load_schema(schema_path: str | Path) -> Dict[str, Any]:
     return load_json(schema_path)
 
 
+def _assemble_from_template(template: str, fields: Dict[str, Any]) -> str:
+    """Render *template* using *fields*.
+
+    Optional segments denoted by ``[ ... ]`` are dropped if any enclosed field
+    is missing. ``{field}`` placeholders are replaced by values from *fields*.
+    """
+
+    def render(segment: str) -> str:
+        result = ""
+        i = 0
+        while i < len(segment):
+            ch = segment[i]
+            if ch == "{":
+                j = segment.index("}", i)
+                name = segment[i + 1 : j]
+                if name not in fields:
+                    raise KeyError(name)
+                result += str(fields[name])
+                i = j + 1
+            elif ch == "[":
+                depth = 1
+                j = i + 1
+                while j < len(segment) and depth:
+                    if segment[j] == "[":
+                        depth += 1
+                    elif segment[j] == "]":
+                        depth -= 1
+                    j += 1
+                inner = segment[i + 1 : j - 1]
+                try:
+                    result += render(inner)
+                except KeyError:
+                    pass
+                i = j
+            else:
+                result += ch
+                i += 1
+        return result
+
+    return render(template)
+
+
 def assemble(schema_path: str | Path, fields: Dict[str, Any]) -> str:
+    """Assemble a filename using a JSON schema.
+
+    Schemas may define a ``template`` string following parseo's mini-template
+    syntax. If present, the template is used for rendering the final filename.
+    Otherwise the legacy ``fields_order`` + ``joiner`` approach is used.
     """
-    Assemble a filename using a JSON schema:
-      - Order of placeholders is derived from ``fields_order`` or from the
-        schema's ``template`` if the former is absent.
-      - Optional schema['joiner'] defines how parts are joined (default '_')
-      - If a field is missing in 'fields', raise a clear error
-      - If the last field is literally named 'extension' and looks like '.ext',
-        no extra dot is added; it is appended as-is
-    """
+
     sch = _load_schema(schema_path)
+
+    if isinstance(sch.get("template"), str):
+        template = sch["template"]
+        if not sch.get("fields_order"):
+            _, order = compile_template(template, sch.get("fields", {}))
+            sch["fields_order"] = order
+        return _assemble_from_template(template, fields)
+
     order = sch.get("fields_order")
-    if (not order or not isinstance(order, list)) and isinstance(sch.get("template"), str):
-        _, order = compile_template(sch["template"], sch.get("fields", {}))
-        sch["fields_order"] = order
-    if not order:
+    if not order or not isinstance(order, list):
         raise ValueError(f"Schema {schema_path} missing 'fields_order' list.")
 
     joiner = sch.get("joiner", "_")
@@ -45,8 +90,6 @@ def assemble(schema_path: str | Path, fields: Dict[str, Any]) -> str:
             raise ValueError(f"Field '{key}' must be string/number, got {type(val).__name__}.")
         parts.append(str(val))
 
-    # If the last part looks like an extension (e.g., '.SAFE'), it is already included.
-    # Otherwise, the schema can include 'extension' in fields_order to ensure correctness.
     filename = joiner.join(parts)
     return filename
 

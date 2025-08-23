@@ -1,0 +1,24 @@
+{
+  "schema_id": "copernicus:clms:hr-wsi:icd",
+  "schema_version": "0.0.0",
+  "stac_version": "1.1.0",
+  "stac_extensions": ["raster", "eo"],
+  "description": "CLMS HR-WSI Ice Cover Duration product filename.",
+  "fields": {
+    "prefix": {"type": "string", "enum": ["CLMS_WSI"], "description": "Constant prefix"},
+    "product": {"type": "string", "enum": ["ICD"], "description": "Product code"},
+    "pixel_spacing": {"type": "string", "enum": ["020m", "100m"], "description": "Pixel spacing"},
+    "tile_id": {"type": "string", "pattern": "^(?:T\\d{2}[C-HJ-NP-X][A-Z]{2}|E\\d{2}N\\d{2})$", "description": "Tile identifier"},
+    "period_start": {"type": "string", "pattern": "^\\d{8}P1Y$", "description": "Aggregation period start"},
+    "combination": {"type": "string", "enum": ["COMB"], "description": "Combination method"},
+    "version": {"type": "string", "pattern": "^V\\d{3}$", "description": "Product version"},
+    "file_id": {"type": "string", "enum": ["ICD", "NOBS1", "NOBS2", "ICD-QA", "MTD"], "description": "File identifier"},
+    "extension": {"type": "string", "enum": ["tif", "xml"], "description": "File extension without leading dot"}
+  },
+  "template": "{prefix}_{product}_{pixel_spacing}_{tile_id}_{period_start}_{combination}_{version}_{file_id}[.{extension}]",
+  "examples": [
+    "CLMS_WSI_ICD_020m_T31TCH_20160901P1Y_COMB_V100_ICD-QA.tif",
+    "CLMS_WSI_ICD_020m_E70N20_20160901P1Y_COMB_V100_ICD-QA.tif",
+    "CLMS_WSI_ICD_100m_E70N20_20160901P1Y_COMB_V100_ICD-QA.tif"
+  ]
+}
