@@ -76,7 +76,7 @@ fields = {
     "datetime": "20241123T224759",
     "version": "N0511",
     "sat_relative_orbit": "R101",
-    "mgrs_tile": "T03VUL",
+    "mgrs_tile": "T03VUL",  # MGRS tile (TxxYYY, e.g., T32TNS)
     "generation_datetime": "20241123T230829",
     "extension": ".SAFE"
 }
