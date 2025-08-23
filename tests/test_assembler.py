@@ -1,5 +1,7 @@
 from pathlib import Path
 
+import pytest
+
 from parseo import assemble, assemble_auto
 
 
@@ -121,3 +123,41 @@ def test_assemble_auto_st_schema():
     }
     result = assemble_auto(fields)
     assert result == "ST_20231231T000000_S2_W05S20-98765_030m_V101_PPI.tif"
+
+
+def test_assemble_s2_invalid_processing_baseline():
+    schema = (
+        Path(__file__).resolve().parents[1]
+        / "src/parseo/schemas/copernicus/sentinel/s2/s2_filename_v1_0_0.json"
+    )
+    fields = {
+        "platform": "S2A",
+        "sensor": "MSI",
+        "processing_level": "L1C",
+        "sensing_datetime": "20201024T103021",
+        "processing_baseline": "N512",  # invalid, should be N followed by 4 digits
+        "relative_orbit": "R101",
+        "mgrs_tile": "T03VUL",
+        "generation_datetime": "20201024T103021",
+    }
+    with pytest.raises(ValueError):
+        assemble(schema, fields)
+
+
+def test_assemble_s2_invalid_generation_datetime():
+    schema = (
+        Path(__file__).resolve().parents[1]
+        / "src/parseo/schemas/copernicus/sentinel/s2/s2_filename_v1_0_0.json"
+    )
+    fields = {
+        "platform": "S2A",
+        "sensor": "MSI",
+        "processing_level": "L1C",
+        "sensing_datetime": "20201024T103021",
+        "processing_baseline": "N0511",
+        "relative_orbit": "R101",
+        "mgrs_tile": "T03VUL",
+        "generation_datetime": "20201024",  # invalid format
+    }
+    with pytest.raises(ValueError):
+        assemble(schema, fields)
