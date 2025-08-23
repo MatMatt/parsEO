@@ -61,7 +61,7 @@
       "description": "File extension without leading dot"
     }
   },
-  "filename_pattern": "^(?P<platform>{{platform}})_(?P<mode>{{mode}})_(?P<product>{{product}})_(?P<level>{{level}})(?P<pol>{{pol}})_(?P<start_datetime>{{start_datetime}})_(?P<end_datetime>{{end_datetime}})_(?P<abs_orbit>{{abs_orbit}})_(?P<datatake>{{datatake}})_(?P<product_id>{{product_id}})(?:\\.(?P<extension>{{extension}}))?$",
+  "template": "{platform}_{mode}_{product}_{level}{pol}_{start_datetime}_{end_datetime}_{abs_orbit}_{datatake}_{product_id}[.{extension}]",
   "examples": [
     "S1A_IW_SLC__1SDVV_20250105T053021_20250105T053048_A054321_D068F2E_ABC123.SAFE",
     "S1B_EW_GRDH_1SHHH_20190101T000000_20190101T000030_A012345_D0ABCDE_ABCDEF",

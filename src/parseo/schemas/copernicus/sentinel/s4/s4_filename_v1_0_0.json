@@ -4,7 +4,15 @@
   "stac_version": "1.1.0",
   "stac_extensions": ["processing", "sat", "raster", "eo"],
   "description": "Sentinel-4 product filename (UVN; optional tile, extension).",
-  "filename_pattern": "^(?P<platform>S4A|S4B)_(?P<instrument>UVN)_(?P<processing_level>L1|L2)_(?P<sensing_datetime>\\d{8}T\\d{6})(?:_(?P<tile>[A-Z0-9_\\-]{3,10}))?(?P<extension>\\.[A-Za-z0-9]+)?$",
+  "fields": {
+    "platform": {"type": "string", "enum": ["S4A", "S4B"]},
+    "instrument": {"type": "string", "enum": ["UVN"]},
+    "processing_level": {"type": "string", "enum": ["L1", "L2"]},
+    "sensing_datetime": {"type": "string", "pattern": "^\\d{8}T\\d{6}$"},
+    "tile": {"type": "string", "pattern": "^[A-Z0-9_\\-]{3,10}$"},
+    "extension": {"type": "string", "pattern": "^[A-Za-z0-9]+$", "description": "File extension without leading dot"}
+  },
+  "template": "{platform}_{instrument}_{processing_level}_{sensing_datetime}[_{tile}][.{extension}]",
   "examples": [
     "S4A_UVN_L2_20250105T103021_EUROPE.tif",
     "S4B_UVN_L1_20240701T101010.nc"

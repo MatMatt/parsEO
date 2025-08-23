@@ -56,7 +56,10 @@ def test_schema_paths_cached(monkeypatch):
 def test_parse_bom_schema(tmp_path, monkeypatch):
     import json
 
-    schema = {"filename_pattern": r"^(?P<id>ABC)\.SAFE$"}
+    schema = {
+        "template": "{id}.SAFE",
+        "fields": {"id": {"enum": ["ABC"]}},
+    }
     bom_path = tmp_path / "bom_schema.json"
     bom_path.write_text("\ufeff" + json.dumps(schema), encoding="utf-8")
 

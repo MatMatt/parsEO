@@ -51,7 +51,7 @@
       "description": "File extension without leading dot"
     }
   },
-  "filename_pattern": "^(?P<platform>{{platform}})_(?P<sensor>{{sensor}})(?P<processing_level>{{processing_level}})_(?P<sensing_datetime>{{sensing_datetime}})_(?P<processing_baseline>{{processing_baseline}})_(?P<relative_orbit>{{relative_orbit}})_(?P<mgrs_tile>{{mgrs_tile}})_(?P<generation_datetime>{{generation_datetime}})(?:\\.(?P<extension>{{extension}}))?$",
+  "template": "{platform}_{sensor}{processing_level}_{sensing_datetime}_{processing_baseline}_{relative_orbit}_{mgrs_tile}_{generation_datetime}[.{extension}]",
   "examples": [
     "S2B_MSIL2A_20241123T224759_N0511_R101_T03VUL_20241123T230829.SAFE",
     "S2A_MSIL1C_20230715T103021_N0400_R052_T32TNS_20230715T103555",

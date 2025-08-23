@@ -8,6 +8,7 @@ from typing import Dict, Iterator, Optional
 import re
 from functools import lru_cache
 from ._json import load_json
+from .template import compile_template
 
 # Root folder inside the package where JSON schemas live
 SCHEMAS_ROOT = "schemas"
@@ -132,51 +133,37 @@ def _compile_pattern(pattern: str) -> re.Pattern:
     return re.compile(pattern)
 
 
-def _expand_pattern(schema: Dict) -> Optional[str]:
-    """Expand ``filename_pattern`` placeholders using field definitions.
+def _pattern_from_schema(schema: Dict) -> Optional[str]:
+    """Return a compiled regex pattern derived from schema's template.
 
-    A pattern may reference field names using ``{{field}}`` tokens. For each
-    field definition, either an ``enum`` or a ``pattern`` is used to replace the
-    corresponding token. Anchors (``^``/``$``) in field patterns are stripped so
-    they integrate cleanly into the larger regex.
+    The result is cached inside the schema object. If a ``template`` key is
+    present it is compiled via :func:`compile_template`. Otherwise a legacy
+    ``filename_pattern`` is used as-is.
     """
 
-    cached = schema.get("_expanded_pattern")
+    cached = schema.get("_compiled_pattern")
     if cached:
         return cached
 
-    patt = schema.get("filename_pattern")
-    if not isinstance(patt, str):
-        return None
-
-    fields = schema.get("fields", {})
-    if not isinstance(fields, dict):
-        schema["_expanded_pattern"] = patt
-        return patt
-
-    def field_regex(spec: Dict) -> str:
-        if "enum" in spec:
-            return "(?:" + "|".join(re.escape(v) for v in spec["enum"]) + ")"
-        pattern = spec.get("pattern")
-        if pattern is None:
-            raise KeyError("Field spec missing 'pattern' or 'enum'")
-        if pattern.startswith("^"):
-            pattern = pattern[1:]
-        if pattern.endswith("$"):
-            pattern = pattern[:-1]
+    template = schema.get("template")
+    if isinstance(template, str):
+        fields = schema.get("fields", {})
+        pattern, order = compile_template(template, fields)
+        schema["_compiled_pattern"] = pattern
+        if "fields_order" not in schema and order:
+            schema["fields_order"] = order
         return pattern
 
-    for name, spec in fields.items():
-        placeholder = f"{{{{{name}}}}}"
-        if placeholder in patt:
-            patt = patt.replace(placeholder, field_regex(spec))
+    patt = schema.get("filename_pattern")
+    if isinstance(patt, str):
+        schema["_compiled_pattern"] = patt
+        return patt
 
-    schema["_expanded_pattern"] = patt
-    return patt
+    return None
 
 
 def _match_filename(name: str, schema: Dict) -> Optional[re.Match]:
-    patt = _expand_pattern(schema)
+    patt = _pattern_from_schema(schema)
     if not isinstance(patt, str) or not patt:
         return None
     rx = _compile_pattern(patt)
