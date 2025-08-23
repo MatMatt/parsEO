@@ -17,10 +17,10 @@ def test_assemble_clms_fsc_schema():
         "platform": "S2A",
         "version": "V100",
         "file_id": "FSCOG",
-        "extension": ".tif",
+        "extension": "tif",
     }
     result = assemble(schema, fields)
-    assert result == "CLMS_WSI_FSC_020m_T32TNS_20211018T103021_S2A_V100_FSCOG_.tif"
+    assert result == "CLMS_WSI_FSC_020m_T32TNS_20211018T103021_S2A_V100_FSCOG.tif"
 
 
 def test_assemble_auto_wic_schema():
@@ -33,7 +33,7 @@ def test_assemble_auto_wic_schema():
         "platform": "S2B",
         "version": "V100",
         "file_id": "WIC",
-        "extension": ".tif",
+        "extension": "tif",
     }
     result = assemble_auto(fields)
-    assert result == "CLMS_WSI_WIC_020m_T33WXP_20201024T103021_S2B_V100_WIC_.tif"
+    assert result == "CLMS_WSI_WIC_020m_T33WXP_20201024T103021_S2B_V100_WIC.tif"

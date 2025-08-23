@@ -1,60 +1,22 @@
 {
-    "prefix":  {
-                   "codes":  [
-                                 "CLMS_WSI"
-                             ]
-               },
-    "product":  {
-                    "codes":  [
-                                  "SWS"
-                              ]
-                },
-    "pixel_spacing":  {
-                          "codes":  [
-                                        "060m"
-                                    ]
-                      },
-    "tile_id":  {
-                    "format":  "T\u003czone\u003e\u003clat_band\u003e\u003cgrid_square\u003e"
-                },
-    "sensing_datetime":  {
-                             "format":  "YYYYMMDDThhmmss"
-                         },
-    "platform":  {
-                     "codes":  [
-                                   "S1A",
-                                   "S1B"
-                               ]
-                 },
-    "version":  {
-                    "format":  "VXYZ"
-                },
-    "file_id":  {
-                    "codes":  [
-                                  "WSM",
-                                  "WSM-QA",
-                                  "MTD"
-                              ]
-                },
-    "extension":  {
-                      "codes":  [
-                                    ".tif",
-                                    ".xml"
-                                ]
-                  },
-    "filename_pattern":  "^(?P\u003cprefix\u003eCLMS_WSI)_(?P\u003cproduct\u003eSWS)_(?P\u003cpixel_spacing\u003e060m)_(?P\u003ctile_id\u003eT\\d{2}[C-HJ-NP-X][A-Z]{2})_(?P\u003csensing_datetime\u003e(?:19|20)\\d\\d(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\\d|3[01])T(?:[01]\\d|2[0-3])(?:[0-5]\\d){2})_(?P\u003cplatform\u003eS1A|S1B)_(?P\u003cversion\u003eV\\d{3})_(?P\u003cfile_id\u003eWSM|WSM-QA|MTD)(?P\u003cextension\u003e\\.(?:tif|xml))$",
-    "fields_order":  [
-                         "prefix",
-                         "product",
-                         "pixel_spacing",
-                         "tile_id",
-                         "sensing_datetime",
-                         "platform",
-                         "version",
-                         "file_id",
-                         "extension"
-                     ],
-    "valid_examples":  [
-                           "CLMS_WSI_SWS_060m_T32TNS_20210217T053159_S1B_V100_WSM.tif"
-                       ]
+  "schema_id": "copernicus:clms:hr-wsi:sws",
+  "schema_version": "0.0.0",
+  "stac_version": "1.1.0",
+  "stac_extensions": ["raster", "eo"],
+  "description": "CLMS HR-WSI Small Water Surface product filename.",
+  "fields": {
+    "prefix": {"type": "string", "enum": ["CLMS_WSI"], "description": "Constant prefix"},
+    "product": {"type": "string", "enum": ["SWS"], "description": "Product code"},
+    "pixel_spacing": {"type": "string", "enum": ["060m"], "description": "Pixel spacing"},
+    "tile_id": {"type": "string", "pattern": "^T\\d{2}[C-HJ-NP-X][A-Z]{2}$", "description": "UTM tile identifier"},
+    "sensing_datetime": {"type": "string", "pattern": "^\\d{8}T\\d{6}$", "description": "Acquisition datetime (UTC)"},
+    "platform": {"type": "string", "enum": ["S1A", "S1B"], "description": "Satellite platform"},
+    "version": {"type": "string", "pattern": "^V\\d{3}$", "description": "Product version"},
+    "file_id": {"type": "string", "enum": ["WSM", "WSM-QA", "MTD"], "description": "File identifier"},
+    "extension": {"type": "string", "enum": ["tif", "xml"], "description": "File extension without leading dot"}
+  },
+  "template": "{prefix}_{product}_{pixel_spacing}_{tile_id}_{sensing_datetime}_{platform}_{version}_{file_id}[.{extension}]",
+  "examples": [
+    "CLMS_WSI_SWS_060m_T32TNS_20210217T053159_S1B_V100_WSM.tif"
+  ]
 }

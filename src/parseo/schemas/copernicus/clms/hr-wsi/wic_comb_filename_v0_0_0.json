@@ -1,60 +1,22 @@
 {
-    "prefix":  {
-                   "codes":  [
-                                 "CLMS_WSI"
-                             ]
-               },
-    "product":  {
-                    "codes":  [
-                                  "WIC"
-                              ]
-                },
-    "pixel_spacing":  {
-                          "codes":  [
-                                        "020m"
-                                    ]
-                      },
-    "tile_id":  {
-                    "format":  "T\u003czone\u003e\u003clat_band\u003e\u003cgrid_square\u003e"
-                },
-    "period_start":  {
-                         "format":  "YYYYMMDDTHH0000P12H"
-                     },
-    "combination":  {
-                        "codes":  [
-                                      "COMB"
-                                  ]
-                    },
-    "version":  {
-                    "format":  "VXYZ"
-                },
-    "file_id":  {
-                    "codes":  [
-                                  "WIC",
-                                  "QAFLAGS",
-                                  "WIC-QA",
-                                  "MTD"
-                              ]
-                },
-    "extension":  {
-                      "codes":  [
-                                    ".tif",
-                                    ".xml"
-                                ]
-                  },
-    "filename_pattern":  "^(?P\u003cprefix\u003eCLMS_WSI)_(?P\u003cproduct\u003eWIC)_(?P\u003cpixel_spacing\u003e020m)_(?P\u003ctile_id\u003eT\\d{2}[C-HJ-NP-X][A-Z]{2})_(?P\u003cperiod_start\u003e(?:19|20)\\d\\d(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\\d|3[01])T(?:00|12)0000P12H)_(?P\u003ccombination\u003eCOMB)_(?P\u003cversion\u003eV\\d{3})_(?P\u003cfile_id\u003eWIC|QAFLAGS|WIC-QA|MTD)(?P\u003cextension\u003e\\.(?:tif|xml))$",
-    "fields_order":  [
-                         "prefix",
-                         "product",
-                         "pixel_spacing",
-                         "tile_id",
-                         "period_start",
-                         "combination",
-                         "version",
-                         "file_id",
-                         "extension"
-                     ],
-    "valid_examples":  [
-                           "CLMS_WSI_WIC_020m_T31TCH_20160720T120000P12H_COMB_V100_WIC-QA.tif"
-                       ]
+  "schema_id": "copernicus:clms:hr-wsi:wic-comb",
+  "schema_version": "0.0.0",
+  "stac_version": "1.1.0",
+  "stac_extensions": ["raster", "eo"],
+  "description": "CLMS HR-WSI Water and Ice Cover combination filename.",
+  "fields": {
+    "prefix": {"type": "string", "enum": ["CLMS_WSI"], "description": "Constant prefix"},
+    "product": {"type": "string", "enum": ["WIC"], "description": "Product code"},
+    "pixel_spacing": {"type": "string", "enum": ["020m"], "description": "Pixel spacing"},
+    "tile_id": {"type": "string", "pattern": "^T\\d{2}[C-HJ-NP-X][A-Z]{2}$", "description": "UTM tile identifier"},
+    "period_start": {"type": "string", "pattern": "^\\d{8}T(?:00|12)0000P12H$", "description": "Aggregation period start"},
+    "combination": {"type": "string", "enum": ["COMB"], "description": "Combination method"},
+    "version": {"type": "string", "pattern": "^V\\d{3}$", "description": "Product version"},
+    "file_id": {"type": "string", "enum": ["WIC", "QAFLAGS", "WIC-QA", "MTD"], "description": "File identifier"},
+    "extension": {"type": "string", "enum": ["tif", "xml"], "description": "File extension without leading dot"}
+  },
+  "template": "{prefix}_{product}_{pixel_spacing}_{tile_id}_{period_start}_{combination}_{version}_{file_id}[.{extension}]",
+  "examples": [
+    "CLMS_WSI_WIC_020m_T31TCH_20160720T120000P12H_COMB_V100_WIC-QA.tif"
+  ]
 }

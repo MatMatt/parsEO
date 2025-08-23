@@ -18,13 +18,13 @@ def test_cli_assemble_success(capsys):
         "platform=S2B",
         "version=V100",
         "file_id=WIC",
-        "extension=.tif",
+        "extension=tif",
     ]
     assert cli.main() == 0
     captured = capsys.readouterr()
     assert (
         captured.out.strip()
-        == "CLMS_WSI_WIC_020m_T33WXP_20201024T103021_S2B_V100_WIC_.tif"
+        == "CLMS_WSI_WIC_020m_T33WXP_20201024T103021_S2B_V100_WIC.tif"
     )
 
 
@@ -48,7 +48,7 @@ def test_cli_assemble_missing_assembler(monkeypatch):
         "platform=S2B",
         "version=V100",
         "file_id=WIC",
-        "extension=.tif",
+        "extension=tif",
     ]
     with pytest.raises(SystemExit) as exc:
         cli.main()

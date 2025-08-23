@@ -1,67 +1,22 @@
 {
-    "prefix":  {
-                   "codes":  [
-                                 "CLMS_WSI"
-                             ]
-               },
-    "product":  {
-                    "codes":  [
-                                  "SP"
-                              ]
-                },
-    "pixel_spacing":  {
-                          "codes":  [
-                                        "060m",
-                                        "100m"
-                                    ]
-                      },
-    "tile_id":  {
-                    "format":  "TxxYYY or EXXNXX"
-                },
-    "period_start":  {
-                         "format":  "YYYYMMDDP1Y"
-                     },
-    "combination":  {
-                        "codes":  [
-                                      "COMB"
-                                  ]
-                    },
-    "version":  {
-                    "format":  "VXYZ"
-                },
-    "file_id":  {
-                    "codes":  [
-                                  "SCD",
-                                  "SCO",
-                                  "SCM",
-                                  "NCSO",
-                                  "NWSO",
-                                  "QAFLAGS",
-                                  "SCD-QA",
-                                  "SCO-QA",
-                                  "SCM-QA",
-                                  "MTD"
-                              ]
-                },
-    "extension":  {
-                      "codes":  [
-                                    ".tif",
-                                    ".xml"
-                                ]
-                  },
-    "filename_pattern":  "^(?P\u003cprefix\u003eCLMS_WSI)_(?P\u003cproduct\u003eSP)_(?P\u003cpixel_spacing\u003e060m|100m)_(?P\u003ctile_id\u003e(?:T\\d{2}[C-HJ-NP-X][A-Z]{2}|E\\d{2}N\\d{2}))_(?P\u003cperiod_start\u003e(?:19|20)\\d\\d(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\\d|3[01]))P1Y_(?P\u003ccombination\u003eCOMB)_(?P\u003cversion\u003eV\\d{3})_(?P\u003cfile_id\u003eSCD|SCO|SCM|NCSO|NWSO|QAFLAGS|SCD-QA|SCO-QA|SCM-QA|MTD)(?P\u003cextension\u003e\\.(?:tif|xml))$",
-    "fields_order":  [
-                         "prefix",
-                         "product",
-                         "pixel_spacing",
-                         "tile_id",
-                         "period_start",
-                         "combination",
-                         "version",
-                         "file_id",
-                         "extension"
-                     ],
-    "valid_examples":  [
-                           "CLMS_WSI_SP_060m_T38TKL_20200901P1Y_COMB_V100_SCD-QA.tif"
-                       ]
+  "schema_id": "copernicus:clms:hr-wsi:sp-comb",
+  "schema_version": "0.0.0",
+  "stac_version": "1.1.0",
+  "stac_extensions": ["raster", "eo"],
+  "description": "CLMS HR-WSI Snow Products combination filename.",
+  "fields": {
+    "prefix": {"type": "string", "enum": ["CLMS_WSI"], "description": "Constant prefix"},
+    "product": {"type": "string", "enum": ["SP"], "description": "Product code"},
+    "pixel_spacing": {"type": "string", "enum": ["060m", "100m"], "description": "Pixel spacing"},
+    "tile_id": {"type": "string", "pattern": "^(?:T\\d{2}[C-HJ-NP-X][A-Z]{2}|E\\d{2}N\\d{2})$", "description": "Tile identifier"},
+    "period_start": {"type": "string", "pattern": "^\\d{8}P1Y$", "description": "Aggregation period start"},
+    "combination": {"type": "string", "enum": ["COMB"], "description": "Combination method"},
+    "version": {"type": "string", "pattern": "^V\\d{3}$", "description": "Product version"},
+    "file_id": {"type": "string", "enum": ["SCD", "SCO", "SCM", "NCSO", "NWSO", "QAFLAGS", "SCD-QA", "SCO-QA", "SCM-QA", "MTD"], "description": "File identifier"},
+    "extension": {"type": "string", "enum": ["tif", "xml"], "description": "File extension without leading dot"}
+  },
+  "template": "{prefix}_{product}_{pixel_spacing}_{tile_id}_{period_start}_{combination}_{version}_{file_id}[.{extension}]",
+  "examples": [
+    "CLMS_WSI_SP_060m_T38TKL_20200901P1Y_COMB_V100_SCD-QA.tif"
+  ]
 }
