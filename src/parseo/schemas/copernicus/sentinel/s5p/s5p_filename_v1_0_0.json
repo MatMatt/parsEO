@@ -4,7 +4,7 @@
   "stac_version": "1.1.0",
   "stac_extensions": ["processing", "sat", "raster", "eo"],
   "description": "Sentinel-5P product filename (TROPOMI; extension optional).",
-  "filename_pattern": "^(?P<platform>S5P)_(?P<instrument>TROPOMI)_(?P<processing_level>L1B|L2)_(?P<product_type>[A-Z0-9_]{2,12})_(?P<datetime>\\d{8}T\\d{6})(?P<extension>\\.[A-Za-z0-9]+)?$",
+  "filename_pattern": "^(?P<platform>S5P)_(?P<instrument>TROPOMI)_(?P<processing_level>L1B|L2)_(?P<product_type>[A-Z0-9_]{2,12})_(?P<sensing_datetime>\\d{8}T\\d{6})(?P<extension>\\.[A-Za-z0-9]+)?$",
   "examples": [
     "S5P_TROPOMI_L2_NO2_20250105T103021.nc",
     "S5P_TROPOMI_L1B_RA_BD3_20230715T103021.he5"
