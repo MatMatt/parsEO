@@ -3,7 +3,7 @@
   "schema_version": "1.0.0",
   "stac_version": "1.1.0",
   "stac_extensions": ["processing", "sat", "raster", "eo", "mgrs"],
-  "description": "Sentinel-2 SAFE product filename (MSI sensor, processing levels L1C/L2A; extension optional).",
+  "description": "Sentinel-2 product filename (MSI sensor, processing levels L1C/L2A; extension optional).",
   "fields": {
     "platform": {
       "type": "string",
