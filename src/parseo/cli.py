@@ -4,13 +4,9 @@ from __future__ import annotations
 import argparse
 import json
 import sys
-from importlib.resources import as_file, files
-from pathlib import Path
 from typing import Any, Dict, List
 
-from parseo.parser import parse_auto, describe_schema  # parser helpers
-
-SCHEMAS_ROOT = "schemas"
+from parseo.parser import parse_auto, describe_schema, list_schemas  # parser helpers
 
 
 # ---------- small utilities ----------
@@ -24,7 +20,7 @@ def _build_arg_parser() -> argparse.ArgumentParser:
     p_parse.add_argument("filename")
 
     # list-schemas
-    sp.add_parser("list-schemas", help="List packaged schema JSON files")
+    sp.add_parser("list-schemas", help="List available schema families")
 
     # schema-info
     p_info = sp.add_parser("schema-info", help="Show details for a mission family")
@@ -140,11 +136,8 @@ def main(argv: List[str] | None = None) -> int:
         return 0
 
     if args.cmd == "list-schemas":
-        base = files("parseo").joinpath(SCHEMAS_ROOT)
-        with as_file(base) as bp:
-            root = Path(bp)
-            for p in root.rglob("*.json"):
-                print(p.relative_to(root))
+        for fam in list_schemas():
+            print(fam)
         return 0
 
     if args.cmd == "schema-info":
