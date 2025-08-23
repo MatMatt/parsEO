@@ -99,3 +99,17 @@ def test_malformed_schema_surfaces_error(tmp_path, monkeypatch):
     with pytest.raises(RuntimeError) as exc:
         parse_auto("whatever.SAFE")
     assert "Expecting value" in str(exc.value)
+
+def test_modis_example():
+    parser._get_schema_paths.cache_clear()
+    name = "MOD09GA.A2021123.h18v04.006.2021132234506.hdf"
+    res = parse_auto(name)
+    assert res is not None
+    assert res.fields["platform"] == "MOD"
+    assert res.fields["product"] == "09"
+    assert res.fields["variant"] == "GA"
+    assert res.fields["acq_date"] == "A2021123"
+    assert res.fields["tile"] == "h18v04"
+    assert res.fields["collection"] == "006"
+    assert res.fields["proc_date"] == "2021132234506"
+    assert res.fields["extension"] == "hdf"
