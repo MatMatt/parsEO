@@ -199,9 +199,11 @@ def main(argv: List[str] | None = None) -> int:
             from parseo.assembler import assemble as assemble_with_schema
         except ModuleNotFoundError:
             raise SystemExit(
-                "The 'assemble' command requires parseo.assembler.\n"
-                "Add 'src/parseo/assembler.py' with an 'assemble(schema_path, fields)' function, "
-                "or use 'parse'/'list-schemas' for now."
+                "The 'assemble' command requires parseo.assembler, which is part of the "
+                "standard parseo installation.\n"
+                "If it is missing, reinstall parseo with assembler support or provide a "
+                "'parseo/assembler.py' implementing 'assemble(schema_path, fields)'. "
+                "You can still use 'parse' or 'list-schemas'."
             )
 
         fields = _resolve_fields(args)
