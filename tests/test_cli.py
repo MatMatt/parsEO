@@ -30,6 +30,27 @@ def test_cli_assemble_success(capsys):
     )
 
 
+def test_cli_assemble_fapar_success(capsys):
+    sys.argv = [
+        'parseo',
+        'assemble',
+        'prefix=CLMS_VPP',
+        'product=FAPAR',
+        'resolution=100m',
+        'tile_id=T32TNS',
+        'start_date=20210101',
+        'end_date=20210110',
+        'version=V100',
+        'file_id=FAPAR',
+        'extension=tif',
+    ]
+    assert cli.main() == 0
+    captured = capsys.readouterr()
+    assert (
+        captured.out.strip()
+        == 'CLMS_VPP_FAPAR_100m_T32TNS_20210101_20210110_V100_FAPAR.tif'
+    )
+
 def test_cli_assemble_missing_assembler(monkeypatch):
     real_import = builtins.__import__
 

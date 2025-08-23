@@ -37,3 +37,38 @@ def test_assemble_auto_wic_schema():
     }
     result = assemble_auto(fields)
     assert result == "CLMS_WSI_WIC_020m_T33WXP_20201024T103021_S2B_V100_WIC.tif"
+
+def test_assemble_clms_fapar_schema():
+    schema = (
+        Path(__file__).resolve().parents[1]
+        / "src/parseo/schemas/copernicus/clms/hr-vpp/fapar_filename_v0_0_0.json"
+    )
+    fields = {
+        "prefix": "CLMS_VPP",
+        "product": "FAPAR",
+        "resolution": "100m",
+        "tile_id": "T32TNS",
+        "start_date": "20210101",
+        "end_date": "20210110",
+        "version": "V100",
+        "file_id": "FAPAR",
+        "extension": "tif",
+    }
+    result = assemble(schema, fields)
+    assert result == "CLMS_VPP_FAPAR_100m_T32TNS_20210101_20210110_V100_FAPAR.tif"
+
+
+def test_assemble_auto_fapar_schema():
+    fields = {
+        "prefix": "CLMS_VPP",
+        "product": "FAPAR",
+        "resolution": "100m",
+        "tile_id": "T32TNS",
+        "start_date": "20210101",
+        "end_date": "20210110",
+        "version": "V100",
+        "file_id": "FAPAR",
+        "extension": "tif",
+    }
+    result = assemble_auto(fields)
+    assert result == "CLMS_VPP_FAPAR_100m_T32TNS_20210101_20210110_V100_FAPAR.tif"
