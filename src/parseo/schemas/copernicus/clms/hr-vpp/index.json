@@ -6,6 +6,11 @@
             "file": "fapar_filename_v0_0_0.json",
             "version": "0.0.0",
             "status": "current"
+        },
+        {
+            "file": "st_filename_v0_0_0.json",
+            "version": "0.0.0",
+            "status": "current"
         }
     ]
 }

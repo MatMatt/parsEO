@@ -113,3 +113,24 @@ def test_modis_example():
     assert res.fields["collection"] == "006"
     assert res.fields["proc_date"] == "2021132234506"
     assert res.fields["extension"] == "hdf"
+
+
+def test_hrvpp_st_example():
+    name = "ST_20240101T123045_S2_E15N45-01234_010m_V100_PPI.tif"
+    res = parse_auto(name)
+    assert res is not None
+    assert res.fields["prefix"] == "ST"
+    assert res.fields["timestamp"] == "20240101T123045"
+    assert res.fields["sensor"] == "S2"
+    assert res.fields["tile_id"] == "E15N45-01234"
+    assert res.fields["resolution"] == "010m"
+    assert res.fields["version"] == "V100"
+    assert res.fields["product"] == "PPI"
+    assert res.fields["extension"] == "tif"
+
+
+def test_hrvpp_st_variant():
+    name = "ST_20231231T000000_S2_W05S20-98765_030m_V101_PPI.tif"
+    res = parse_auto(name)
+    assert res.fields["tile_id"] == "W05S20-98765"
+    assert res.fields["version"] == "V101"

@@ -87,3 +87,37 @@ def test_assemble_auto_fapar_schema():
     }
     result = assemble_auto(fields)
     assert result == "CLMS_VPP_FAPAR_100m_T32TNS_20210101_20210110_V100_FAPAR.tif"
+
+
+def test_assemble_clms_st_schema():
+    schema = (
+        Path(__file__).resolve().parents[1]
+        / "src/parseo/schemas/copernicus/clms/hr-vpp/st_filename_v0_0_0.json"
+    )
+    fields = {
+        "prefix": "ST",
+        "timestamp": "20240101T123045",
+        "sensor": "S2",
+        "tile_id": "E15N45-01234",
+        "resolution": "010m",
+        "version": "V100",
+        "product": "PPI",
+        "extension": "tif",
+    }
+    result = assemble(schema, fields)
+    assert result == "ST_20240101T123045_S2_E15N45-01234_010m_V100_PPI.tif"
+
+
+def test_assemble_auto_st_schema():
+    fields = {
+        "prefix": "ST",
+        "timestamp": "20231231T000000",
+        "sensor": "S2",
+        "tile_id": "W05S20-98765",
+        "resolution": "030m",
+        "version": "V101",
+        "product": "PPI",
+        "extension": "tif",
+    }
+    result = assemble_auto(fields)
+    assert result == "ST_20231231T000000_S2_W05S20-98765_030m_V101_PPI.tif"
