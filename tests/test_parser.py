@@ -1,4 +1,4 @@
-﻿from parseo.parser import parse_auto
+from parseo.parser import parse_auto
 
 def test_s2_example():
     name = "S2B_MSIL2A_20241123T224759_N0511_R101_T03VUL_20241123T230829.SAFE"
