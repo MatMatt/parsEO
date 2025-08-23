@@ -22,6 +22,14 @@ class ParseResult:
     match_family: Optional[str] = None  # e.g., "S1", "S2", "LANDSAT"
 
 
+@dataclass(frozen=True)
+class _FamilyInfo:
+    """Metadata about a mission family discovered from ``index.json`` files."""
+
+    tokens: tuple[str, ...]
+    schema_path: Path
+
+
 # ---------------------------
 # Schema discovery (recursive)
 # ---------------------------
@@ -50,22 +58,63 @@ def _get_schema_paths(pkg: str) -> list[Path]:
     return list(_iter_schema_paths(pkg))
 
 
+def _family_tokens_from_name(family: str) -> tuple[str, ...]:
+    """Return tokens used to hint the family from a filename prefix."""
+
+    fam = family.upper()
+    tokens = {fam}
+    m = re.fullmatch(r"S(\d+)([A-Z]*)", fam)
+    if m:
+        num, suffix = m.groups()
+        tokens.add(f"SENTINEL-{num}{suffix}")
+    return tuple(tokens)
+
+
+@lru_cache(maxsize=1)
+def _discover_family_info(pkg: str) -> Dict[str, _FamilyInfo]:
+    """Scan ``schemas`` for ``index.json`` files to discover mission families."""
+
+    root = files(pkg).joinpath(SCHEMAS_ROOT)
+    info: Dict[str, _FamilyInfo] = {}
+    with as_file(root) as root_path:
+        base = Path(root_path)
+        if not base.exists():
+            return info
+        for index_path in base.rglob("index.json"):
+            try:
+                data = load_json(index_path)
+            except Exception:
+                continue
+            family = data.get("family")
+            if not isinstance(family, str):
+                continue
+            versions = data.get("versions") or []
+            schema_file = None
+            if isinstance(versions, list):
+                current = next(
+                    (v for v in versions if v.get("status") == "current"),
+                    versions[0] if versions else None,
+                )
+                if current and isinstance(current.get("file"), str):
+                    schema_file = index_path.parent / current["file"]
+            if schema_file is None:
+                continue
+            info[family.upper()] = _FamilyInfo(
+                tokens=_family_tokens_from_name(family),
+                schema_path=schema_file,
+            )
+    return info
+
+
 def _find_schema_by_hints(pkg: str, product: Optional[str]) -> Optional[Path]:
-    """
-    Prefer a schema whose filename hints at the requested family (S1/S2/LANDSAT),
-    but still search recursively.
-    """
+    """Return the schema path for the hinted family, if available."""
+
     if not product:
         return None
-    tokens = {
-        "S1": ("sentinel1", "s1_"),
-        "S2": ("sentinel2", "s2_"),
-        "LANDSAT": ("landsat",),
-    }.get(product, tuple())
-    for p in _get_schema_paths(pkg):
-        name = p.name.lower()
-        if any(tok in name for tok in tokens):
-            return p
+    info = _discover_family_info(pkg)
+    fam = info.get(product.upper())
+    if fam:
+        return fam.schema_path
     return None
 
 
@@ -154,21 +203,20 @@ def _try_validate(name: str, schema: Dict) -> bool:
 def parse_auto(name: str) -> ParseResult:
     """
     Try to parse `name` by matching it against any schema under schemas/**.json.
-    A quick 'family' hint is derived from the filename prefix (S1/S2/LANDSAT).
-    Returns a ParseResult on success; raises RuntimeError if nothing matches.
+    A quick 'family' hint is derived from the filename prefix by dynamically
+    inspecting available ``index.json`` files. Returns a ParseResult on success;
+    raises RuntimeError if nothing matches.
     """
     pkg = __package__  # e.g., "parseo"
+    info = _discover_family_info(pkg)
 
-    # Quick family hint
+    # Quick family hint based on discovered tokens
+    product_hint = None
     u = name.upper()
-    if u.startswith(("S1", "SENTINEL-1")):
-        product_hint = "S1"
-    elif u.startswith(("S2", "SENTINEL-2")):
-        product_hint = "S2"
-    elif u.startswith("LANDSAT"):
-        product_hint = "LANDSAT"
-    else:
-        product_hint = None
+    for fam, meta in info.items():
+        if any(u.startswith(tok) for tok in meta.tokens):
+            product_hint = fam
+            break
 
     # Try hinted schema first (if any)
     hinted = _find_schema_by_hints(pkg, product=product_hint)

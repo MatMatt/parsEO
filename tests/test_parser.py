@@ -1,6 +1,7 @@
 from parseo.parser import parse_auto
 import parseo.parser as parser
 import pytest
+from functools import lru_cache
 
 def test_s2_example():
     name = "S2B_MSIL2A_20241123T224759_N0511_R101_T03VUL_20241123T230829.SAFE"
@@ -23,19 +24,28 @@ def test_s1_example():
     assert res.fields["pol"] == "VV"
 
 
+def test_s3_example():
+    name = "S3A_OLCI_L2_20250105T103021_080_SEG01.tif"
+    res = parse_auto(name)
+    assert res.match_family == "S3"
+    assert res.fields["platform"] == "S3A"
+
+
 def test_schema_paths_cached(monkeypatch):
     calls = {"n": 0}
 
-    original_iter = parser._iter_schema_paths
+    original_discover = parser._discover_family_info
+    original_discover.cache_clear()
 
-    def counting_iter(pkg: str):
+    def counting_discover(pkg: str):
         calls["n"] += 1
-        yield from original_iter(pkg)
+        return original_discover(pkg)
 
-    monkeypatch.setattr(parser, "_iter_schema_paths", counting_iter)
-    parser._get_schema_paths.cache_clear()
+    wrapped = lru_cache(maxsize=None)(counting_discover)
+    monkeypatch.setattr(parser, "_discover_family_info", wrapped)
+    parser._discover_family_info.cache_clear()
 
-    # Two parses should trigger only a single scan of schema files
+    # Two parses should trigger only a single scan of index.json files
     parser.parse_auto("S2B_MSIL2A_20241123T224759_N0511_R101_T03VUL_20241123T230829.SAFE")
     parser.parse_auto("S1A_IW_SLC__1SDVV_20250105T053021_20250105T053048_A054321_D068F2E_ABC123.SAFE")
 
