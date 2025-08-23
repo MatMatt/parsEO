@@ -80,6 +80,14 @@ def test_list_schemas_exposes_known_families():
     assert "S1" in fams
 
 
+def test_cli_list_schemas_outputs_families(capsys):
+    assert cli.main(["list-schemas"]) == 0
+    out = capsys.readouterr().out.splitlines()
+    assert "S1" in out
+    assert "S2" in out
+    assert all("index.json" not in line for line in out)
+
+
 def test_cli_schema_info(capsys):
     assert cli.main(["schema-info", "S2"]) == 0
     out = capsys.readouterr().out

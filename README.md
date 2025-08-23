@@ -145,6 +145,14 @@ parseo parse S1A_IW_SLC__1SDV_20250105T053021_20250105T053048_A054321_D068F2E_AB
 
 # List available schemas
 parseo list-schemas
+# -> CLC
+#    LANDSAT
+#    S1
+#    S2
+#    S3
+#    S4
+#    S5P
+#    S6
 
 # Inspect a specific schema
 parseo schema-info S2
