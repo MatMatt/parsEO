@@ -47,7 +47,7 @@
     },
     "datatake": {
       "type": "string",
-      "pattern": "^D[0-9A-F]{6,7}$",
+      "pattern": "^D[0-9A-F]{6}$",
       "description": "Datatake ID"
     },
     "product_id": {
