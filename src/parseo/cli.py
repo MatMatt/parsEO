@@ -4,12 +4,11 @@ from __future__ import annotations
 import argparse
 import json
 import sys
-from importlib.resources import files, as_file
+from importlib.resources import as_file, files
 from pathlib import Path
-from typing import List, Dict, Any
+from typing import Any, Dict, List
 
 from parseo.parser import parse_auto  # existing parser entrypoint
-from ._json import load_json
 
 SCHEMAS_ROOT = "schemas"
 
@@ -67,58 +66,6 @@ def _stdin_text() -> str:
     if sys.stdin and not sys.stdin.closed and not sys.stdin.isatty():
         return sys.stdin.read()
     return ""
-
-
-def _iter_schema_json_paths():
-    """Yield Path objects for all packaged *.json schemas."""
-    base = files("parseo").joinpath(SCHEMAS_ROOT)
-    with as_file(base) as bp:
-        root = Path(bp)
-        yield from root.rglob("*.json")
-
-
-def _select_schema_by_first_compulsory(fields: Dict[str, Any]) -> Path:
-    """
-    Auto-pick the best schema using:
-      - eligible if user provided the schema's FIRST field (fields_order[0])
-      - among eligibles, pick the one with largest overlap (#keys in fields_order)
-      - tie-breaker: longer fields_order (more specific) wins
-    """
-    best = None  # (overlap, len(order), str(path))
-    best_path: Path | None = None
-    seen_first_keys = set()
-
-    for p in _iter_schema_json_paths():
-        try:
-            sch = load_json(p)
-        except Exception:
-            continue
-
-        order = sch.get("fields_order") or []
-        if not order:
-            continue
-
-        first_key = order[0]
-        seen_first_keys.add(first_key)
-
-        if first_key not in fields:
-            continue
-
-        overlap = sum(1 for k in fields.keys() if k in order)
-        key = (overlap, len(order), str(p))
-        if (best is None) or (key > best):
-            best = key
-            best_path = p
-
-    if not best_path:
-        sample = ", ".join(sorted(seen_first_keys)) or "<no schemas found>"
-        raise SystemExit(
-            "[assemble] Could not select a schema. "
-            "Include the schema's FIRST compulsory field among your inputs.\n"
-            f"Examples of first fields from packaged schemas: {sample}"
-        )
-
-    return best_path
 
 
 def _resolve_fields(args) -> Dict[str, Any]:
@@ -196,19 +143,18 @@ def main(argv: List[str] | None = None) -> int:
     if args.cmd == "assemble":
         # Lazy import so 'parse' doesn’t require assembler module
         try:
-            from parseo.assembler import assemble as assemble_with_schema
+            from parseo.assembler import assemble_auto
         except ModuleNotFoundError:
             raise SystemExit(
                 "The 'assemble' command requires parseo.assembler, which is part of the "
                 "standard parseo installation.\n"
                 "If it is missing, reinstall parseo with assembler support or provide a "
-                "'parseo/assembler.py' implementing 'assemble(schema_path, fields)'. "
+                "'parseo/assembler.py' implementing 'assemble_auto(fields)'. "
                 "You can still use 'parse' or 'list-schemas'."
             )
 
         fields = _resolve_fields(args)
-        schema_path = _select_schema_by_first_compulsory(fields)
-        out = assemble_with_schema(str(schema_path), fields)
+        out = assemble_auto(fields)
         print(out)
         return 0
 
