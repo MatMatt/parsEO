@@ -68,7 +68,10 @@ print(res.fields)  # structured dict of extracted fields
 ### Assemble a filename
 
 ```python
+from pathlib import Path
 from parseo import assemble
+
+schema_path = Path("src/parseo/schemas/copernicus/sentinel/s2/s2_filename_v1_0_0.json")
 
 fields = {
     "platform": "S2B",
@@ -79,10 +82,32 @@ fields = {
     "sat_relative_orbit": "R101",
     "mgrs_tile": "T03VUL",  # MGRS tile (TxxYYY, e.g., T32TNS)
     "generation_datetime": "20241123T230829",
-    "extension": ".SAFE"
+    "extension": ".SAFE",
 }
 
-filename = assemble(fields)
+filename = assemble(schema_path, fields)
+print(filename)
+# -> S2B_MSIL2A_20241123T224759_N0511_R101_T03VUL_20241123T230829.SAFE
+```
+
+Automatic schema selection:
+
+```python
+from parseo import assemble_auto
+
+fields = {
+    "platform": "S2B",
+    "sensor": "MSI",
+    "processing_level": "L2A",
+    "datetime": "20241123T224759",
+    "version": "N0511",
+    "sat_relative_orbit": "R101",
+    "mgrs_tile": "T03VUL",
+    "generation_datetime": "20241123T230829",
+    "extension": ".SAFE",
+}
+
+filename = assemble_auto(fields)
 print(filename)
 # -> S2B_MSIL2A_20241123T224759_N0511_R101_T03VUL_20241123T230829.SAFE
 ```
