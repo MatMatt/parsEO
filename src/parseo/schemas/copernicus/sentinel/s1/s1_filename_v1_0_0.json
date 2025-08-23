@@ -3,7 +3,7 @@
   "schema_version": "1.0.0",
   "stac_version": "1.1.0",
   "stac_extensions": ["processing", "sat", "sar"],
-  "description": "Sentinel-1 SAFE product filename; TTTR token is RAW_, SLC_, OCN_, or GRD(F|H|M|E); extension optional.",
+  "description": "Sentinel-1 product filename; TTTR token is RAW_, SLC_, OCN_, or GRD(F|H|M|E); extension optional.",
   "fields": {
     "platform": {
       "type": "string",
