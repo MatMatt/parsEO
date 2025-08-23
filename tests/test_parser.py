@@ -23,6 +23,8 @@ def test_s1_example():
     assert res.fields["product_type"] == "SLC_"
     assert res.fields["processing_level"] == "1SD"
     assert res.fields["polarization"] == "V"
+    assert res.version == "1.0.0"
+    assert res.status == "current"
 
 
 def test_s3_example():

@@ -19,7 +19,8 @@ class ParseResult:
     """Result of a parsing attempt."""
     valid: bool
     fields: Dict[str, str]
-    schema_path: str
+    version: Optional[str] = None
+    status: Optional[str] = None
     match_family: Optional[str] = None  # e.g., "S1", "S2", "LANDSAT"
 
 
@@ -29,6 +30,8 @@ class _FamilyInfo:
 
     tokens: tuple[str, ...]
     schema_path: Path
+    version: Optional[str] = None
+    status: Optional[str] = None
 
 
 # ---------------------------
@@ -91,6 +94,7 @@ def _discover_family_info(pkg: str) -> Dict[str, _FamilyInfo]:
                 continue
             versions = data.get("versions") or []
             schema_file = None
+            current = None
             if isinstance(versions, list):
                 current = next(
                     (v for v in versions if v.get("status") == "current"),
@@ -103,20 +107,10 @@ def _discover_family_info(pkg: str) -> Dict[str, _FamilyInfo]:
             info[family.upper()] = _FamilyInfo(
                 tokens=_family_tokens_from_name(family),
                 schema_path=schema_file,
+                version=current.get("version") if isinstance(current, dict) else None,
+                status=current.get("status") if isinstance(current, dict) else None,
             )
     return info
-
-
-def _find_schema_by_hints(pkg: str, product: Optional[str]) -> Optional[Path]:
-    """Return the schema path for the hinted family, if available."""
-
-    if not product:
-        return None
-    info = _discover_family_info(pkg)
-    fam = info.get(product.upper())
-    if fam:
-        return fam.schema_path
-    return None
 
 
 # ---------------------------
@@ -206,7 +200,8 @@ def parse_auto(name: str) -> ParseResult:
             break
 
     # Try hinted schema first (if any)
-    hinted = _find_schema_by_hints(pkg, product=product_hint)
+    hinted_meta = info.get(product_hint) if product_hint else None
+    hinted = hinted_meta.schema_path if hinted_meta else None
     if hinted and hinted.exists():
         try:
             schema = _load_json_from_path(hinted)
@@ -214,7 +209,8 @@ def parse_auto(name: str) -> ParseResult:
                 return ParseResult(
                     valid=True,
                     fields=_extract_fields(name, schema),
-                    schema_path=str(hinted),
+                    version=hinted_meta.version if hinted_meta else None,
+                    status=hinted_meta.status if hinted_meta else None,
                     match_family=product_hint,
                 )
         except Exception:
@@ -236,11 +232,21 @@ def parse_auto(name: str) -> ParseResult:
                 first_error = e
             continue
         if _try_validate(name, schema):
+            matched_family = None
+            version = None
+            status = None
+            for fam_name, meta in info.items():
+                if meta.schema_path == p:
+                    matched_family = fam_name
+                    version = meta.version
+                    status = meta.status
+                    break
             return ParseResult(
                 valid=True,
                 fields=_extract_fields(name, schema),
-                schema_path=str(p),
-                match_family=product_hint,
+                version=version,
+                status=status,
+                match_family=matched_family or product_hint,
             )
 
     # Nothing matched — provide a helpful error listing what we saw

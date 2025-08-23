@@ -123,9 +123,12 @@ def main(argv: List[str] | None = None) -> int:
             "valid": bool(getattr(res, "valid", False)),
             "fields": getattr(res, "fields", None),
         }
-        spath = getattr(res, "schema_path", None)
-        if spath:
-            out["schema_path"] = spath
+        version = getattr(res, "version", None)
+        if version:
+            out["version"] = version
+        status = getattr(res, "status", None)
+        if status:
+            out["status"] = status
         mfam = getattr(res, "match_family", None)
         if mfam:
             out["match_family"] = mfam
