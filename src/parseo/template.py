@@ -1,16 +1,11 @@
-"""Utility helpers for working with filename templates.
+"""Utility helpers for working with filename templates."""
 
-This module is intentionally minimal.  It exposes a small helper that
-merges user provided field values with optional default values.  The
-function demonstrates a typical pattern where an optional mapping is
-accepted as input.  Using :class:`~typing.Optional` keeps compatibility
-with Python versions prior to 3.10.
-"""
+from __future__ import annotations
 
-from typing import Any, Dict, Optional
+from typing import Any, Dict
 
 
-def merge_fields(fields: Dict[str, Any], defaults: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+def merge_fields(fields: Dict[str, Any], defaults: Dict[str, Any] | None = None) -> Dict[str, Any]:
     """Merge ``fields`` with optional ``defaults``.
 
     Parameters
