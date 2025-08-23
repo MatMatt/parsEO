@@ -3,7 +3,7 @@
   "schema_version": "1.0.0",
   "stac_version": "1.1.0",
   "stac_extensions": ["processing", "sat", "sar"],
-  "description": "Sentinel-1 SAFE product filename; TTTR token is SLC_, OCN_, or GRD(F|H|M); extension optional.",
+  "description": "Sentinel-1 SAFE product filename; TTTR token is RAW_, SLC_, OCN_, or GRD(F|H|M|E); extension optional.",
   "fields": {
     "platform": {
       "type": "string",
@@ -17,7 +17,7 @@
     },
     "product": {
       "type": "string",
-      "enum": ["SLC_", "OCN_", "GRDF", "GRDH", "GRDM"],
+      "enum": ["RAW_", "SLC_", "OCN_", "GRDF", "GRDH", "GRDM", "GRDE"],
       "description": "Product class/type"
     },
     "level": {
@@ -65,6 +65,8 @@
   "examples": [
     "S1A_IW_SLC__1SDVV_20250105T053021_20250105T053048_A054321_D068F2E_ABC123.SAFE",
     "S1B_EW_GRDH_1SHHH_20190101T000000_20190101T000030_A012345_D0ABCDE_ABCDEF",
-    "S1C_SM_OCN__1SVHV_20240701T101010_20240701T101111_A123456_D1A2B3C_1A2B3C.SAFE"
+    "S1C_SM_OCN__1SVHV_20240701T101010_20240701T101111_A123456_D1A2B3C_1A2B3C.SAFE",
+    "S1A_EW_RAW__0SDVV_20230601T123456_20230601T123546_A210987_D0ABCDEF_123ABC.SAFE",
+    "S1B_SM_GRDE_1SHVV_20190315T120000_20190315T120030_A654321_D0FEDCB_DEF123"
   ]
 }
