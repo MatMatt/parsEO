@@ -81,7 +81,7 @@ fields = {
     "extension": ".SAFE"
 }
 
-filename = assemble("sentinel/s2/s2_filename_v1_0_0.json", fields)
+filename = assemble(fields)
 print(filename)
 # -> S2B_MSIL2A_20241123T224759_N0511_R101_T03VUL_20241123T230829.SAFE
 ```
