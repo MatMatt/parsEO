@@ -3,10 +3,11 @@ from __future__ import annotations
 
 from importlib.resources import as_file, files
 from pathlib import Path
+import re
 from typing import Any, Dict
 
 from ._json import load_json
-from .template import compile_template
+from .template import compile_template, _field_regex
 
 
 SCHEMAS_ROOT = "schemas"
@@ -67,6 +68,24 @@ def assemble(schema_path: str | Path, fields: Dict[str, Any]) -> str:
     """
 
     sch = _load_schema(schema_path)
+
+    # Validate provided fields against schema definitions
+    specs = sch.get("fields", {})
+    for name, value in fields.items():
+        spec = specs.get(name)
+        if not spec:
+            continue
+        if "enum" in spec and str(value) not in spec["enum"]:
+            raise ValueError(
+                f"Field '{name}' must be one of {spec['enum']}, got {value!r}."
+            )
+        if "pattern" in spec:
+            pattern = _field_regex({"pattern": spec["pattern"]})
+            regex = re.compile(f"^{pattern}$")
+            if not regex.match(str(value)):
+                raise ValueError(
+                    f"Field '{name}' with value {value!r} does not match pattern {spec['pattern']}."
+                )
 
     if isinstance(sch.get("template"), str):
         template = sch["template"]
