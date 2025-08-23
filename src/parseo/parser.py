@@ -297,11 +297,21 @@ def describe_schema(family: str, pkg: str = __package__) -> dict[str, Any]:
                 if k in spec
             }
 
-    return {
+    out: Dict[str, Any] = {
         "schema_id": schema.get("schema_id"),
         "description": schema.get("description"),
         "fields": fields,
     }
+
+    template = schema.get("template")
+    if isinstance(template, str):
+        out["template"] = template
+
+    examples = schema.get("examples")
+    if isinstance(examples, list):
+        out["examples"] = [e for e in examples if isinstance(e, str)]
+
+    return out
 
 
 def parse_auto(name: str) -> ParseResult:
