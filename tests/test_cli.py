@@ -1,5 +1,6 @@
 import sys
 import builtins
+import io
 import pytest
 
 from parseo import cli
@@ -54,3 +55,18 @@ def test_cli_assemble_missing_assembler(monkeypatch):
     msg = str(exc.value)
     assert "requires parseo.assembler" in msg
     assert "standard parseo installation" in msg
+
+
+def test_fields_json_invalid_string():
+    sys.argv = ["parseo", "assemble", "--fields-json", "{"]
+    with pytest.raises(SystemExit) as exc:
+        cli.main()
+    assert "--fields-json is not valid JSON" in str(exc.value)
+
+
+def test_fields_json_invalid_stdin(monkeypatch):
+    sys.argv = ["parseo", "assemble", "--fields-json", "-"]
+    monkeypatch.setattr(sys, "stdin", io.StringIO("{"))
+    with pytest.raises(SystemExit) as exc:
+        cli.main()
+    assert "--fields-json '-' is not valid JSON" in str(exc.value)
