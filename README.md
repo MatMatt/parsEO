@@ -86,6 +86,42 @@ print(filename)
 # -> S2B_MSIL2A_20241123T224759_N0511_R101_T03VUL_20241123T230829.SAFE
 ```
 
+### Run as a web API
+
+parsEO functions can be exposed through a web service. The example below uses
+[FastAPI](https://fastapi.tiangolo.com), which provides an automatic Swagger UI
+for trying out the endpoints.
+
+```python
+# file: main.py
+from fastapi import FastAPI
+from parseo import assemble, parse_auto
+
+app = FastAPI()
+
+
+@app.get("/parse")
+def parse_endpoint(name: str):
+    res = parse_auto(name)
+    return res.model_dump()
+
+
+@app.post("/assemble")
+def assemble_endpoint(schema: str, fields: dict):
+    filename = assemble(schema, fields)
+    return {"filename": filename}
+```
+
+Start the server and open [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
+to access Swagger UI:
+
+```bash
+uvicorn main:app --reload
+```
+
+The interactive page lets you call `/parse` and `/assemble` directly from the
+browser to verify your API.
+
 ---
 
 ## Command Line Interface
