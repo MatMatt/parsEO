@@ -2,8 +2,10 @@ import sys
 import builtins
 import io
 import pytest
+import json
 
 from parseo import cli
+from parseo.parser import list_schemas
 
 
 def test_cli_assemble_success(capsys):
@@ -70,3 +72,18 @@ def test_fields_json_invalid_stdin(monkeypatch):
     with pytest.raises(SystemExit) as exc:
         cli.main()
     assert "--fields-json '-' is not valid JSON" in str(exc.value)
+
+
+def test_list_schemas_exposes_known_families():
+    fams = list_schemas()
+    assert "S2" in fams
+    assert "S1" in fams
+
+
+def test_cli_schema_info(capsys):
+    assert cli.main(["schema-info", "S2"]) == 0
+    out = capsys.readouterr().out
+    data = json.loads(out)
+    assert data["schema_id"] == "copernicus:sentinel:s2"
+    assert "platform" in data["fields"]
+    assert data["fields"]["platform"]["description"] == "Spacecraft unit"

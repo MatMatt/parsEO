@@ -146,6 +146,18 @@ parseo parse S1A_IW_SLC__1SDV_20250105T053021_20250105T053048_A054321_D068F2E_AB
 # List available schemas
 parseo list-schemas
 
+# Inspect a specific schema
+parseo schema-info S2
+# -> {
+#      "schema_id": "copernicus:sentinel:s2",
+#      "description": "Sentinel-2 product filename (MSI sensor, processing levels L1C/L2A; extension optional).",
+#      "fields": {
+#        "platform": {"type": "string", "enum": ["S2A", "S2B", "S2C"], "description": "Spacecraft unit"},
+#        "sensor": {"type": "string", "enum": ["MSI"], "description": "Sensor"},
+#        ...
+#      }
+#    }
+
 # Assemble a filename from fields.
 # The CLI auto-selects a schema based on the first compulsory field.
 
