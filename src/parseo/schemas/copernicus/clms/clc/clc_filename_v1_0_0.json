@@ -1,81 +1,43 @@
 {
-    "$schema":  "https://json-schema.org/draft/2020-12/schema",
-    "title":  "CLC filename",
-    "type":  "object",
-    "properties":  {
-                       "name":  {
-                                    "type":  "string"
-                                }
-                   },
-    "required":  [
-                     "name"
-                 ],
-    "x-parseo":  {
-                     "version":  "1.0.0",
-                     "valid_example":  "CLC2018_CLC2018_V2020_20u1.tif",
-                     "parse_regex":  "^(?P\u003cproject\u003eCLC|U)(?P\u003creference_year\u003e\\d{4})_(?P\u003cproduct\u003e[A-Z0-9]+)_(?P\u003cversion\u003eV\\d{4})_(?P\u003cresolution\u003e[0-9A-Za-z]+)\\.(?P\u003cextension\u003e[A-Za-z0-9]+)$",
-                     "template":  "{project}{reference_year}_{product}_{version}_{resolution}.{extension}",
-                     "requirements":  {
-                                          "project":  {
-                                                          "$ref":  "fields.json#/$defs/project"
-                                                      },
-                                          "reference_year":  {
-                                                                 "$ref":  "fields.json#/$defs/reference_year"
-                                                             },
-                                          "product":  {
-                                                          "$ref":  "fields.json#/$defs/product"
-                                                      },
-                                          "version":  {
-                                                          "$ref":  "fields.json#/$defs/version"
-                                                      },
-                                          "resolution":  {
-                                                             "$ref":  "fields.json#/$defs/resolution"
-                                                         },
-                                          "extension":  {
-                                                            "$ref":  "fields.json#/$defs/extension"
-                                                        }
-                                      },
-                     "build_transforms":  {
-                                              "project":  [
-                                                              "upper"
-                                                          ],
-                                              "version":  [
-                                                              "upper"
-                                                          ],
-                                              "resolution":  [
-                                                                 "lower"
-                                                             ],
-                                              "extension":  [
-                                                                "lower"
-                                                            ]
-                                          },
-                     "parse_transforms":  {
-                                              "project":  [
-                                                              "upper"
-                                                          ],
-                                              "version":  [
-                                                              "upper"
-                                                          ]
-                                          },
-                     "fields":  {
-                                    "project":  {
-
-                                                },
-                                    "reference_year":  {
-
-                                                       },
-                                    "product":  {
-
-                                                },
-                                    "version":  {
-
-                                                },
-                                    "resolution":  {
-
-                                                   },
-                                    "extension":  {
-
-                                                  }
-                                }
-                 }
+  "schema_id": "copernicus:clms:clc",
+  "schema_version": "1.0.0",
+  "stac_version": "1.1.0",
+  "stac_extensions": ["raster", "eo"],
+  "description": "Corine Land Cover product filename.",
+  "fields": {
+    "project": {
+      "type": "string",
+      "enum": ["CLC", "U"],
+      "description": "Project code"
+    },
+    "reference_year": {
+      "type": "string",
+      "pattern": "^\\d{4}$",
+      "description": "Reference year (e.g., 2018, 2012)"
+    },
+    "product": {
+      "type": "string",
+      "pattern": "^[A-Z0-9]+$",
+      "description": "Product name, often CLCYYYY or change token"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^V\\d{4}$",
+      "description": "Product version (e.g., V2020)"
+    },
+    "resolution": {
+      "type": "string",
+      "pattern": "^[0-9]+[A-Za-z0-9]*$",
+      "description": "Resolution code (e.g., 20, 100, 20u1)"
+    },
+    "extension": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9]+$",
+      "description": "File extension without leading dot"
+    }
+  },
+  "template": "{project}{reference_year}_{product}_{version}_{resolution}[.{extension}]",
+  "examples": [
+    "CLC2018_CLC2018_V2020_20u1.tif"
+  ]
 }
