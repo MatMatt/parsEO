@@ -1,118 +1,12 @@
 {
-    "$schema":  "https://json-schema.org/draft/2020-12/schema",
-    "title":  "Sentinel-3 filename",
-    "type":  "object",
-    "properties":  {
-                       "name":  {
-                                    "type":  "string"
-                                }
-                   },
-    "required":  [
-                     "name"
-                 ],
-    "x-parseo":  {
-                     "version":  "1.0.0",
-                     "parse_regex":  "^(?P\u003csatellite\u003eS3)(?P\u003cplatform\u003eA|B|C)_(?P\u003cinstrument\u003eOLCI|SLSTR|SRAL)_(?P\u003cprocessing_level\u003eL0|L1|L2)_(?P\u003csensing_datetime\u003e\\d{8}T\\d{6})(?:_(?P\u003ctrack\u003e\\d{3}))?(?:_(?P\u003csegment\u003e[A-Z0-9_\\-]{1,10}))?\\.(?P\u003cextension\u003e[A-Za-z0-9]+)$",
-                     "template":  "{satellite}{platform}_{instrument}_{processing_level}_{sensing_datetime}{track_opt}{segment_opt}.{extension}",
-                     "requirements":  {
-                                          "satellite":  {
-                                                            "$ref":  "fields.json#/$defs/satellite"
-                                                        },
-                                          "platform":  {
-                                                           "$ref":  "fields.json#/$defs/platform"
-                                                       },
-                                          "instrument":  {
-                                                             "$ref":  "fields.json#/$defs/instrument"
-                                                         },
-                                          "processing_level":  {
-                                                                   "$ref":  "fields.json#/$defs/processing_level"
-                                                               },
-                                          "sensing_datetime":  {
-                                                                   "$ref":  "fields.json#/$defs/sensing_datetime"
-                                                               },
-                                          "track":  {
-                                                        "$ref":  "fields.json#/$defs/track"
-                                                    },
-                                          "segment":  {
-                                                          "$ref":  "fields.json#/$defs/segment"
-                                                      },
-                                          "extension":  {
-                                                            "$ref":  "fields.json#/$defs/extension"
-                                                        }
-                                      },
-                     "build_transforms":  {
-                                              "platform":  [
-                                                               "upper"
-                                                           ],
-                                              "instrument":  [
-                                                                 "upper"
-                                                             ],
-                                              "processing_level":  [
-                                                                       "upper"
-                                                                   ],
-                                              "sensing_datetime":  [
-                                                                       "datetime:%Y%m%dT%H%M%S"
-                                                                   ],
-                                              "extension":  [
-                                                                "lower"
-                                                            ],
-                                              "_compose:track_opt":  [
-                                                                         "ifset:track:prefix:_"
-                                                                     ],
-                                              "_compose:segment_opt":  [
-                                                                           "ifset:segment:prefix:_"
-                                                                       ]
-                                          },
-                     "parse_transforms":  {
-                                              "extension":  [
-                                                                "lower"
-                                                            ]
-                                          },
-                     "fields":  {
-                                    "satellite":  {
-
-                                                  },
-                                    "platform":  {
-
-                                                 },
-                                    "instrument":  {
-
-                                                   },
-                                    "processing_level":  {
-
-                                                         },
-                                    "sensing_datetime":  {
-
-                                                         },
-                                    "track":  {
-
-                                              },
-                                    "segment":  {
-
-                                                },
-                                    "extension":  {
-
-                                                  }
-                                },
-                     "map_to_canonical":  {
-                                              "mission":  "{satellite}{platform}",
-                                              "instrument":  "{instrument}",
-                                              "level":  "{processing_level}",
-                                              "acq_datetime":  "{sensing_datetime}",
-                                              "track":  "{track}",
-                                              "segment":  "{segment}",
-                                              "extension":  "{extension}"
-                                          },
-                     "map_from_canonical":  {
-                                                "satellite":  "{mission[:2]}",
-                                                "platform":  "{mission[2:3]}",
-                                                "instrument":  "{instrument}",
-                                                "processing_level":  "{level}",
-                                                "sensing_datetime":  "{acq_datetime}",
-                                                "track":  "{track}",
-                                                "segment":  "{segment}",
-                                                "extension":  "{extension}"
-                                            },
-                     "valid_example":  "S3A_OLCI_L2_20250105T103021_080_SEG01.tif"
-                 }
+  "schema_id": "copernicus:sentinel:s3",
+  "schema_version": "1.0.0",
+  "stac_version": "1.1.0",
+  "stac_extensions": ["processing", "sat", "raster", "eo"],
+  "description": "Sentinel-3 product filename (OLCI/SLSTR/SRAL; optional track, segment, extension).",
+  "filename_pattern": "^(?P<platform>S3A|S3B|S3C)_(?P<instrument>OLCI|SLSTR|SRAL)_(?P<processing_level>L0|L1|L2)_(?P<datetime>\\d{8}T\\d{6})(?:_(?P<sat_relative_orbit>\\d{3}))?(?:_(?P<segment>[A-Z0-9_\\-]{1,10}))?(?P<extension>\\.[A-Za-z0-9]+)?$",
+  "examples": [
+    "S3A_OLCI_L2_20250105T103021_080_SEG01.tif",
+    "S3B_SRAL_L1_20230715T103021_123.nc"
+  ]
 }

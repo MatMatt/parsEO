@@ -1,102 +1,12 @@
 {
-    "$schema":  "https://json-schema.org/draft/2020-12/schema",
-    "title":  "Sentinel-6 filename",
-    "type":  "object",
-    "properties":  {
-                       "name":  {
-                                    "type":  "string"
-                                }
-                   },
-    "required":  [
-                     "name"
-                 ],
-    "x-parseo":  {
-                     "version":  "1.0.0",
-                     "parse_regex":  "^(?P\u003csatellite\u003eS6)(?P\u003cplatform\u003eA|B)_(?P\u003cinstrument\u003eP4)_(?P\u003csampling_rate\u003e1Hz|2Hz|20Hz)(?P\u003cmode\u003e[A-Z])_(?P\u003cstart_datetime\u003e\\d{8}T\\d{6})_(?P\u003cstop_datetime\u003e\\d{8}T\\d{6})_(?P\u003csegment\u003e\\d{4})\\.(?P\u003cextension\u003e[A-Za-z0-9]+)$",
-                     "template":  "{satellite}{platform}_{instrument}_{sampling_rate}{mode}_{start_datetime}_{stop_datetime}_{segment}.{extension}",
-                     "requirements":  {
-                                          "satellite":  {
-                                                            "$ref":  "fields.json#/$defs/satellite"
-                                                        },
-                                          "platform":  {
-                                                           "$ref":  "fields.json#/$defs/platform"
-                                                       },
-                                          "instrument":  {
-                                                             "$ref":  "fields.json#/$defs/instrument"
-                                                         },
-                                          "sampling_rate":  {
-                                                                "$ref":  "fields.json#/$defs/sampling_rate"
-                                                            },
-                                          "mode":  {
-                                                       "$ref":  "fields.json#/$defs/mode"
-                                                   },
-                                          "start_datetime":  {
-                                                                 "$ref":  "fields.json#/$defs/datetime_compact"
-                                                             },
-                                          "stop_datetime":  {
-                                                                "$ref":  "fields.json#/$defs/datetime_compact"
-                                                            },
-                                          "segment":  {
-                                                          "$ref":  "fields.json#/$defs/segment"
-                                                      },
-                                          "extension":  {
-                                                            "$ref":  "fields.json#/$defs/extension"
-                                                        }
-                                      },
-                     "build_transforms":  {
-                                              "platform":  [
-                                                               "upper"
-                                                           ],
-                                              "sampling_rate":  [
-                                                                    "upper"
-                                                                ],
-                                              "mode":  [
-                                                           "upper"
-                                                       ],
-                                              "start_datetime":  [
-                                                                     "datetime:%Y%m%dT%H%M%S"
-                                                                 ],
-                                              "stop_datetime":  [
-                                                                    "datetime:%Y%m%dT%H%M%S"
-                                                                ],
-                                              "extension":  [
-                                                                "lower"
-                                                            ]
-                                          },
-                     "parse_transforms":  {
-                                              "extension":  [
-                                                                "lower"
-                                                            ]
-                                          },
-                     "fields":  {
-                                    "satellite":  {
-
-                                                  },
-                                    "platform":  {
-
-                                                 },
-                                    "instrument":  {
-
-                                                   },
-                                    "sampling_rate":  {
-
-                                                      },
-                                    "mode":  {
-
-                                             },
-                                    "start_datetime":  {
-
-                                                       },
-                                    "stop_datetime":  {
-
-                                                      },
-                                    "segment":  {
-
-                                                },
-                                    "extension":  {
-
-                                                  }
-                                },
-                     "valid_example":  "S6A_P4_20HzN_20221015T103529_20221015T112143_0001.nc"
-                 }
+  "schema_id": "copernicus:sentinel:s6",
+  "schema_version": "1.0.0",
+  "stac_version": "1.1.0",
+  "stac_extensions": ["processing", "sat"],
+  "description": "Sentinel-6 product filename (P4 altimetry; extension optional).",
+  "filename_pattern": "^(?P<platform>S6A|S6B)_(?P<instrument>P4)_(?P<sampling_rate>1Hz|2Hz|20Hz)(?P<mode>[A-Z])_(?P<start_datetime>\\d{8}T\\d{6})_(?P<end_datetime>\\d{8}T\\d{6})_(?P<segment>\\d{4})(?P<extension>\\.[A-Za-z0-9]+)?$",
+  "examples": [
+    "S6A_P4_20HzN_20221015T103529_20221015T112143_0001.nc",
+    "S6B_P4_1HzN_20230715T103021_20230715T103121_0002"
+  ]
 }
