@@ -39,6 +39,7 @@ parseo = "parseo.cli:main"
 # If you want optional extras:
 [project.optional-dependencies]
 dev = ["build", "twine", "ruff", "mypy", "pytest", "pytest-cov"]
+web = ["fastapi", "uvicorn"]
 
 [tool.setuptools]
 include-package-data = true  # ensure MANIFEST.in if you ship data
