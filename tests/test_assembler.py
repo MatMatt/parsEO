@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from parseo import assemble
+from parseo import assemble, assemble_auto
 
 
 def test_assemble_clms_fsc_schema():
@@ -18,3 +18,19 @@ def test_assemble_clms_fsc_schema():
     }
     result = assemble(schema, fields)
     assert result == "CLMS_WSI_FSC_020m_T32TNS_20211018T103021_S2A_V100_FSCOG_.tif"
+
+
+def test_assemble_auto_wic_schema():
+    fields = {
+        "prefix": "CLMS_WSI",
+        "product": "WIC",
+        "pixel_spacing": "020m",
+        "tile_id": "T33WXP",
+        "sensing_datetime": "20201024T103021",
+        "platform": "S2B",
+        "version": "V100",
+        "file_id": "WIC",
+        "extension": ".tif",
+    }
+    result = assemble_auto(fields)
+    assert result == "CLMS_WSI_WIC_020m_T33WXP_20201024T103021_S2B_V100_WIC_.tif"
