@@ -50,7 +50,9 @@ def _field_regex(spec: Optional[Dict[str, Any]]) -> str:
     return pattern
 
 
-def compile_template(template: str, fields: Dict[str, Dict]) -> Tuple[str, List[str]]:
+def compile_template(
+    template: str, fields: Dict[str, Dict[str, Any]]
+) -> Tuple[str, List[str]]:
     """Compile *template* into a regex pattern and extract field order.
 
     ``{field}`` placeholders are replaced using patterns or enums from
