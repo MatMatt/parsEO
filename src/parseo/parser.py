@@ -1,4 +1,4 @@
-﻿# src/parseo/parser.py
+# src/parseo/parser.py
 from __future__ import annotations
 
 from dataclasses import dataclass

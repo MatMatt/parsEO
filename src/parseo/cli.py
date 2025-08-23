@@ -1,4 +1,4 @@
-﻿# src/parseo/cli.py
+# src/parseo/cli.py
 from __future__ import annotations
 
 import argparse
