@@ -134,9 +134,15 @@ def _resolve_fields(args) -> Dict[str, Any]:
             raw = _stdin_text()
             if not raw.strip():
                 raise SystemExit("--fields-json '-' set but stdin is empty.")
-            return json.loads(raw)
+            try:
+                return json.loads(raw)
+            except json.JSONDecodeError as e:
+                raise SystemExit(f"--fields-json '-' is not valid JSON: {e}")
         else:
-            return json.loads(args.fields_json)
+            try:
+                return json.loads(args.fields_json)
+            except json.JSONDecodeError as e:
+                raise SystemExit(f"--fields-json is not valid JSON: {e}")
 
     # 2) stdin JSON (only if no positional fields were given)
     if not args.fields:
