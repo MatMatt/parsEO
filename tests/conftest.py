@@ -1,5 +1,7 @@
 
-import json, re, pathlib
+import json, re, pathlib, sys
+
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent / "src"))
 
 def load_schema_by_name(root_dir: str, fname: str):
     root = pathlib.Path(root_dir)

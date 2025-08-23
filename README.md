@@ -91,6 +91,16 @@ print(filename)
 ## Command Line Interface
 
 Use the CLI to parse filenames, list available schemas, and assemble filenames from fields.
+The `assemble` subcommand relies on the `parseo.assembler` module, which ships with the
+standard parseo installation. If you run `parseo assemble` in an environment where this
+module was intentionally omitted, the CLI will exit with:
+
+```
+The 'assemble' command requires parseo.assembler, which is part of the standard parseo installation.
+```
+
+Reinstall parseo with assembler support or provide your own `parseo/assembler.py`
+implementing `assemble(schema_path, fields)` to enable this command.
 
 ```bash
 # Parse a filename
