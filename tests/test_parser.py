@@ -8,6 +8,9 @@ def test_s2_example():
     assert res is not None
     assert res.fields["platform"] == "S2B"
     assert res.fields["processing_level"] == "MSIL2A"
+    assert res.fields["sensing_datetime"] == "20241123T224759"
+    assert res.fields["processing_baseline"] == "N0511"
+    assert res.fields["relative_orbit"] == "R101"
 
 def test_s1_example():
     name = "S1A_IW_SLC__1SDVV_20250105T053021_20250105T053048_A054321_D068F2E_ABC123.SAFE"

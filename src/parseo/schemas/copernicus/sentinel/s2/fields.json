@@ -30,16 +30,6 @@
                                               ],
                                    "description":  "Spacecraft unit"
                                },
-                  "instrument":  {
-                                     "type":  "string",
-                                     "values":  [
-                                                    {
-                                                        "code":  "MSI",
-                                                        "label":  "Multispectral Instrument"
-                                                    }
-                                                ],
-                                     "description":  "Instrument identifier"
-                                 },
                   "processing_level":  {
                                            "type":  "string",
                                            "values":  [
