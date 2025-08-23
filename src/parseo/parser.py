@@ -83,8 +83,51 @@ def _compile_pattern(pattern: str) -> re.Pattern:
     return re.compile(pattern)
 
 
-def _match_filename(name: str, schema: Dict) -> Optional[re.Match]:
+def _expand_pattern(schema: Dict) -> Optional[str]:
+    """Expand ``filename_pattern`` placeholders using field definitions.
+
+    A pattern may reference field names using ``{{field}}`` tokens. For each
+    field definition, either an ``enum`` or a ``pattern`` is used to replace the
+    corresponding token. Anchors (``^``/``$``) in field patterns are stripped so
+    they integrate cleanly into the larger regex.
+    """
+
+    cached = schema.get("_expanded_pattern")
+    if cached:
+        return cached
+
     patt = schema.get("filename_pattern")
+    if not isinstance(patt, str):
+        return None
+
+    fields = schema.get("fields", {})
+    if not isinstance(fields, dict):
+        schema["_expanded_pattern"] = patt
+        return patt
+
+    def field_regex(spec: Dict) -> str:
+        if "enum" in spec:
+            return "(?:" + "|".join(re.escape(v) for v in spec["enum"]) + ")"
+        pattern = spec.get("pattern")
+        if pattern is None:
+            raise KeyError("Field spec missing 'pattern' or 'enum'")
+        if pattern.startswith("^"):
+            pattern = pattern[1:]
+        if pattern.endswith("$"):
+            pattern = pattern[:-1]
+        return pattern
+
+    for name, spec in fields.items():
+        placeholder = f"{{{{{name}}}}}"
+        if placeholder in patt:
+            patt = patt.replace(placeholder, field_regex(spec))
+
+    schema["_expanded_pattern"] = patt
+    return patt
+
+
+def _match_filename(name: str, schema: Dict) -> Optional[re.Match]:
+    patt = _expand_pattern(schema)
     if not isinstance(patt, str) or not patt:
         return None
     rx = _compile_pattern(patt)

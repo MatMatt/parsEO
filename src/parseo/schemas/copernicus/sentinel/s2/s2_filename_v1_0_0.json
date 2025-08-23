@@ -4,7 +4,49 @@
   "stac_version": "1.1.0",
   "stac_extensions": ["processing", "sat", "raster", "eo", "mgrs"],
   "description": "Sentinel-2 SAFE product filename (MSIL1C/MSIL2A; extension optional).",
-  "filename_pattern": "^(?P<platform>S2A|S2B|S2C)_(?P<processing_level>MSIL1C|MSIL2A)_(?P<sensing_datetime>\\d{8}T\\d{6})_(?P<processing_baseline>N\\d{4})_(?P<relative_orbit>R\\d{3})_(?P<mgrs_tile>T[0-9A-Z]{5})_(?P<generation_datetime>\\d{8}T\\d{6})(?P<extension>\\.SAFE)?$",
+  "fields": {
+    "platform": {
+      "type": "string",
+      "enum": ["S2A", "S2B", "S2C"],
+      "description": "Spacecraft unit"
+    },
+    "processing_level": {
+      "type": "string",
+      "enum": ["MSIL1C", "MSIL2A"],
+      "description": "Processing level"
+    },
+    "sensing_datetime": {
+      "type": "string",
+      "pattern": "^\\d{8}T\\d{6}$",
+      "description": "Acquisition datetime (UTC, YYYYMMDDTHHMMSS)"
+    },
+    "processing_baseline": {
+      "type": "string",
+      "pattern": "^N\\d{4}$",
+      "description": "Processing baseline (e.g., N0511)"
+    },
+    "relative_orbit": {
+      "type": "string",
+      "pattern": "^R\\d{3}$",
+      "description": "Relative orbit number"
+    },
+    "mgrs_tile": {
+      "type": "string",
+      "pattern": "^T[0-9A-Z]{5}$",
+      "description": "MGRS tile identifier"
+    },
+    "generation_datetime": {
+      "type": "string",
+      "pattern": "^\\d{8}T\\d{6}$",
+      "description": "Product generation datetime (UTC, YYYYMMDDTHHMMSS)"
+    },
+    "extension": {
+      "type": "string",
+      "enum": ["SAFE"],
+      "description": "File extension without leading dot"
+    }
+  },
+  "filename_pattern": "^(?P<platform>{{platform}})_(?P<processing_level>{{processing_level}})_(?P<sensing_datetime>{{sensing_datetime}})_(?P<processing_baseline>{{processing_baseline}})_(?P<relative_orbit>{{relative_orbit}})_(?P<mgrs_tile>{{mgrs_tile}})_(?P<generation_datetime>{{generation_datetime}})(?:\\.(?P<extension>{{extension}}))?$",
   "examples": [
     "S2B_MSIL2A_20241123T224759_N0511_R101_T03VUL_20241123T230829.SAFE",
     "S2A_MSIL1C_20230715T103021_N0400_R052_T32TNS_20230715T103555"
