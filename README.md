@@ -200,7 +200,6 @@ parseo assemble \
   sensing_datetime=20201024T103021 platform=S2B version=V100 file_id=WIC extension=.tif
 # -> CLMS_WSI_WIC_020m_T33WXP_20201024T103021_S2B_V100_WIC.tif
 ```
-
 ---
 
 ## Contributing
