@@ -55,3 +55,8 @@ ENV/
 
 # Backup files
 *.bak_*
+
+# other
+*html
+*bootstrap*
+*.js
