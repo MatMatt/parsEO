@@ -34,6 +34,16 @@ def test_s3_example():
     assert res.fields["platform"] == "S3A"
 
 
+def test_near_miss_reports_field():
+    name = "S2X_MSIL2A_20241123T224759_N0511_R101_T03VUL_20241123T230829.SAFE"
+    with pytest.raises(parser.ParseError) as exc:
+        parse_auto(name)
+    msg = str(exc.value)
+    assert "platform" in msg
+    assert "S2X" in msg
+    assert "S2A" in msg
+
+
 def test_schema_paths_cached(monkeypatch):
     calls = {"n": 0}
 

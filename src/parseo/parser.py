@@ -8,7 +8,7 @@ from typing import Any, Dict, Iterator, Optional
 import re
 from functools import lru_cache
 from ._json import load_json
-from .template import compile_template
+from .template import compile_template, _field_regex
 
 # Root folder inside the package where JSON schemas live
 SCHEMAS_ROOT = "schemas"
@@ -22,6 +22,20 @@ class ParseResult:
     version: Optional[str] = None
     status: Optional[str] = None
     match_family: Optional[str] = None  # e.g., "S1", "S2", "LANDSAT"
+
+
+@dataclass(frozen=True)
+class ParseError(Exception):
+    """Raised when a filename nearly matches a schema but fails on a field."""
+
+    field: str
+    expected: str
+    value: str
+
+    def __str__(self) -> str:  # pragma: no cover - trivial
+        return (
+            f"Invalid value '{self.value}' for field '{self.field}': expected {self.expected}"
+        )
 
 
 @dataclass(frozen=True)
@@ -177,6 +191,82 @@ def _try_validate(name: str, schema: Dict) -> bool:
     return _match_filename(name, schema) is not None
 
 
+def _named_group_spans(pattern: str) -> Dict[str, tuple[int, int]]:
+    spans: Dict[str, tuple[int, int]] = {}
+    stack: list[tuple[Optional[str], int]] = []
+    i = 0
+    in_class = False
+    while i < len(pattern):
+        ch = pattern[i]
+        if ch == "\\":
+            i += 2
+            continue
+        if in_class:
+            if ch == "]":
+                in_class = False
+            i += 1
+            continue
+        if ch == "[":
+            in_class = True
+            i += 1
+            continue
+        if ch == "(":
+            if pattern.startswith("(?P<", i):
+                j = i + 4
+                k = pattern.index(">", j)
+                name = pattern[j:k]
+                stack.append((name, i))
+                i = k + 1
+            else:
+                stack.append((None, i))
+                i += 1
+            continue
+        if ch == ")":
+            name, start = stack.pop()
+            if name:
+                spans[name] = (start, i + 1)
+            i += 1
+            continue
+        i += 1
+    return spans
+
+
+def _explain_match_failure(name: str, schema: Dict) -> Optional[tuple[str, str, str]]:
+    pattern = _pattern_from_schema(schema)
+    fields = schema.get("fields", {})
+    order = schema.get("fields_order", [])
+    if not pattern or not order:
+        return None
+    spans = _named_group_spans(pattern)
+    for i, field in enumerate(order):
+        next_start = spans[order[i + 1]][0] if i + 1 < len(order) else len(pattern) - 1
+        prefix_pat = pattern[:next_start] + ".*$"
+        if not _compile_pattern(prefix_pat).match(name):
+            before_pat = pattern[:spans[field][0]]
+            m_before = _compile_pattern(before_pat).match(name)
+            start_pos = len(m_before.group(0)) if m_before else 0
+            spec = fields.get(field, {})
+            field_rx = re.compile(_field_regex(spec))
+            m_field = field_rx.match(name[start_pos:])
+            if m_field:
+                value = m_field.group(0)
+            else:
+                end_pos = len(name)
+                for sep in ["_", ".", "-"]:
+                    idx = name.find(sep, start_pos)
+                    if idx != -1:
+                        end_pos = min(end_pos, idx)
+                value = name[start_pos:end_pos]
+            if "enum" in spec:
+                expected = f"one of {spec['enum']}"
+            elif "pattern" in spec:
+                expected = f"pattern {spec['pattern']}"
+            else:
+                expected = "a different value"
+            return field, expected, value
+    return None
+
+
 # ---------------------------
 # Public API
 # ---------------------------
@@ -246,6 +336,12 @@ def parse_auto(name: str) -> ParseResult:
                     status=hinted_meta.status if hinted_meta else None,
                     match_family=product_hint,
                 )
+            mismatch = _explain_match_failure(name, schema)
+            if mismatch:
+                field, expected, value = mismatch
+                raise ParseError(field, expected, value)
+        except ParseError:
+            raise
         except Exception:
             # If hinted schema is unreadable, fall back to brute force
             pass
@@ -257,6 +353,7 @@ def parse_auto(name: str) -> ParseResult:
         raise FileNotFoundError(f"No schemas packaged under {pkg}/{SCHEMAS_ROOT}.")
 
     first_error: Optional[Exception] = None
+    near_miss: Optional[ParseError] = None
     for p in candidates:
         try:
             schema = _load_json_from_path(p)
@@ -281,6 +378,11 @@ def parse_auto(name: str) -> ParseResult:
                 status=status,
                 match_family=matched_family or product_hint,
             )
+        if near_miss is None:
+            mismatch = _explain_match_failure(name, schema)
+            if mismatch:
+                field, expected, value = mismatch
+                near_miss = ParseError(field, expected, value)
 
     # Nothing matched — provide a helpful error listing what we saw
     with as_file(files(pkg).joinpath(SCHEMAS_ROOT)) as rp:
@@ -291,6 +393,8 @@ def parse_auto(name: str) -> ParseResult:
         f"Looked recursively under {pkg}/{SCHEMAS_ROOT}/ and found "
         f"{len(seen)} file(s): {seen[:8]}{'…' if len(seen) > 8 else ''}"
     )
+    if near_miss is not None:
+        raise near_miss
     if first_error is not None:
         msg += f". First error while reading schemas: {first_error}"
         raise RuntimeError(msg) from first_error
