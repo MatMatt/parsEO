@@ -1,0 +1,11 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "family": "MTG",
+    "versions": [
+        {
+            "status": "current",
+            "file": "mtg_filename_v1_0_0.json",
+            "version": "1.0.0"
+        }
+    ]
+}
