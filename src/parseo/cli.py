@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import List, Dict, Any
 
 from parseo.parser import parse_auto  # existing parser entrypoint
+from ._json import load_json
 
 SCHEMAS_ROOT = "schemas"
 
@@ -76,13 +77,6 @@ def _iter_schema_json_paths():
         yield from root.rglob("*.json")
 
 
-def _load_json(path: Path) -> Dict[str, Any]:
-    txt = path.read_text(encoding="utf-8")
-    if txt.startswith("\ufeff"):
-        txt = txt.lstrip("\ufeff")
-    return json.loads(txt)
-
-
 def _select_schema_by_first_compulsory(fields: Dict[str, Any]) -> Path:
     """
     Auto-pick the best schema using:
@@ -96,7 +90,7 @@ def _select_schema_by_first_compulsory(fields: Dict[str, Any]) -> Path:
 
     for p in _iter_schema_json_paths():
         try:
-            sch = _load_json(p)
+            sch = load_json(p)
         except Exception:
             continue
 

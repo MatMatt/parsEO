@@ -1,17 +1,14 @@
 # src/parseo/assembler.py
 from __future__ import annotations
 
-import json
 from pathlib import Path
 from typing import Dict, Any
 
+from ._json import load_json
+
 
 def _load_schema(schema_path: str | Path) -> Dict[str, Any]:
-    p = Path(schema_path)
-    txt = p.read_text(encoding="utf-8")
-    if txt.startswith("\ufeff"):
-        txt = txt.lstrip("\ufeff")
-    return json.loads(txt)
+    return load_json(schema_path)
 
 
 def assemble(schema_path: str | Path, fields: Dict[str, Any]) -> str:

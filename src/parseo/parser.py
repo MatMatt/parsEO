@@ -5,9 +5,9 @@ from dataclasses import dataclass
 from importlib.resources import files, as_file
 from pathlib import Path
 from typing import Dict, Iterator, Optional
-import json
 import re
 from functools import lru_cache
+from ._json import load_json
 
 # Root folder inside the package where JSON schemas live
 SCHEMAS_ROOT = "schemas"
@@ -75,8 +75,7 @@ def _find_schema_by_hints(pkg: str, product: Optional[str]) -> Optional[Path]:
 
 @lru_cache(maxsize=256)
 def _load_json_from_path(path: Path) -> Dict:
-    with open(path, "r", encoding="utf-8") as f:
-        return json.load(f)
+    return load_json(path)
 
 
 @lru_cache(maxsize=512)
