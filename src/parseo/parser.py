@@ -47,13 +47,36 @@ class _FamilyInfo:
 
 
 def _extract_tokens_from_pattern(pattern: str) -> List[str]:
+    """Extract candidate prefix tokens from the first named group in ``pattern``.
+
+    The regexes used in the schemas typically start with something like::
+
+        ^(?P<platform>S3A|S3B)_
+
+    Besides the explicit alternatives inside the named group we also want to
+    capture common delimiters immediately following the group (e.g. the ``_``
+    after ``S5P``).  This helps ``parse_auto`` match hints such as ``S5P_``
+    without requiring the caller to strip delimiters beforehand.
+    """
+
     pattern = pattern.lstrip("^")
     m = re.match(r"\(\?P<[^>]+>([^)]+)\)", pattern)
     if not m:
         return []
+
     raw = m.group(1)
+    remainder = pattern[m.end() :]
+
+    # Base tokens are the alternatives inside the first named group
     parts = [re.sub(r"\\.", "", p) for p in raw.split("|")]
-    return [p for p in parts if len(p) >= 2]
+    tokens = [p for p in parts if len(p) >= 2]
+
+    # If the named group is immediately followed by a fixed delimiter, include
+    # variants with that delimiter appended (e.g. ``S5P_``)
+    if remainder.startswith("_"):
+        tokens.extend(f"{p}_" for p in list(tokens))
+
+    return tokens
 
 
 @lru_cache(maxsize=1)
