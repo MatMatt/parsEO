@@ -72,7 +72,8 @@ from parseo import assemble
 
 fields = {
     "platform": "S2B",
-    "processing_level": "MSIL2A",
+    "sensor": "MSI",
+    "processing_level": "L2A",
     "datetime": "20241123T224759",
     "version": "N0511",
     "sat_relative_orbit": "R101",
@@ -150,7 +151,7 @@ parseo list-schemas
 
 # Example: Sentinel-2 SAFE (first field: platform)
 parseo assemble \
-  platform=S2B processing_level=MSIL2A datetime=20241123T224759 \
+  platform=S2B sensor=MSI processing_level=L2A datetime=20241123T224759 \
   version=N0511 sat_relative_orbit=R101 mgrs_tile=T03VUL \
   generation_datetime=20241123T230829 extension=.SAFE
 # -> S2B_MSIL2A_20241123T224759_N0511_R101_T03VUL_20241123T230829.SAFE
