@@ -15,14 +15,14 @@ def test_s2_example():
     assert res.fields["relative_orbit"] == "R101"
 
 def test_s1_example():
-    name = "S1A_IW_SLC__1SDVV_20250105T053021_20250105T053048_A054321_D068F2E_ABC123.SAFE"
+    name = "S1A_IW_SLC__1SDV_20250105T053021_20250105T053048_A054321_D068F2E_ABC123.SAFE"
     res = parse_auto(name)
     assert res is not None
     assert res.fields["platform"] == "S1A"
-    assert res.fields["mode"] == "IW"
-    assert res.fields["product"] == "SLC_"
-    assert res.fields["level"] == "1SD"
-    assert res.fields["pol"] == "VV"
+    assert res.fields["instrument_mode"] == "IW"
+    assert res.fields["product_type"] == "SLC_"
+    assert res.fields["processing_level"] == "1SD"
+    assert res.fields["polarization"] == "V"
 
 
 def test_s3_example():
@@ -48,7 +48,7 @@ def test_schema_paths_cached(monkeypatch):
 
     # Two parses should trigger only a single scan of index.json files
     parser.parse_auto("S2B_MSIL2A_20241123T224759_N0511_R101_T03VUL_20241123T230829.SAFE")
-    parser.parse_auto("S1A_IW_SLC__1SDVV_20250105T053021_20250105T053048_A054321_D068F2E_ABC123.SAFE")
+    parser.parse_auto("S1A_IW_SLC__1SDV_20250105T053021_20250105T053048_A054321_D068F2E_ABC123.SAFE")
 
     assert calls["n"] == 1
 
