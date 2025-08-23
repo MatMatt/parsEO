@@ -95,3 +95,7 @@ def test_cli_schema_info(capsys):
     assert data["schema_id"] == "copernicus:sentinel:s2"
     assert "platform" in data["fields"]
     assert data["fields"]["platform"]["description"] == "Spacecraft unit"
+    assert isinstance(data.get("template"), str)
+    assert isinstance(data.get("examples"), list)
+    assert data["examples"]
+    assert all(isinstance(x, str) for x in data["examples"])

@@ -159,6 +159,11 @@ parseo schema-info S2
 # -> {
 #      "schema_id": "copernicus:sentinel:s2",
 #      "description": "Sentinel-2 product filename (MSI sensor, processing levels L1C/L2A; extension optional).",
+#      "template": "{platform}_{sensor}{processing_level}_{sensing_datetime}_..._[.{extension}]",
+#      "examples": [
+#        "S2B_MSIL2A_20241123T224759_N0511_R101_T03VUL_20241123T230829.SAFE",
+#        "..."
+#      ],
 #      "fields": {
 #        "platform": {"type": "string", "enum": ["S2A", "S2B", "S2C"], "description": "Spacecraft unit"},
 #        "sensor": {"type": "string", "enum": ["MSI"], "description": "Sensor"},
