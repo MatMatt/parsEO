@@ -56,23 +56,23 @@
                                   "type":  "string",
                                   "values":  [
                                                  {
-                                                     "code":  "SLC__",
+                                                     "code":  "SLC_",
                                                      "label":  "Single Look Complex"
                                                  },
                                                  {
-                                                     "code":  "OCN__",
+                                                     "code":  "OCN_",
                                                      "label":  "Ocean"
                                                  },
                                                  {
-                                                     "code":  "GRDF_",
+                                                     "code":  "GRDF",
                                                      "label":  "GRD (F)"
                                                  },
                                                  {
-                                                     "code":  "GRDH_",
+                                                     "code":  "GRDH",
                                                      "label":  "GRD (H)"
                                                  },
                                                  {
-                                                     "code":  "GRDM_",
+                                                     "code":  "GRDM",
                                                      "label":  "GRD (M)"
                                                  }
                                              ],

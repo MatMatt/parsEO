@@ -1,0 +1,12 @@
+{
+  "schema_id": "copernicus:sentinel:s2",
+  "schema_version": "1.0.0",
+  "stac_version": "1.1.0",
+  "stac_extensions": ["processing", "sat", "raster", "eo", "mgrs"],
+  "description": "Sentinel-2 SAFE product filename (MSIL1C/MSIL2A; extension optional).",
+  "filename_pattern": "^(?P<platform>S2A|S2B|S2C)_(?P<processing_level>MSIL1C|MSIL2A)_(?P<datetime>\\d{8}T\\d{6})_(?P<version>N\\d{4})_(?P<sat_relative_orbit>R\\d{3})_(?P<mgrs_tile>T[0-9A-Z]{5})_(?P<generation_datetime>\\d{8}T\\d{6})(?P<extension>\\.SAFE)?$",
+  "examples": [
+    "S2B_MSIL2A_20241123T224759_N0511_R101_T03VUL_20241123T230829.SAFE",
+    "S2A_MSIL1C_20230715T103021_N0400_R052_T32TNS_20230715T103555"
+  ]
+}

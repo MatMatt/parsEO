@@ -1,0 +1,13 @@
+{
+  "schema_id": "copernicus:sentinel:s1",
+  "schema_version": "1.0.0",
+  "stac_version": "1.1.0",
+  "stac_extensions": ["processing", "sat", "sar"],
+  "description": "Sentinel-1 SAFE product filename; TTTR token is SLC_ or GRD(F|H|M); extension optional.",
+  "filename_pattern": "^(?P<platform>S1A|S1B|S1C)_(?P<sar_instrument_mode>IW|SM|EW|WV)_(?P<sar_product_type>SLC_|GRDF|GRDH|GRDM|OCN)_(?P<processing_level>[0-9A-Z]{3,4})_(?P<start_datetime>\\d{8}T\\d{6})_(?P<end_datetime>\\d{8}T\\d{6})_(?P<sat_absolute_orbit>A\\d{6})_(?P<mission_data_take_id>D[0-9A-F]{6})_(?P<product_id>[0-9A-Z]{6})(?P<extension>\\.SAFE)?$",
+  "examples": [
+    "S1A_IW_SLC__1SDV_20250105T053021_20250105T053048_A054321_D068F2E_ABC123.SAFE",
+    "S1B_EW_GRDH_1SSH_20190101T000000_20190101T000030_A012345_D0ABCDE_ABCDEF",
+    "S1C_SM_OCN_1SSS_20240701T101010_20240701T101111_A123456_D1A2B3C_1A2B3C.SAFE"
+  ]
+}
