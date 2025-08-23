@@ -136,4 +136,4 @@ parseo assemble \
 
 ## License
 
-EUPL-1.2 (see LICENSE file)
+This project is licensed under the [European Union Public Licence v1.2](LICENSE.txt).

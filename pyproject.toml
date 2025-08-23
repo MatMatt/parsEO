@@ -7,7 +7,7 @@ name = "parseo"
 version = "0.2.0"  # or remove this and use setuptools-scm below
 description = "Filename parser/assembler for satellite data"
 readme = "README.md"
-license = { text = "MIT" }  # or {file = "LICENSE"}
+license = { text = "EUPL-1.2" }
 requires-python = ">=3.9"
 dependencies = [
   "jsonschema>=4,<5"
@@ -17,7 +17,7 @@ keywords = ["satellite", "remote-sensing", "filenames", "sentinel", "parsing"]
 classifiers = [
   "Development Status :: 4 - Beta",
   "Intended Audience :: Science/Research",
-  "License :: OSI Approved :: MIT License",
+  "License :: OSI Approved :: European Union Public Licence 1.2 (EUPL 1.2)",
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
