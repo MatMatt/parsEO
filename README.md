@@ -27,9 +27,10 @@ It also serves as an **authoritative definition of filename structures** through
 
 Currently included schemas cover:
 
-- **Sentinel missions**: S1, S2, S3, S4, S5P, S6
+- **Sentinel missions**: S1, S2, S3, S4, S5P, S6  
+- **Landsat**: LT04, LT05, LE07, LC08, LC09  
+- **NASA MODIS**: Terra/Aqua MODIS products
 - **EUMETSAT missions**: MTG, Metop
-- **Landsat**: LT04, LT05, LE07, LC08, LC09
 - **Copernicus Land Monitoring Service (CLMS)**:
   - Corine Land Cover (CLC)  
   - High Resolution Water & Snow / Ice (HR-WSI)  
@@ -65,6 +66,16 @@ res = parse_auto(name)
 
 print(res.valid)   # True
 print(res.fields)  # structured dict of extracted fields
+```
+
+Example for a MODIS product:
+
+```python
+name = "MOD09GA.A2021123.h18v04.006.2021132234506.hdf"
+res = parse_auto(name)
+print(res.fields["platform"])  # MOD
+print(res.fields["product"])   # 09
+print(res.fields["variant"])   # GA
 ```
 
 ### Assemble a filename

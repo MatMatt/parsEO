@@ -38,6 +38,21 @@ def test_assemble_auto_wic_schema():
     result = assemble_auto(fields)
     assert result == "CLMS_WSI_WIC_020m_T33WXP_20201024T103021_S2B_V100_WIC.tif"
 
+def test_assemble_auto_modis_schema():
+    fields = {
+        "platform": "MOD",
+        "product": "09",
+        "variant": "GA",
+        "acq_date": "A2021123",
+        "tile": "h18v04",
+        "collection": "006",
+        "proc_date": "2021132234506",
+        "extension": "hdf",
+    }
+    result = assemble_auto(fields)
+    assert result == "MOD09GA.A2021123.h18v04.006.2021132234506.hdf"
+
+    
 def test_assemble_clms_fapar_schema():
     schema = (
         Path(__file__).resolve().parents[1]
