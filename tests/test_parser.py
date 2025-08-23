@@ -8,7 +8,8 @@ def test_s2_example():
     res = parse_auto(name)
     assert res is not None
     assert res.fields["platform"] == "S2B"
-    assert res.fields["processing_level"] == "MSIL2A"
+    assert res.fields["sensor"] == "MSI"
+    assert res.fields["processing_level"] == "L2A"
     assert res.fields["sensing_datetime"] == "20241123T224759"
     assert res.fields["processing_baseline"] == "N0511"
     assert res.fields["relative_orbit"] == "R101"
