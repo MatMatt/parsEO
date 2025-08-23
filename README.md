@@ -86,6 +86,81 @@ print(filename)
 # -> S2B_MSIL2A_20241123T224759_N0511_R101_T03VUL_20241123T230829.SAFE
 ```
 
+### Run as a web API
+
+parsEO can be wrapped by a small [FastAPI](https://fastapi.tiangolo.com) service to expose its
+parsing and assembling functions over HTTP. The steps below start a local API that provides
+`/parse` and `/assemble` endpoints.
+
+1. **Install the dependencies**:
+
+   ```bash
+   pip install parseo fastapi uvicorn
+   ```
+
+2. **Create `main.py`** with the following content:
+
+   ```python
+   from dataclasses import asdict
+
+   from fastapi import FastAPI
+   from pydantic import BaseModel
+
+   from parseo import assemble, parse_auto
+
+
+   app = FastAPI()
+
+
+   @app.get("/parse")
+   def parse_endpoint(name: str):
+       res = parse_auto(name)
+       return asdict(res)
+
+
+   class AssemblePayload(BaseModel):
+       schema: str
+       fields: dict
+
+
+   @app.post("/assemble")
+   def assemble_endpoint(payload: AssemblePayload):
+       filename = assemble(payload.schema, payload.fields)
+       return {"filename": filename}
+   ```
+
+3. **Start the server**:
+
+   ```bash
+   uvicorn main:app --reload
+   ```
+
+4. **Test the API** at <http://127.0.0.1:8000/docs> using the Swagger UI:
+
+   - `GET /parse` – click *Try it out*, enter a filename such as
+     `S2B_MSIL2A_20241123T224759_N0511_R101_T03VUL_20241123T230829.SAFE`, then
+     *Execute* to view the parsed fields.
+   - `POST /assemble` – click *Try it out* and paste the JSON body below, then
+     *Execute* to receive the assembled filename.
+
+     ```json
+     {
+       "schema": "sentinel/s2/s2_filename_v1_0_0.json",
+       "fields": {
+         "platform": "S2B",
+         "processing_level": "MSIL2A",
+         "datetime": "20241123T224759",
+         "version": "N0511",
+         "sat_relative_orbit": "R101",
+         "mgrs_tile": "T03VUL",
+         "generation_datetime": "20241123T230829",
+         "extension": ".SAFE"
+       }
+     }
+     ```
+
+These endpoints can also be called from the command line with `curl` if preferred.
+
 ---
 
 ## Command Line Interface
