@@ -4,7 +4,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from importlib.resources import files, as_file
 from pathlib import Path
-from typing import Dict, Iterator, Optional
+from typing import Dict, Iterator, List, Optional, Tuple
 import json
 import re
 from functools import lru_cache
@@ -40,23 +40,62 @@ def _iter_schema_paths(pkg: str) -> Iterator[Path]:
         yield from (p for p in base.rglob("*.json") if p.is_file())
 
 
+@dataclass(frozen=True)
+class _FamilyInfo:
+    tokens: Tuple[str, ...]
+    schema_path: Path
+
+
+def _extract_tokens_from_pattern(pattern: str) -> List[str]:
+    pattern = pattern.lstrip("^")
+    m = re.match(r"\(\?P<[^>]+>([^)]+)\)", pattern)
+    if not m:
+        return []
+    raw = m.group(1)
+    parts = [re.sub(r"\\.", "", p) for p in raw.split("|")]
+    return [p for p in parts if len(p) >= 2]
+
+
+@lru_cache(maxsize=1)
+def _gather_family_info(pkg: str) -> Dict[str, _FamilyInfo]:
+    root = files(pkg).joinpath(SCHEMAS_ROOT)
+    with as_file(root) as root_path:
+        base = Path(root_path)
+        if not base.exists():
+            return {}
+        info: Dict[str, _FamilyInfo] = {}
+        for idx_path in base.rglob("index.json"):
+            idx = _load_json_from_path(idx_path)
+            family = idx.get("family")
+            versions = idx.get("versions", [])
+            if not family or not versions:
+                continue
+            entry = next((v for v in versions if v.get("status") == "current"), versions[0])
+            file = entry.get("file")
+            if not file:
+                continue
+            schema_path = idx_path.parent / file
+            try:
+                schema = _load_json_from_path(schema_path)
+            except Exception:
+                continue
+            patt = schema.get("filename_pattern")
+            if not isinstance(patt, str):
+                xparseo = schema.get("x-parseo", {})
+                if isinstance(xparseo, dict):
+                    patt = xparseo.get("parse_regex")
+            tokens = _extract_tokens_from_pattern(patt) if isinstance(patt, str) else []
+            if family not in tokens:
+                tokens.append(family)
+            info[family] = _FamilyInfo(tokens=tuple(t.upper() for t in tokens), schema_path=schema_path)
+        return info
+
+
 def _find_schema_by_hints(pkg: str, product: Optional[str]) -> Optional[Path]:
-    """
-    Prefer a schema whose filename hints at the requested family (S1/S2/LANDSAT),
-    but still search recursively.
-    """
     if not product:
         return None
-    tokens = {
-        "S1": ("sentinel1", "s1_"),
-        "S2": ("sentinel2", "s2_"),
-        "LANDSAT": ("landsat",),
-    }.get(product, tuple())
-    for p in _iter_schema_paths(pkg):
-        name = p.name.lower()
-        if any(tok in name for tok in tokens):
-            return p
-    return None
+    info = _gather_family_info(pkg).get(product)
+    return info.schema_path if info else None
 
 
 # ---------------------------
@@ -107,19 +146,19 @@ def parse_auto(name: str) -> ParseResult:
     """
     pkg = __package__  # e.g., "parseo"
 
-    # Quick family hint
+    info = _gather_family_info(pkg)
+    token_map: Dict[str, str] = {
+        tok: fam for fam, fi in info.items() for tok in fi.tokens
+    }
     u = name.upper()
-    if u.startswith(("S1", "SENTINEL-1")):
-        product_hint = "S1"
-    elif u.startswith(("S2", "SENTINEL-2")):
-        product_hint = "S2"
-    elif u.startswith("LANDSAT"):
-        product_hint = "LANDSAT"
-    else:
-        product_hint = None
+    product_hint = None
+    for tok in sorted(token_map, key=len, reverse=True):
+        if u.startswith(tok):
+            product_hint = token_map[tok]
+            break
 
     # Try hinted schema first (if any)
-    hinted = _find_schema_by_hints(pkg, product=product_hint)
+    hinted = _find_schema_by_hints(pkg, product_hint)
     if hinted and hinted.exists():
         try:
             schema = _load_json_from_path(hinted)
