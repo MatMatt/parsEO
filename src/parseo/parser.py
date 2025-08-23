@@ -4,7 +4,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from importlib.resources import files, as_file
 from pathlib import Path
-from typing import Dict, Iterator, Optional
+from typing import Any, Dict, Iterator, Optional
 import re
 from functools import lru_cache
 from ._json import load_json
@@ -180,6 +180,39 @@ def _try_validate(name: str, schema: Dict) -> bool:
 # ---------------------------
 # Public API
 # ---------------------------
+
+
+def list_schemas(pkg: str = __package__) -> list[str]:
+    """Return a list of available mission family names."""
+
+    info = _discover_family_info(pkg)
+    return sorted(info.keys())
+
+
+def describe_schema(family: str, pkg: str = __package__) -> dict[str, Any]:
+    """Return schema metadata and field descriptions for ``family``."""
+
+    info = _discover_family_info(pkg)
+    meta = info.get(family.upper())
+    if meta is None:
+        raise KeyError(f"Unknown family: {family}")
+
+    schema = _load_json_from_path(meta.schema_path)
+    fields: Dict[str, Dict[str, Any]] = {}
+    for name, spec in schema.get("fields", {}).items():
+        if isinstance(spec, dict):
+            fields[name] = {
+                k: spec[k]
+                for k in ("type", "enum", "pattern", "description")
+                if k in spec
+            }
+
+    return {
+        "schema_id": schema.get("schema_id"),
+        "description": schema.get("description"),
+        "fields": fields,
+    }
+
 
 def parse_auto(name: str) -> ParseResult:
     """

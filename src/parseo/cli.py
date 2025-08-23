@@ -8,7 +8,7 @@ from importlib.resources import as_file, files
 from pathlib import Path
 from typing import Any, Dict, List
 
-from parseo.parser import parse_auto  # existing parser entrypoint
+from parseo.parser import parse_auto, describe_schema  # parser helpers
 
 SCHEMAS_ROOT = "schemas"
 
@@ -25,6 +25,10 @@ def _build_arg_parser() -> argparse.ArgumentParser:
 
     # list-schemas
     sp.add_parser("list-schemas", help="List packaged schema JSON files")
+
+    # schema-info
+    p_info = sp.add_parser("schema-info", help="Show details for a mission family")
+    p_info.add_argument("family", help="Mission family name, e.g. 'S2'")
 
     # assemble
     p_asm = sp.add_parser(
@@ -141,6 +145,14 @@ def main(argv: List[str] | None = None) -> int:
             root = Path(bp)
             for p in root.rglob("*.json"):
                 print(p.relative_to(root))
+        return 0
+
+    if args.cmd == "schema-info":
+        try:
+            info = describe_schema(args.family)
+        except KeyError as e:
+            raise SystemExit(str(e))
+        print(json.dumps(info, indent=2, ensure_ascii=False))
         return 0
 
     if args.cmd == "assemble":
