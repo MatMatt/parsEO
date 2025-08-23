@@ -4,12 +4,22 @@
   "fields": {
     "platform": {
       "type": "string",
-      "enum": ["MTG-I1", "MTG-I2", "MTG-S1", "MTG-S2"],
+      "enum": [
+        "MTG-I1",
+        "MTG-I2",
+        "MTG-S1",
+        "MTG-S2"
+      ],
       "description": "Spacecraft unit"
     },
     "instrument": {
       "type": "string",
-      "enum": ["FCI", "LI", "IRS", "UVN"],
+      "enum": [
+        "FCI",
+        "LI",
+        "IRS",
+        "UVN"
+      ],
       "description": "Instrument short name"
     },
     "product_type": {
@@ -19,7 +29,10 @@
     },
     "processing_level": {
       "type": "string",
-      "enum": ["L1", "L2"],
+      "enum": [
+        "L1",
+        "L2"
+      ],
       "description": "Processing level"
     },
     "start_datetime": {
@@ -39,7 +52,9 @@
     },
     "extension": {
       "type": "string",
-      "enum": ["nc"],
+      "enum": [
+        "nc"
+      ],
       "description": "File extension without leading dot"
     }
   },

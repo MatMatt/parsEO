@@ -4,17 +4,28 @@
   "fields": {
     "platform": {
       "type": "string",
-      "enum": ["M01", "M02", "M03"],
+      "enum": [
+        "M01",
+        "M02",
+        "M03"
+      ],
       "description": "Spacecraft unit"
     },
     "instrument": {
       "type": "string",
-      "enum": ["AVHR", "IASI", "ASCAT"],
+      "enum": [
+        "AVHR",
+        "IASI",
+        "ASCAT"
+      ],
       "description": "Instrument short name"
     },
     "processing_level": {
       "type": "string",
-      "enum": ["L1B", "L2"],
+      "enum": [
+        "L1B",
+        "L2"
+      ],
       "description": "Processing level"
     },
     "start_datetime": {
@@ -44,7 +55,9 @@
     },
     "extension": {
       "type": "string",
-      "enum": ["nc"],
+      "enum": [
+        "nc"
+      ],
       "description": "File extension without leading dot"
     }
   },

@@ -27,8 +27,9 @@ It also serves as an **authoritative definition of filename structures** through
 
 Currently included schemas cover:
 
-- **Sentinel missions**: S1, S2, S3, S4, S5P, S6  
-- **Landsat**: LT04, LT05, LE07, LC08, LC09  
+- **Sentinel missions**: S1, S2, S3, S4, S5P, S6
+- **EUMETSAT missions**: MTG, Metop
+- **Landsat**: LT04, LT05, LE07, LC08, LC09
 - **Copernicus Land Monitoring Service (CLMS)**:
   - Corine Land Cover (CLC)  
   - High Resolution Water & Snow / Ice (HR-WSI)  
