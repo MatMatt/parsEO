@@ -4,7 +4,16 @@
   "stac_version": "1.1.0",
   "stac_extensions": ["processing", "sat", "raster", "eo"],
   "description": "Sentinel-3 product filename (OLCI/SLSTR/SRAL; optional relative orbit, segment, extension).",
-  "filename_pattern": "^(?P<platform>S3A|S3B|S3C)_(?P<instrument>OLCI|SLSTR|SRAL)_(?P<processing_level>L0|L1|L2)_(?P<sensing_datetime>\\d{8}T\\d{6})(?:_(?P<relative_orbit>\\d{3}))?(?:_(?P<segment>[A-Z0-9_\\-]{1,10}))?(?P<extension>\\.[A-Za-z0-9]+)?$",
+  "fields": {
+    "platform": {"type": "string", "enum": ["S3A", "S3B", "S3C"]},
+    "instrument": {"type": "string", "enum": ["OLCI", "SLSTR", "SRAL"]},
+    "processing_level": {"type": "string", "enum": ["L0", "L1", "L2"]},
+    "sensing_datetime": {"type": "string", "pattern": "^\\d{8}T\\d{6}$"},
+    "relative_orbit": {"type": "string", "pattern": "^\\d{3}$"},
+    "segment": {"type": "string", "pattern": "^[A-Z0-9_\\-]{1,10}$"},
+    "extension": {"type": "string", "pattern": "^[A-Za-z0-9]+$", "description": "File extension without leading dot"}
+  },
+  "template": "{platform}_{instrument}_{processing_level}_{sensing_datetime}[_{relative_orbit}][_{segment}][.{extension}]",
   "examples": [
     "S3A_OLCI_L2_20250105T103021_080_SEG01.tif",
     "S3B_SRAL_L1_20230715T103021_123.nc"

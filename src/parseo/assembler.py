@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Any, Dict
 
 from ._json import load_json
+from .template import compile_template
 
 
 SCHEMAS_ROOT = "schemas"
@@ -18,7 +19,8 @@ def _load_schema(schema_path: str | Path) -> Dict[str, Any]:
 def assemble(schema_path: str | Path, fields: Dict[str, Any]) -> str:
     """
     Assemble a filename using a JSON schema:
-      - schema['fields_order'] defines the order of fields
+      - Order of placeholders is derived from ``fields_order`` or from the
+        schema's ``template`` if the former is absent.
       - Optional schema['joiner'] defines how parts are joined (default '_')
       - If a field is missing in 'fields', raise a clear error
       - If the last field is literally named 'extension' and looks like '.ext',
@@ -26,7 +28,10 @@ def assemble(schema_path: str | Path, fields: Dict[str, Any]) -> str:
     """
     sch = _load_schema(schema_path)
     order = sch.get("fields_order")
-    if not order or not isinstance(order, list):
+    if (not order or not isinstance(order, list)) and isinstance(sch.get("template"), str):
+        _, order = compile_template(sch["template"], sch.get("fields", {}))
+        sch["fields_order"] = order
+    if not order:
         raise ValueError(f"Schema {schema_path} missing 'fields_order' list.")
 
     joiner = sch.get("joiner", "_")
@@ -73,6 +78,9 @@ def _select_schema_by_first_compulsory(fields: Dict[str, Any]) -> Path:
             continue
 
         order = sch.get("fields_order") or []
+        if not order and isinstance(sch.get("template"), str):
+            _, order = compile_template(sch["template"], sch.get("fields", {}))
+            sch["fields_order"] = order
         if not order:
             continue
 

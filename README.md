@@ -188,11 +188,13 @@ Adding support for a new product requires only a JSON schema placed under
      listed there is optional.
 
 4. **Describe the filename structure**
-   - The `"filename_pattern"` regex stitches the fields together using
-     named groups: `(?P<name>{{name}})`.
-   - Field order is defined intrinsically by the order of these groups.
-   - Optional segments are wrapped in non‑capturing groups with `?` so their
-     preceding separators vanish when absent.
+   - Provide a `"template"` string that arranges fields using `{field}`
+     placeholders. Optional parts can be wrapped in square brackets, e.g.,
+     `[.{extension}]`.
+   - At runtime the template is compiled into a regex by replacing each
+     placeholder with the field's pattern or enum values.
+   - Placeholder order in the template defines `fields_order` for
+     filename assembly.
 
 5. **Provide examples**
    - Include an `"examples"` array showing valid filenames with and without
