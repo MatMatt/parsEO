@@ -2,14 +2,15 @@
     "$schema":  "https://json-schema.org/draft/2020-12/schema",
     "title":  "Sentinel-6 Fields",
     "$defs":  {
-                  "satellite":  {
+                 "satellite":  {
                                     "type":  "string",
                                     "values":  [
                                                    {
                                                        "code":  "S6",
                                                        "label":  "Sentinel-6 mission"
                                                    }
-                                               ]
+                                               ],
+                                    "description":  "Mission family"
                                 },
                   "platform":  {
                                    "type":  "string",
@@ -22,7 +23,8 @@
                                                       "code":  "B",
                                                       "label":  "Unit B"
                                                   }
-                                              ]
+                                              ],
+                                   "description":  "Spacecraft unit"
                                },
                   "instrument":  {
                                      "type":  "string",
@@ -31,37 +33,46 @@
                                                         "code":  "P4",
                                                         "label":  "Poseidon-4 Radar Altimeter"
                                                     }
-                                                ]
+                                                ],
+                                     "description":  "Instrument identifier"
                                  },
                   "sampling_rate":  {
                                         "type":  "string",
                                         "values":  [
                                                        {
-                                                           "code":  "1Hz"
+                                                           "code":  "1Hz",
+                                                           "label":  "1 Hz"
                                                        },
                                                        {
-                                                           "code":  "2Hz"
+                                                           "code":  "2Hz",
+                                                           "label":  "2 Hz"
                                                        },
                                                        {
-                                                           "code":  "20Hz"
+                                                           "code":  "20Hz",
+                                                           "label":  "20 Hz"
                                                        }
-                                                   ]
+                                                   ],
+                                        "description":  "Sampling rate"
                                     },
                   "mode":  {
                                "type":  "string",
-                               "pattern":  "^[A-Z]$"
+                               "pattern":  "^[A-Z]$",
+                               "description":  "Measurement mode indicator"
                            },
                   "datetime_compact":  {
                                            "type":  "string",
-                                           "pattern":  "^\\d{8}T\\d{6}$"
+                                           "pattern":  "^\\d{8}T\\d{6}$",
+                                           "description":  "UTC datetime (YYYYMMDDTHHMMSS)"
                                        },
                   "segment":  {
                                   "type":  "string",
-                                  "pattern":  "^\\d{4}$"
+                                  "pattern":  "^\\d{4}$",
+                                  "description":  "Segment number"
                               },
                   "extension":  {
                                     "type":  "string",
-                                    "pattern":  "^[A-Za-z0-9]+$"
+                                    "pattern":  "^[A-Za-z0-9]+$",
+                                    "description":  "File extension without leading dot"
                                 }
               }
 }
