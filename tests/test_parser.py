@@ -34,3 +34,21 @@ def test_schema_paths_cached(monkeypatch):
     parser.parse_auto("S1A_IW_SLC__1SDV_20250105T053021_20250105T053048_A054321_D068F2E_ABC123.SAFE")
 
     assert calls["n"] == 1
+
+
+def test_parse_bom_schema(tmp_path, monkeypatch):
+    import json
+
+    schema = {"filename_pattern": r"^(?P<id>ABC)\.SAFE$"}
+    bom_path = tmp_path / "bom_schema.json"
+    bom_path.write_text("\ufeff" + json.dumps(schema), encoding="utf-8")
+
+    def fake_iter(pkg: str):
+        yield bom_path
+
+    monkeypatch.setattr(parser, "_iter_schema_paths", fake_iter)
+    parser._get_schema_paths.cache_clear()
+
+    res = parse_auto("ABC.SAFE")
+    assert res.valid
+    assert res.fields["id"] == "ABC"
