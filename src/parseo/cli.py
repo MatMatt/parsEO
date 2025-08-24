@@ -100,6 +100,8 @@ def _kv_pairs_to_dict(pairs: List[str]) -> Dict[str, str]:
         v = v.strip()
         if not k:
             raise SystemExit(f"Invalid field '{p}': empty key.")
+        if k in out:
+            raise SystemExit(f"Duplicate field '{k}'.")
         out[k] = v
     return out
 

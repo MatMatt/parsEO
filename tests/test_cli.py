@@ -201,3 +201,25 @@ def test_cli_list_stac_collections_deep(monkeypatch, capsys):
     out = capsys.readouterr().out.splitlines()
     assert out == ["X"]
     assert called == {"base_url": "http://example", "deep": True}
+
+
+def test_kv_pairs_to_dict_duplicate_key():
+    with pytest.raises(SystemExit) as exc:
+        cli._kv_pairs_to_dict(["a=1", "a=2"])
+    assert "Duplicate field 'a'" in str(exc.value)
+
+
+def test_cli_assemble_duplicate_key(monkeypatch):
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "parseo",
+            "assemble",
+            "prefix=CLMS_WSI",
+            "prefix=OTHER",
+        ],
+    )
+    with pytest.raises(SystemExit) as exc:
+        cli.main()
+    assert "Duplicate field 'prefix'" in str(exc.value)
