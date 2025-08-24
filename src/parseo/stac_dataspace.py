@@ -12,6 +12,7 @@ import urllib.error
 import urllib.request
 import json
 import itertools
+import re
 
 CDSE_STAC_URL = "https://catalogue.dataspace.copernicus.eu/stac/"
 
@@ -69,10 +70,23 @@ def iter_asset_filenames(
         raise SystemExit(f"HTTP error {err.code} for {err.geturl()}") from err
     for feat in data.get("features", []):
         assets = feat.get("assets", {})
+        props = feat.get("properties", {})
         for asset in assets.values():
             href = asset.get("href")
             if not href:
                 continue
+            if "$" in href:
+                placeholders = re.findall(r"\$[A-Za-z0-9_]+", href)
+                unresolved = False
+                for ph in placeholders:
+                    key = ph[1:]
+                    if key in props and props[key] is not None:
+                        href = href.replace(ph, str(props[key]))
+                    else:
+                        unresolved = True
+                        break
+                if unresolved:
+                    continue
             yield href.rstrip("/").split("/")[-1]
 
 

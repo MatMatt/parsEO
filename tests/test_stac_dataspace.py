@@ -33,6 +33,26 @@ def test_iter_asset_filenames_custom_base_url(monkeypatch):
     assert out == ["file1.tif"]
 
 
+def test_iter_asset_filenames_resolves_templates(monkeypatch):
+    def fake_read_json(url):
+        return {
+            "features": [
+                {
+                    "properties": {"name": "F", "suffix": "tif"},
+                    "assets": {
+                        "templated": {"href": "http://files/$name.$suffix"},
+                        "missing": {"href": "http://files/$missing.$suffix"},
+                        "plain": {"href": "http://files/plain.tif"},
+                    },
+                }
+            ]
+        }
+
+    monkeypatch.setattr(sd, "_read_json", fake_read_json)
+    out = list(sd.iter_asset_filenames("C1", base_url="http://y"))
+    assert out == ["F.tif", "plain.tif"]
+
+
 def test_sample_collection_filenames_custom_base_url(monkeypatch):
     called = {}
 
