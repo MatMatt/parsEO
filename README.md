@@ -168,6 +168,28 @@ STAC API:
 
 ```bash
 parseo list-stac-collections --stac-url https://catalogue.dataspace.copernicus.eu/stac
+SUOMI-NPP
+LANDSAT-7
+COP-DEM
+AQUA
+LANDSAT-5
+S2GLC
+TERRAAQUA
+LANDSAT-9
+SMOS
+LANDSAT-8
+GLOBAL-MOSAICS
+SENTINEL-5P
+SENTINEL-1-RTC
+CCM
+ENVISAT
+LANDSAT-8-ESA
+SENTINEL-1
+SENTINEL-2
+CLMS
+SENTINEL-3
+SENTINEL-6
+TERRA
 ```
 
 Each collection ID is printed on its own line.
@@ -179,7 +201,7 @@ collection. The STAC API root must always be provided via ``--stac-url``
 (with or without a trailing slash):
 
 ```bash
-parseo stac-sample SENTINEL2_L2A --samples 3 --stac-url https://catalogue.dataspace.copernicus.eu/stac
+parseo stac-sample SENTINEL-2 --samples 3 --stac-url https://catalogue.dataspace.copernicus.eu/stac
 ```
 
 Known collection aliases are automatically mapped to their official STAC IDs:
