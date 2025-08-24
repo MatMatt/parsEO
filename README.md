@@ -164,10 +164,12 @@ browser to verify your API.
 ### List STAC collections
 
 Use the ``list-stac-collections`` subcommand to list collection IDs exposed by a
-STAC API:
+STAC API. The STAC root URL must be supplied via ``--stac-url``:
 
 ```bash
 parseo list-stac-collections --stac-url https://catalogue.dataspace.copernicus.eu/stac
+```
+```
 SUOMI-NPP
 LANDSAT-7
 COP-DEM
@@ -202,13 +204,17 @@ collection. The STAC API root must always be provided via ``--stac-url``
 
 ```bash
 parseo stac-sample SENTINEL-2 --samples 3 --stac-url https://catalogue.dataspace.copernicus.eu/stac
+SENTINEL-2:
+  S2A_MSIL2A_20200105T000000_N0209_R000_T00ABC_20200105T000000.SAFE
+  S2B_MSIL2A_20200106T000000_N0209_R000_T00DEF_20200106T000000.SAFE
+  S2B_MSIL2A_20200107T000000_N0209_R000_T00GHI_20200107T000000.SAFE
 ```
 
 Known collection aliases are automatically mapped to their official STAC IDs:
 
 | Alias | STAC ID |
 |-------|---------|
-| `SENTINEL2_L2A` | `sentinel-2-l2a` |
+| `SENTINEL2_L2A` | `sentinel-2` |
 
 A different STAC service can be targeted by supplying its URL:
 
