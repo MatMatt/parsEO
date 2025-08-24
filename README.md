@@ -161,6 +161,17 @@ uvicorn main:app --reload
 The interactive page lets you call `/parse` and `/assemble` directly from the
 browser to verify your API.
 
+ ### List STAC collections
+
+Use the ``list-stac-collections`` subcommand to list collection IDs exposed by a
+STAC API:
+
+```bash
+parseo list-stac-collections --stac-url https://catalogue.dataspace.copernicus.eu/stac
+```
+
+Each collection ID is printed on its own line.
+
 ### Sample filenames from a STAC collection
 
 The ``stac-sample`` subcommand prints a few asset filenames from a STAC
