@@ -98,6 +98,45 @@ def test_iter_asset_filenames_resolves_templates(monkeypatch):
     assert out == ["F.tif", "plain.tif"]
 
 
+def test_iter_asset_filenames_uses_title(monkeypatch):
+    def fake_read_json(url):
+        return {
+            "features": [
+                {
+                    "assets": {
+                        "a": {
+                            "title": "from-title.tif",
+                            "href": "http://files/Products('from-href')/$value",
+                        }
+                    }
+                }
+            ]
+        }
+
+    monkeypatch.setattr(sd, "_read_json", fake_read_json)
+    out = list(sd.iter_asset_filenames("C1", base_url="http://y"))
+    assert out == ["from-title.tif"]
+
+
+def test_iter_asset_filenames_odata_href(monkeypatch):
+    def fake_read_json(url):
+        return {
+            "features": [
+                {
+                    "assets": {
+                        "a": {
+                            "href": "http://host/odata/v1/Products('NAME')/$value"
+                        }
+                    }
+                }
+            ]
+        }
+
+    monkeypatch.setattr(sd, "_read_json", fake_read_json)
+    out = list(sd.iter_asset_filenames("C1", base_url="http://y"))
+    assert out == ["NAME"]
+
+
 def test_sample_collection_filenames_custom_base_url(monkeypatch):
     called = {}
 
