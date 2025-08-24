@@ -25,8 +25,13 @@ CDSE_STAC_URL = "https://catalogue.dataspace.copernicus.eu/stac/"
 
 # Mapping of common collection aliases to their official STAC IDs.
 # Keys are case-insensitive aliases as they might appear in user commands.
+# Accepted formats include variants such as "SENTINEL2_L1C",
+# "SENTINEL-2-L1C", or "S2_L2A".
 STAC_ID_ALIASES: dict[str, str] = {
     "SENTINEL2_L2A": "sentinel-2-l2a",
+    "S2_L2A": "sentinel-2-l2a",
+    "SENTINEL2_L1C": "sentinel-2-l1c",
+    "SENTINEL-2-L1C": "sentinel-2-l1c",
 }
 
 

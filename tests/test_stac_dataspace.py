@@ -3,6 +3,19 @@ import urllib.error
 import parseo.stac_dataspace as sd
 
 
+@pytest.mark.parametrize(
+    "alias, expected",
+    [
+        ("SENTINEL2_L2A", "sentinel-2-l2a"),
+        ("S2_L2A", "sentinel-2-l2a"),
+        ("SENTINEL2_L1C", "sentinel-2-l1c"),
+        ("SENTINEL-2-L1C", "sentinel-2-l1c"),
+    ],
+)
+def test_norm_collection_id_aliases(alias, expected):
+    assert sd._norm_collection_id(alias) == expected
+
+
 def test_list_collections_custom_base_url(monkeypatch):
     urls = []
 
