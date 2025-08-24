@@ -124,7 +124,7 @@ def test_search_stac_and_download_http_error(monkeypatch, tmp_path):
     fake_requests = types.SimpleNamespace(get=fake_get, HTTPError=HTTPError)
     monkeypatch.setitem(sys.modules, "requests", fake_requests)
 
-    with pytest.raises(SystemExit):
+    with pytest.raises(FileNotFoundError):
         ss.search_stac_and_download(
             stac_url="http://base",
             collections=["C"],

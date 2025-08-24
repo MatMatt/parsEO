@@ -64,6 +64,12 @@ def search_stac_and_download(
     The search is performed via :mod:`pystac-client` and the asset is retrieved
     with :mod:`requests`. ``dest_dir`` is created if needed and the path to the
     downloaded file is returned.
+
+    Raises
+    ------
+    FileNotFoundError
+        If the STAC search yields no downloadable assets or all downloads
+        fail.
     """
 
     try:
@@ -101,4 +107,4 @@ def search_stac_and_download(
                 return dest_path
             except requests.HTTPError:
                 continue
-    raise SystemExit("No matching assets found")
+    raise FileNotFoundError("No matching assets found")
