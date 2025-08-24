@@ -80,7 +80,7 @@ def search_stac_and_download(
 
     client = Client.open(stac_url)
     search = client.search(collections=collections, bbox=bbox, datetime=datetime)
-    for item in search.get_items():
+    for item in search.items():
         for asset in item.assets.values():
             href = getattr(asset, "href", None)
             if not href:
@@ -91,11 +91,14 @@ def search_stac_and_download(
             dest_dir_path = Path(dest_dir)
             dest_dir_path.mkdir(parents=True, exist_ok=True)
             dest_path = dest_dir_path / name
-            with requests.get(href, stream=True) as resp:
-                resp.raise_for_status()
-                with open(dest_path, "wb") as fh:
-                    for chunk in resp.iter_content(chunk_size=8192):
-                        if chunk:
-                            fh.write(chunk)
-            return dest_path
+            try:
+                with requests.get(href, stream=True) as resp:
+                    resp.raise_for_status()
+                    with open(dest_path, "wb") as fh:
+                        for chunk in resp.iter_content(chunk_size=8192):
+                            if chunk:
+                                fh.write(chunk)
+                return dest_path
+            except requests.HTTPError:
+                continue
     raise SystemExit("No matching assets found")
