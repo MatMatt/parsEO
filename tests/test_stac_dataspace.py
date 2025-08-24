@@ -181,6 +181,24 @@ def test_iter_asset_filenames_generic_title_uses_href(monkeypatch):
     assert out == ["NAME"]
 
 
+def test_iter_asset_filenames_skips_value_href(monkeypatch):
+    def fake_read_json(url):
+        return {
+            "features": [
+                {
+                    "assets": {
+                        "skip": {"href": "http://host/path/$value"},
+                        "keep": {"href": "http://host/path/file.tif"},
+                    }
+                }
+            ]
+        }
+
+    monkeypatch.setattr(sd, "_read_json", fake_read_json)
+    out = list(sd.iter_asset_filenames("C1", base_url="http://y"))
+    assert out == ["file.tif"]
+
+
 def test_sample_collection_filenames_custom_base_url(monkeypatch):
     called = {}
 

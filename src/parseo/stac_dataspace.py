@@ -168,6 +168,8 @@ def iter_asset_filenames(
                             filename += ".dat"
                 else:
                     continue
+                if filename.startswith("$"):
+                    continue
                 yield filename
                 remaining -= 1
                 if remaining == 0:
