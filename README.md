@@ -164,16 +164,17 @@ browser to verify your API.
 ### Sample filenames from a STAC collection
 
 The ``stac-sample`` subcommand prints a few asset filenames from a STAC
-collection. The STAC API root must always be provided via ``--stac-url``:
+collection. The STAC API root must always be provided via ``--stac-url``
+(with or without a trailing slash):
 
 ```bash
-parseo stac-sample S2 --samples 3 --stac-url https://catalogue.dataspace.copernicus.eu/stac/
+parseo stac-sample SENTINEL2_L2A --samples 3 --stac-url https://catalogue.dataspace.copernicus.eu/stac
 ```
 
 A different STAC service can be targeted by supplying its URL:
 
 ```bash
-parseo stac-sample my-collection --samples 2 --stac-url https://stac.example.com/
+parseo stac-sample my-collection --samples 2 --stac-url https://stac.example.com
 ```
 
 ---

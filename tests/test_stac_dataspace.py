@@ -10,7 +10,7 @@ def test_list_collections_custom_base_url(monkeypatch):
         return {"collections": [{"id": "abc"}]}
 
     monkeypatch.setattr(sd, "_read_json", fake_read_json)
-    out = sd.list_collections(base_url="http://x/")
+    out = sd.list_collections(base_url="http://x")
     assert urls == ["http://x/collections"]
     assert out == ["abc"]
 
@@ -27,7 +27,7 @@ def test_iter_asset_filenames_custom_base_url(monkeypatch):
         }
 
     monkeypatch.setattr(sd, "_read_json", fake_read_json)
-    out = list(sd.iter_asset_filenames("C1", base_url="http://y/", limit=1))
+    out = list(sd.iter_asset_filenames("C1", base_url="http://y", limit=1))
     assert urls == ["http://y/collections/C1/items?limit=1"]
     assert out == ["file1.tif"]
 
@@ -41,8 +41,8 @@ def test_sample_collection_filenames_custom_base_url(monkeypatch):
         return iter(["f1", "f2", "f3"])
 
     monkeypatch.setattr(sd, "iter_asset_filenames", fake_iter)
-    res = sd.sample_collection_filenames("COL", 2, base_url="http://z/")
-    assert called == {"collection": "COL", "base_url": "http://z/"}
+    res = sd.sample_collection_filenames("COL", 2, base_url="http://z")
+    assert called == {"collection": "COL", "base_url": "http://z"}
     assert res == ["f1", "f2"]
 
 
