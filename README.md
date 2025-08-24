@@ -242,18 +242,16 @@ from parseo import stac_scraper
 
 stac_url = "https://catalogue.dataspace.copernicus.eu/stac"
 
-# List available collections
+# List available collections and download the first matching asset for each
 for cid in stac_scraper.list_collections(stac_url):
     print(cid)
-
-# Search the STAC and download the first matching asset
-stac_scraper.search_stac_and_download(
-    stac_url=stac_url,
-    collections=["SENTINEL-2"],
-    bbox=[13.0, 52.0, 13.5, 52.5],
-    datetime="2024-01-01/2024-01-02",
-    dest_dir="downloads",
-)
+    stac_scraper.search_stac_and_download(
+        stac_url=stac_url,
+        collections=[cid],
+        bbox=[13.0, 52.0, 13.5, 52.5],
+        datetime="2024-01-01/2024-01-02",
+        dest_dir="downloads",
+    )
 ```
 
 This functionality depends on the ``pystac-client`` and ``requests``
