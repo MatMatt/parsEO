@@ -56,33 +56,68 @@ def test_iter_asset_filenames_resolves_templates(monkeypatch):
 def test_sample_collection_filenames_custom_base_url(monkeypatch):
     called = {}
 
-    def fake_iter(collection_id, *, base_url, limit=100):
+    def fake_iter_tree(collection_id, *, base_url, limit):
         called["collection"] = collection_id
         called["base_url"] = base_url
-        return iter(["f1", "f2", "f3"])
+        called["limit"] = limit
+        yield (collection_id, "f1")
+        yield (collection_id, "f2")
+        yield (collection_id, "f3")
 
-    monkeypatch.setattr(sd, "iter_asset_filenames", fake_iter)
+    monkeypatch.setattr(sd, "iter_collection_tree", fake_iter_tree)
     res = sd.sample_collection_filenames("COL", 2, base_url="http://z")
-    assert called == {"collection": "COL", "base_url": "http://z"}
-    assert res == ["f1", "f2"]
+    assert called == {
+        "collection": "COL",
+        "base_url": "http://z",
+        "limit": 2,
+    }
+    assert res == {"COL": ["f1", "f2"]}
 
 
 def test_sample_collection_filenames_alias(monkeypatch):
     calls = []
 
-    def fake_iter(collection_id, *, base_url, limit=100):
+    def fake_iter_tree(collection_id, *, base_url, limit):
         calls.append(collection_id)
-        return iter(["a", "b"])
+        yield (collection_id, "a")
+        yield (collection_id, "b")
 
-    monkeypatch.setattr(sd, "iter_asset_filenames", fake_iter)
+    monkeypatch.setattr(sd, "iter_collection_tree", fake_iter_tree)
     alias_res = sd.sample_collection_filenames(
         "SENTINEL2_L2A", base_url="http://z"
     )
     official_res = sd.sample_collection_filenames(
         "sentinel-2-l2a", base_url="http://z"
     )
-    assert alias_res == official_res == ["a", "b"]
+    assert alias_res == official_res == {"sentinel-2-l2a": ["a", "b"]}
     assert calls == ["sentinel-2-l2a", "sentinel-2-l2a"]
+
+
+def test_sample_collection_filenames_nested(monkeypatch):
+    """Ensure nested child collections are sampled."""
+
+    collections = {
+        "ROOT": [{"rel": "child", "href": "collections/C1"}, {"rel": "child", "href": "collections/C2"}],
+        "C1": [],
+        "C2": [{"rel": "child", "href": "collections/C3"}],
+        "C3": [],
+    }
+
+    def fake_read_json(url):
+        cid = url.split("/")[-1]
+        return {"links": collections[cid]}
+
+    monkeypatch.setattr(sd, "_read_json", fake_read_json)
+
+    def fake_iter_asset(collection_id, *, base_url, limit=100):
+        return iter({
+            "C1": ["a1", "a2"],
+            "C3": ["c1", "c2"],
+        }[collection_id])
+
+    monkeypatch.setattr(sd, "iter_asset_filenames", fake_iter_asset)
+    res = sd.sample_collection_filenames("ROOT", 1, base_url="http://x")
+    assert res == {"C1": ["a1"], "C3": ["c1"]}
 
 
 def test_list_collections_requires_base_url():
