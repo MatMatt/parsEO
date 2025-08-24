@@ -128,12 +128,15 @@ def iter_asset_filenames(
             assets = feat.get("assets", {})
             for asset in assets.values():
                 title = asset.get("title")
-                if title:
+                href = asset.get("href")
+                filename = None
+                # Many assets use a generic title like "Product" which does not
+                # convey the actual filename.  In such cases prefer extracting
+                # the name from the href.  Only fall back to the title if it is
+                # present and not the generic "Product".
+                if title and title.strip().lower() != "product":
                     filename = title
-                else:
-                    href = asset.get("href")
-                    if not href:
-                        continue
+                elif href:
                     if "$" in href:
                         href_sub = Template(href).safe_substitute(props)
                         if re.search(r"\$(?!value\b)\w+", href_sub):
@@ -144,6 +147,8 @@ def iter_asset_filenames(
                         filename = m.group(1)
                     else:
                         filename = href.rstrip("/").split("/")[-1]
+                else:
+                    continue
                 yield filename
                 remaining -= 1
                 if remaining == 0:
