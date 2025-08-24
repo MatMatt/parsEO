@@ -16,6 +16,33 @@ def test_list_collections_custom_base_url(monkeypatch):
     assert out == ["abc"]
 
 
+def test_list_collections_deep(monkeypatch):
+    calls = []
+
+    responses = {
+        "http://x/collections": {"collections": [{"id": "top"}]},
+        "http://x/": {
+            "links": [
+                {"rel": "child", "href": "A"},
+                {"rel": "child", "href": "cat"},
+            ]
+        },
+        "http://x/A": {"type": "Collection", "id": "A"},
+        "http://x/cat": {"links": [{"rel": "child", "href": "B"}]},
+        "http://x/cat/B": {"type": "Collection", "id": "B"},
+    }
+
+    def fake_read_json(url):
+        calls.append(url)
+        return responses[url]
+
+    monkeypatch.setattr(sd, "_read_json", fake_read_json)
+
+    out = sd.list_collections(base_url="http://x", deep=True)
+    assert set(out) == {"top", "A", "B"}
+    assert set(calls) == set(responses)
+
+
 def test_iter_asset_filenames_custom_base_url(monkeypatch):
     urls = []
 
