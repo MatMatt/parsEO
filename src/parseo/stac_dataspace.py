@@ -55,25 +55,41 @@ def iter_asset_filenames(
     base_url: str,
     limit: int = 100,
 ) -> Iterable[str]:
-    """Yield asset filenames from items of a collection."""
+    """Yield asset filenames from items of a collection.
+
+    Pagination links (``rel="next"``) are followed until all pages are
+    exhausted or ``limit`` filenames have been yielded.
+    """
     base = _norm_base(base_url)
     url = urljoin(base, f"collections/{collection_id}/items?limit={limit}")
-    try:
-        data = _read_json(url)
-    except urllib.error.HTTPError as err:
-        if err.code == 404:
-            raise SystemExit(
-                f"Collection '{collection_id}' not found at {base}. "
-                "Use `parseo stac-sample <collection> --stac-url <url>` with a valid collection ID."
-            ) from err
-        raise SystemExit(f"HTTP error {err.code} for {err.geturl()}") from err
-    for feat in data.get("features", []):
-        assets = feat.get("assets", {})
-        for asset in assets.values():
-            href = asset.get("href")
-            if not href:
-                continue
-            yield href.rstrip("/").split("/")[-1]
+    remaining = limit
+    first_request = True
+    while url and remaining > 0:
+        try:
+            data = _read_json(url)
+        except urllib.error.HTTPError as err:
+            if first_request and err.code == 404:
+                raise SystemExit(
+                    f"Collection '{collection_id}' not found at {base}. "
+                    "Use `parseo stac-sample <collection> --stac-url <url>` with a valid collection ID."
+                ) from err
+            raise SystemExit(f"HTTP error {err.code} for {err.geturl()}") from err
+        first_request = False
+        for feat in data.get("features", []):
+            assets = feat.get("assets", {})
+            for asset in assets.values():
+                href = asset.get("href")
+                if not href:
+                    continue
+                yield href.rstrip("/").split("/")[-1]
+                remaining -= 1
+                if remaining == 0:
+                    return
+        url = None
+        for link in data.get("links", []):
+            if link.get("rel") == "next":
+                url = link.get("href")
+                break
 
 
 def sample_collection_filenames(

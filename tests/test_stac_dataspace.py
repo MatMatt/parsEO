@@ -21,16 +21,34 @@ def test_iter_asset_filenames_custom_base_url(monkeypatch):
 
     def fake_read_json(url):
         urls.append(url)
-        return {
-            "features": [
-                {"assets": {"a": {"href": "http://files/file1.tif"}}}
-            ]
-        }
+        if url == "http://y/collections/C1/items?limit=2":
+            return {
+                "features": [
+                    {"assets": {"a": {"href": "http://files/file1.tif"}}}
+                ],
+                "links": [
+                    {
+                        "rel": "next",
+                        "href": "http://y/collections/C1/items?page=2",
+                    }
+                ],
+            }
+        if url == "http://y/collections/C1/items?page=2":
+            return {
+                "features": [
+                    {"assets": {"b": {"href": "http://files/file2.tif"}}}
+                ],
+                "links": [],
+            }
+        raise AssertionError(f"Unexpected URL {url}")
 
     monkeypatch.setattr(sd, "_read_json", fake_read_json)
-    out = list(sd.iter_asset_filenames("C1", base_url="http://y", limit=1))
-    assert urls == ["http://y/collections/C1/items?limit=1"]
-    assert out == ["file1.tif"]
+    out = list(sd.iter_asset_filenames("C1", base_url="http://y", limit=2))
+    assert urls == [
+        "http://y/collections/C1/items?limit=2",
+        "http://y/collections/C1/items?page=2",
+    ]
+    assert out == ["file1.tif", "file2.tif"]
 
 
 def test_sample_collection_filenames_custom_base_url(monkeypatch):
