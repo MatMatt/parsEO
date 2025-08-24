@@ -128,7 +128,7 @@ def test_cli_stac_sample_custom_url(monkeypatch, capsys):
         calls["collection"] = collection
         calls["samples"] = samples
         calls["base_url"] = base_url
-        return ["a", "b"]
+        return {"C1": ["a"], "C2": ["b"]}
 
     monkeypatch.setattr(cli, "sample_collection_filenames", fake_sample)
     sys.argv = [
@@ -142,7 +142,7 @@ def test_cli_stac_sample_custom_url(monkeypatch, capsys):
     ]
     assert cli.main() == 0
     out = capsys.readouterr().out.splitlines()
-    assert out == ["a", "b"]
+    assert out == ["C1:", "  a", "C2:", "  b"]
     assert calls == {
         "collection": "COL",
         "samples": 2,
