@@ -7,7 +7,8 @@ functions require explicitly passing the ``base_url`` of the STAC service.
 from __future__ import annotations
 
 from collections.abc import Iterable
-from urllib.parse import urljoin
+from pathlib import Path
+from urllib.parse import urljoin, urlparse
 import urllib.error
 import urllib.request
 import json
@@ -146,7 +147,11 @@ def iter_asset_filenames(
                     if m:
                         filename = m.group(1)
                     else:
-                        filename = href.rstrip("/").split("/")[-1]
+                        parsed_url = urlparse(href)
+                        path = Path(parsed_url.path)
+                        filename = path.name
+                        if not path.suffix:
+                            filename += ".dat"
                 else:
                     continue
                 yield filename
