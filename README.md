@@ -204,6 +204,19 @@ collection. The STAC API root must always be provided via ``--stac-url``
 parseo stac-sample SENTINEL-2 --samples 3 --stac-url https://catalogue.dataspace.copernicus.eu/stac
 ```
 
+Which might output:
+
+```
+SENTINEL-2:
+  S2A_MSIL1C_20210101T101031_N0209_R122_T33UUU_20210101T121023.SAFE
+  S2B_MSIL1C_20210101T101031_N0209_R122_T33UUU_20210101T121023.SAFE
+  S2A_MSIL1C_20210102T101031_N0209_R122_T33UUU_20210102T121023.SAFE
+```
+
+Asset filenames are taken from each asset's ``title`` when available; if not,
+the filename is parsed from the ``href``.  OData-style links such as
+``Products('NAME')/$value`` are handled automatically.
+
 Known collection aliases are automatically mapped to their official STAC IDs:
 
 | Alias | STAC ID |
