@@ -154,3 +154,23 @@ def test_cli_stac_sample_requires_url(capsys):
         cli.main(["stac-sample", "COL"])
     err = capsys.readouterr().err
     assert "--stac-url" in err
+
+
+def test_cli_list_stac_collections(monkeypatch, capsys):
+    called = {}
+
+    def fake_list_collections(*, base_url):
+        called["base_url"] = base_url
+        return ["A", "B"]
+
+    monkeypatch.setattr(cli, "list_collections", fake_list_collections)
+    sys.argv = [
+        "parseo",
+        "list-stac-collections",
+        "--stac-url",
+        "http://example",
+    ]
+    assert cli.main() == 0
+    out = capsys.readouterr().out.splitlines()
+    assert out == ["A", "B"]
+    assert called == {"base_url": "http://example"}

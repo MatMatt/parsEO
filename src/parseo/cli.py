@@ -7,7 +7,7 @@ import sys
 from typing import Any, Dict, List
 
 from parseo.parser import parse_auto, describe_schema, list_schemas  # parser helpers
-from parseo.stac_dataspace import sample_collection_filenames
+from parseo.stac_dataspace import list_collections, sample_collection_filenames
 
 
 # ---------- small utilities ----------
@@ -43,6 +43,17 @@ def _build_arg_parser() -> argparse.ArgumentParser:
         "--samples", type=int, default=5, help="Number of filenames to list"
     )
     p_stac.add_argument(
+        "--stac-url",
+        required=True,
+        help="Base URL of the STAC API",
+    )
+
+    # list-stac-collections
+    p_stac_list = sp.add_parser(
+        "list-stac-collections",
+        help="List collection IDs available in a STAC API",
+    )
+    p_stac_list.add_argument(
         "--stac-url",
         required=True,
         help="Base URL of the STAC API",
@@ -177,6 +188,11 @@ def main(argv: List[str] | None = None) -> int:
             raise SystemExit(f"Failed to load CLMS catalog scraper: {exc}")
         for name in fetch_clms_products():
             print(name)
+        return 0
+
+    if args.cmd == "list-stac-collections":
+        for cid in list_collections(base_url=args.stac_url):
+            print(cid)
         return 0
 
     if args.cmd == "stac-sample":
