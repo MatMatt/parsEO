@@ -1,4 +1,8 @@
-"""Helpers for querying STAC APIs.
+"""Helpers for querying STAC APIs via the standard library.
+
+The routines in this module intentionally rely only on :mod:`urllib` from the
+Python standard library to avoid pulling in heavier dependencies.  For a
+``pystac-client`` based alternative see :mod:`parseo.stac_scraper`.
 
 The Copernicus Data Space Ecosystem STAC root URL is available as
 ``CDSE_STAC_URL`` for convenience but is not used as a default.  All helper
@@ -41,11 +45,14 @@ def _read_json(url: str) -> dict:
         return json.load(resp)
 
 
-def list_collections(base_url: str, *, deep: bool = False) -> list[str]:
-    """Return available collection IDs from the STAC API.
+def list_collections_http(base_url: str, *, deep: bool = False) -> list[str]:
+    """Return available collection IDs from the STAC API using ``urllib``.
 
-    If ``deep`` is ``True`` the function follows ``rel='child'`` links and
-    gathers collection IDs from nested catalogs as well.
+    This lightweight helper performs raw HTTP requests without requiring
+    third-party libraries.  If ``deep`` is ``True`` the function follows
+    ``rel='child'`` links and gathers collection IDs from nested catalogs as
+    well.  For a variant powered by ``pystac-client`` see
+    :func:`parseo.stac_scraper.list_collections_client`.
     """
     base = _norm_base(base_url)
 
@@ -96,6 +103,10 @@ def list_collections(base_url: str, *, deep: bool = False) -> list[str]:
                     to_visit.append(urljoin(base_cur, href))
 
     return sorted(collections)
+
+
+# Backwards compatible alias until old name is fully deprecated
+list_collections = list_collections_http
 
 
 def iter_asset_filenames(

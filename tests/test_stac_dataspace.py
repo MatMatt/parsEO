@@ -11,7 +11,7 @@ def test_list_collections_custom_base_url(monkeypatch):
         return {"collections": [{"id": "abc"}]}
 
     monkeypatch.setattr(sd, "_read_json", fake_read_json)
-    out = sd.list_collections(base_url="http://x")
+    out = sd.list_collections_http(base_url="http://x")
     assert urls == ["http://x/collections"]
     assert out == ["abc"]
 
@@ -38,7 +38,7 @@ def test_list_collections_deep(monkeypatch):
 
     monkeypatch.setattr(sd, "_read_json", fake_read_json)
 
-    out = sd.list_collections(base_url="http://x", deep=True)
+    out = sd.list_collections_http(base_url="http://x", deep=True)
     assert set(out) == {"top", "A", "B"}
     assert set(calls) == set(responses)
 
@@ -250,7 +250,7 @@ def test_sample_collection_filenames_nested(monkeypatch):
 
 def test_list_collections_requires_base_url():
     with pytest.raises(TypeError):
-        sd.list_collections()
+        sd.list_collections_http()
 
 
 def test_iter_asset_filenames_bad_collection(monkeypatch):
