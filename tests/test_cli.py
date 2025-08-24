@@ -121,7 +121,6 @@ def test_cli_schema_info(capsys):
     assert data["examples"]
     assert all(isinstance(x, str) for x in data["examples"])
 
-
 def test_cli_stac_sample_custom_url(monkeypatch, capsys):
     calls = {}
 
@@ -149,7 +148,6 @@ def test_cli_stac_sample_custom_url(monkeypatch, capsys):
         "samples": 2,
         "base_url": "http://example",
     }
-
 
 def test_cli_stac_sample_requires_url(capsys):
     with pytest.raises(SystemExit):
