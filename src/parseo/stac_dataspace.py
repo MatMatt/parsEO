@@ -8,6 +8,7 @@ from __future__ import annotations
 
 from collections.abc import Iterable
 from urllib.parse import urljoin
+import urllib.error
 import urllib.request
 import json
 import itertools
@@ -28,7 +29,11 @@ def _read_json(url: str) -> dict:
 def list_collections(base_url: str) -> list[str]:
     """Return available collection IDs from the STAC API."""
     base = _norm_base(base_url)
-    data = _read_json(urljoin(base, "collections"))
+    url = urljoin(base, "collections")
+    try:
+        data = _read_json(url)
+    except urllib.error.HTTPError as err:
+        raise SystemExit(f"HTTP error {err.code} for {err.geturl()}") from err
     return [c["id"] for c in data.get("collections", [])]
 
 
@@ -41,7 +46,15 @@ def iter_asset_filenames(
     """Yield asset filenames from items of a collection."""
     base = _norm_base(base_url)
     url = urljoin(base, f"collections/{collection_id}/items?limit={limit}")
-    data = _read_json(url)
+    try:
+        data = _read_json(url)
+    except urllib.error.HTTPError as err:
+        if err.code == 404:
+            raise SystemExit(
+                f"Collection '{collection_id}' not found at {base}. "
+                "Use `parseo stac-sample <collection> --stac-url <url>` with a valid collection ID."
+            ) from err
+        raise SystemExit(f"HTTP error {err.code} for {err.geturl()}") from err
     for feat in data.get("features", []):
         assets = feat.get("assets", {})
         for asset in assets.values():
