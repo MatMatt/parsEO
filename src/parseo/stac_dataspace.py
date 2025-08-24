@@ -123,7 +123,9 @@ def iter_asset_filenames(
 
     Pagination links (``rel="next"``) are followed until all pages are
     exhausted or ``limit`` filenames have been yielded.  When ``asset_role`` is
-    provided, only assets declaring that role are considered.
+    provided, only assets declaring that role are considered.  Resulting
+    filenames are sanitized: directory components are stripped and any
+    characters outside ``[A-Za-z0-9._-]`` are replaced with ``_``.
     """
     base = _norm_base(base_url)
     url = urljoin(base, f"collections/{collection_id}/items?limit={limit}")
@@ -174,6 +176,8 @@ def iter_asset_filenames(
                     continue
                 if filename.startswith("$"):
                     continue
+                filename = Path(filename).name
+                filename = re.sub(r"[^A-Za-z0-9._-]", "_", filename)
                 yield filename
                 remaining -= 1
                 if remaining == 0:
