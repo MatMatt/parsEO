@@ -128,7 +128,7 @@ def test_cli_stac_sample_custom_url(monkeypatch, capsys):
         calls["collection"] = collection
         calls["samples"] = samples
         calls["base_url"] = base_url
-        return ["a", "b"]
+        return {"C1": ["a"], "C2": ["b"]}
 
     monkeypatch.setattr(cli, "sample_collection_filenames", fake_sample)
     sys.argv = [
@@ -142,7 +142,7 @@ def test_cli_stac_sample_custom_url(monkeypatch, capsys):
     ]
     assert cli.main() == 0
     out = capsys.readouterr().out.splitlines()
-    assert out == ["a", "b"]
+    assert out == ["C1:", "  a", "C2:", "  b"]
     assert calls == {
         "collection": "COL",
         "samples": 2,
@@ -159,8 +159,9 @@ def test_cli_stac_sample_requires_url(capsys):
 def test_cli_list_stac_collections(monkeypatch, capsys):
     called = {}
 
-    def fake_list_collections(*, base_url):
+    def fake_list_collections(*, base_url, deep=False):
         called["base_url"] = base_url
+        called["deep"] = deep
         return ["A", "B"]
 
     monkeypatch.setattr(cli, "list_collections", fake_list_collections)
@@ -173,4 +174,26 @@ def test_cli_list_stac_collections(monkeypatch, capsys):
     assert cli.main() == 0
     out = capsys.readouterr().out.splitlines()
     assert out == ["A", "B"]
-    assert called == {"base_url": "http://example"}
+    assert called == {"base_url": "http://example", "deep": False}
+
+
+def test_cli_list_stac_collections_deep(monkeypatch, capsys):
+    called = {}
+
+    def fake_list_collections(*, base_url, deep=False):
+        called["base_url"] = base_url
+        called["deep"] = deep
+        return ["X"]
+
+    monkeypatch.setattr(cli, "list_collections", fake_list_collections)
+    sys.argv = [
+        "parseo",
+        "list-stac-collections",
+        "--stac-url",
+        "http://example",
+        "--deep",
+    ]
+    assert cli.main() == 0
+    out = capsys.readouterr().out.splitlines()
+    assert out == ["X"]
+    assert called == {"base_url": "http://example", "deep": True}

@@ -58,6 +58,11 @@ def _build_arg_parser() -> argparse.ArgumentParser:
         required=True,
         help="Base URL of the STAC API",
     )
+    p_stac_list.add_argument(
+        "--deep",
+        action="store_true",
+        help="Recursively follow child catalogs to list nested collections",
+    )
 
     # assemble
     p_asm = sp.add_parser(
@@ -191,15 +196,18 @@ def main(argv: List[str] | None = None) -> int:
         return 0
 
     if args.cmd == "list-stac-collections":
-        for cid in list_collections(base_url=args.stac_url):
+        for cid in list_collections(base_url=args.stac_url, deep=args.deep):
             print(cid)
         return 0
 
     if args.cmd == "stac-sample":
-        for fn in sample_collection_filenames(
+        samples = sample_collection_filenames(
             args.collection, args.samples, base_url=args.stac_url
-        ):
-            print(fn)
+        )
+        for cid in sorted(samples):
+            print(f"{cid}:")
+            for fn in samples[cid]:
+                print(f"  {fn}")
         return 0
 
     if args.cmd == "assemble":
