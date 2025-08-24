@@ -137,6 +137,28 @@ def test_iter_asset_filenames_odata_href(monkeypatch):
     assert out == ["NAME"]
 
 
+def test_iter_asset_filenames_strips_query_and_fragment(monkeypatch):
+    def fake_read_json(url):
+        return {
+            "features": [
+                {
+                    "assets": {
+                        "a": {
+                            "href": "http://host/path/file.tif?token=1#frag"
+                        },
+                        "b": {
+                            "href": "http://host/path/file?token=1#frag"
+                        },
+                    }
+                }
+            ]
+        }
+
+    monkeypatch.setattr(sd, "_read_json", fake_read_json)
+    out = list(sd.iter_asset_filenames("C1", base_url="http://y"))
+    assert out == ["file.tif", "file.dat"]
+
+
 def test_iter_asset_filenames_generic_title_uses_href(monkeypatch):
     """Assets with a generic title should fall back to the href."""
 
