@@ -202,20 +202,24 @@ def test_iter_asset_filenames_skips_value_href(monkeypatch):
 def test_sample_collection_filenames_custom_base_url(monkeypatch):
     called = {}
 
-    def fake_iter_tree(collection_id, *, base_url, limit):
+    def fake_iter_tree(collection_id, *, base_url, limit, asset_role=None):
         called["collection"] = collection_id
         called["base_url"] = base_url
         called["limit"] = limit
+        called["asset_role"] = asset_role
         yield (collection_id, "f1")
         yield (collection_id, "f2")
         yield (collection_id, "f3")
 
     monkeypatch.setattr(sd, "iter_collection_tree", fake_iter_tree)
-    res = sd.sample_collection_filenames("COL", 2, base_url="http://z")
+    res = sd.sample_collection_filenames(
+        "COL", 2, base_url="http://z", asset_role="data"
+    )
     assert called == {
         "collection": "COL",
         "base_url": "http://z",
         "limit": 2,
+        "asset_role": "data",
     }
     assert res == {"COL": ["f1", "f2"]}
 
@@ -223,8 +227,8 @@ def test_sample_collection_filenames_custom_base_url(monkeypatch):
 def test_sample_collection_filenames_alias(monkeypatch):
     calls = []
 
-    def fake_iter_tree(collection_id, *, base_url, limit):
-        calls.append(collection_id)
+    def fake_iter_tree(collection_id, *, base_url, limit, asset_role=None):
+        calls.append((collection_id, asset_role))
         yield (collection_id, "a")
         yield (collection_id, "b")
 
@@ -236,7 +240,7 @@ def test_sample_collection_filenames_alias(monkeypatch):
         "sentinel-2-l2a", base_url="http://z"
     )
     assert alias_res == official_res == {"sentinel-2-l2a": ["a", "b"]}
-    assert calls == ["sentinel-2-l2a", "sentinel-2-l2a"]
+    assert calls == [("sentinel-2-l2a", None), ("sentinel-2-l2a", None)]
 
 
 def test_sample_collection_filenames_nested(monkeypatch):
@@ -261,9 +265,44 @@ def test_sample_collection_filenames_nested(monkeypatch):
             "C3": ["c1", "c2"],
         }[collection_id])
 
-    monkeypatch.setattr(sd, "iter_asset_filenames", fake_iter_asset)
+    def fake_iter_asset_role(collection_id, *, base_url, limit=100, asset_role=None):
+        return fake_iter_asset(collection_id, base_url=base_url, limit=limit)
+
+    monkeypatch.setattr(sd, "iter_asset_filenames", fake_iter_asset_role)
     res = sd.sample_collection_filenames("ROOT", 1, base_url="http://x")
     assert res == {"C1": ["a1"], "C3": ["c1"]}
+
+
+def test_iter_asset_filenames_filters_role(monkeypatch):
+    def fake_read_json(url):
+        return {
+            "features": [
+                {
+                    "assets": {
+                        "a": {"href": "http://files/a.tif", "roles": ["data"]},
+                        "b": {"href": "http://files/b.tif", "roles": ["metadata"]},
+                    }
+                }
+            ]
+        }
+
+    monkeypatch.setattr(sd, "_read_json", fake_read_json)
+    out = list(
+        sd.iter_asset_filenames("C1", base_url="http://y", asset_role="data")
+    )
+    assert out == ["a.tif"]
+
+
+def test_sample_collection_filenames_forwards_asset_role(monkeypatch):
+    called = {}
+
+    def fake_iter_tree(collection_id, *, base_url, limit, asset_role=None):
+        called["asset_role"] = asset_role
+        yield (collection_id, "f")
+
+    monkeypatch.setattr(sd, "iter_collection_tree", fake_iter_tree)
+    sd.sample_collection_filenames("COL", base_url="http://x", asset_role="data")
+    assert called["asset_role"] == "data"
 
 
 def test_list_collections_requires_base_url():
