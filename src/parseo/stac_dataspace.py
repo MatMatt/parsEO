@@ -117,11 +117,13 @@ def iter_asset_filenames(
     *,
     base_url: str,
     limit: int = 100,
+    asset_role: str | None = None,
 ) -> Iterable[str]:
     """Yield asset filenames from items of a collection.
 
     Pagination links (``rel="next"``) are followed until all pages are
-    exhausted or ``limit`` filenames have been yielded.
+    exhausted or ``limit`` filenames have been yielded.  When ``asset_role`` is
+    provided, only assets declaring that role are considered.
     """
     base = _norm_base(base_url)
     url = urljoin(base, f"collections/{collection_id}/items?limit={limit}")
@@ -142,6 +144,8 @@ def iter_asset_filenames(
             props = feat.get("properties", {})
             assets = feat.get("assets", {})
             for asset in assets.values():
+                if asset_role and asset_role not in (asset.get("roles") or []):
+                    continue
                 title = asset.get("title")
                 href = asset.get("href")
                 filename = None
@@ -183,12 +187,14 @@ def iter_collection_tree(
     *,
     base_url: str,
     limit: int = 100,
+    asset_role: str | None = None,
 ) -> Iterable[tuple[str, str]]:
     """Yield ``(collection_id, filename)`` pairs for all leaf collections.
 
     The function follows ``links`` with ``rel="child"`` starting from
     ``collection_id`` until it reaches leaf collections.  For each leaf it
-    yields filenames from :func:`iter_asset_filenames`.
+    yields filenames from :func:`iter_asset_filenames`.  The ``asset_role``
+    parameter is forwarded to :func:`iter_asset_filenames`.
     """
     base = _norm_base(base_url)
     url = urljoin(base, f"collections/{collection_id}")
@@ -210,10 +216,15 @@ def iter_collection_tree(
 
     if children:
         for child in children:
-            yield from iter_collection_tree(child, base_url=base, limit=limit)
+            yield from iter_collection_tree(
+                child, base_url=base, limit=limit, asset_role=asset_role
+            )
     else:
         for fn in itertools.islice(
-            iter_asset_filenames(collection_id, base_url=base, limit=limit), limit
+            iter_asset_filenames(
+                collection_id, base_url=base, limit=limit, asset_role=asset_role
+            ),
+            limit,
         ):
             yield collection_id, fn
 
@@ -223,16 +234,20 @@ def sample_collection_filenames(
     samples: int = 5,
     *,
     base_url: str,
+    asset_role: str | None = None,
 ) -> dict[str, list[str]]:
     """Return ``samples`` filenames for each leaf collection.
 
     ``collection_id`` may be the official STAC ID or any alias defined in
     :data:`STAC_ID_ALIASES`.  When ``collection_id`` has child collections, a
-    sample is collected from each leaf.
+    sample is collected from each leaf.  Only assets whose ``roles`` include
+    ``asset_role`` are returned when the parameter is supplied.
     """
     collection_id = _norm_collection_id(collection_id)
     out: dict[str, list[str]] = {}
-    for cid, fn in iter_collection_tree(collection_id, base_url=base_url, limit=samples):
+    for cid, fn in iter_collection_tree(
+        collection_id, base_url=base_url, limit=samples, asset_role=asset_role
+    ):
         lst = out.setdefault(cid, [])
         if len(lst) < samples:
             lst.append(fn)

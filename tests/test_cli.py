@@ -124,10 +124,11 @@ def test_cli_schema_info(capsys):
 def test_cli_stac_sample_custom_url(monkeypatch, capsys):
     calls = {}
 
-    def fake_sample(collection, samples=5, *, base_url):
+    def fake_sample(collection, samples=5, *, base_url, asset_role=None):
         calls["collection"] = collection
         calls["samples"] = samples
         calls["base_url"] = base_url
+        calls["asset_role"] = asset_role
         return {"C1": ["a"], "C2": ["b"]}
 
     monkeypatch.setattr(cli, "sample_collection_filenames", fake_sample)
@@ -139,6 +140,8 @@ def test_cli_stac_sample_custom_url(monkeypatch, capsys):
         "2",
         "--stac-url",
         "http://example",
+        "--asset-role",
+        "data",
     ]
     assert cli.main() == 0
     out = capsys.readouterr().out.splitlines()
@@ -147,6 +150,7 @@ def test_cli_stac_sample_custom_url(monkeypatch, capsys):
         "collection": "COL",
         "samples": 2,
         "base_url": "http://example",
+        "asset_role": "data",
     }
 
 def test_cli_stac_sample_requires_url(capsys):

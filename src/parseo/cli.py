@@ -47,6 +47,10 @@ def _build_arg_parser() -> argparse.ArgumentParser:
         required=True,
         help="Base URL of the STAC API",
     )
+    p_stac.add_argument(
+        "--asset-role",
+        help="Only include assets whose roles contain this value",
+    )
 
     # list-stac-collections
     p_stac_list = sp.add_parser(
@@ -202,7 +206,10 @@ def main(argv: List[str] | None = None) -> int:
 
     if args.cmd == "stac-sample":
         samples = sample_collection_filenames(
-            args.collection, args.samples, base_url=args.stac_url
+            args.collection,
+            args.samples,
+            base_url=args.stac_url,
+            asset_role=args.asset_role,
         )
         for cid in sorted(samples):
             print(f"{cid}:")
