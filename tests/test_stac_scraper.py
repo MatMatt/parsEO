@@ -2,6 +2,7 @@ import sys
 import types
 from pathlib import Path
 
+import pytest
 import parseo.stac_scraper as ss
 
 
@@ -35,7 +36,7 @@ class FakeItem:
 
 
 class FakeSearch:
-    def get_items(self):
+    def items(self):
         yield FakeItem()
 
 
@@ -95,3 +96,39 @@ def test_search_stac_and_download(monkeypatch, tmp_path):
     )
     assert path == dest / "file.bin"
     assert path.read_bytes() == b"data"
+
+
+def test_search_stac_and_download_http_error(monkeypatch, tmp_path):
+    fake_pc = types.SimpleNamespace(Client=FakeClientSearch)
+    monkeypatch.setitem(sys.modules, "pystac_client", fake_pc)
+
+    class HTTPError(Exception):
+        pass
+
+    class FakeResp:
+        def __enter__(self):
+            return self
+
+        def __exit__(self, exc_type, exc, tb):
+            pass
+
+        def raise_for_status(self):
+            raise HTTPError("404")
+
+        def iter_content(self, chunk_size=8192):
+            yield b"data"
+
+    def fake_get(url, stream=True):
+        return FakeResp()
+
+    fake_requests = types.SimpleNamespace(get=fake_get, HTTPError=HTTPError)
+    monkeypatch.setitem(sys.modules, "requests", fake_requests)
+
+    with pytest.raises(SystemExit):
+        ss.search_stac_and_download(
+            stac_url="http://base",
+            collections=["C"],
+            bbox=[0, 0, 1, 1],
+            datetime="2024",
+            dest_dir=tmp_path,
+        )
