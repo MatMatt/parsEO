@@ -265,3 +265,17 @@ def test_iter_asset_filenames_bad_collection(monkeypatch):
         == "Collection 'BAD' not found at http://u/. Use `parseo stac-sample <collection> --stac-url <url>` with a valid collection ID."
     )
 
+
+def test_sample_collection_filenames_url_error(monkeypatch):
+    """Connection issues should result in a clear error message."""
+
+    def fake_urlopen(url):
+        raise urllib.error.URLError("fail")
+
+    monkeypatch.setattr(sd.urllib.request, "urlopen", fake_urlopen)
+    with pytest.raises(SystemExit) as exc:
+        sd.sample_collection_filenames("C1", base_url="http://bad")
+    assert str(exc.value).startswith(
+        "Could not connect to http://bad/collections/C1"
+    )
+

@@ -41,8 +41,11 @@ def _norm_base(base_url: str) -> str:
 
 
 def _read_json(url: str) -> dict:
-    with urllib.request.urlopen(url) as resp:  # type: ignore[call-arg]
-        return json.load(resp)
+    try:
+        with urllib.request.urlopen(url) as resp:  # type: ignore[call-arg]
+            return json.load(resp)
+    except urllib.error.URLError as err:
+        raise SystemExit(f"Could not connect to {url}: {err.reason}") from err
 
 
 def list_collections_http(base_url: str, *, deep: bool = False) -> list[str]:
