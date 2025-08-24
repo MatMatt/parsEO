@@ -182,6 +182,12 @@ collection. The STAC API root must always be provided via ``--stac-url``
 parseo stac-sample SENTINEL2_L2A --samples 3 --stac-url https://catalogue.dataspace.copernicus.eu/stac
 ```
 
+Known collection aliases are automatically mapped to their official STAC IDs:
+
+| Alias | STAC ID |
+|-------|---------|
+| `SENTINEL2_L2A` | `sentinel-2-l2a` |
+
 A different STAC service can be targeted by supplying its URL:
 
 ```bash

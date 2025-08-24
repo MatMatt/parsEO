@@ -46,6 +46,24 @@ def test_sample_collection_filenames_custom_base_url(monkeypatch):
     assert res == ["f1", "f2"]
 
 
+def test_sample_collection_filenames_alias(monkeypatch):
+    calls = []
+
+    def fake_iter(collection_id, *, base_url, limit=100):
+        calls.append(collection_id)
+        return iter(["a", "b"])
+
+    monkeypatch.setattr(sd, "iter_asset_filenames", fake_iter)
+    alias_res = sd.sample_collection_filenames(
+        "SENTINEL2_L2A", base_url="http://z"
+    )
+    official_res = sd.sample_collection_filenames(
+        "sentinel-2-l2a", base_url="http://z"
+    )
+    assert alias_res == official_res == ["a", "b"]
+    assert calls == ["sentinel-2-l2a", "sentinel-2-l2a"]
+
+
 def test_list_collections_requires_base_url():
     with pytest.raises(TypeError):
         sd.list_collections()

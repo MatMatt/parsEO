@@ -15,6 +15,18 @@ import itertools
 CDSE_STAC_URL = "https://catalogue.dataspace.copernicus.eu/stac/"
 
 
+# Mapping of common collection aliases to their official STAC IDs.
+# Keys are case-insensitive aliases as they might appear in user commands.
+STAC_ID_ALIASES: dict[str, str] = {
+    "SENTINEL2_L2A": "sentinel-2-l2a",
+}
+
+
+def _norm_collection_id(collection_id: str) -> str:
+    """Return the official STAC collection ID for ``collection_id``."""
+    return STAC_ID_ALIASES.get(collection_id.upper(), collection_id)
+
+
 def _norm_base(base_url: str) -> str:
     """Return ``base_url`` with exactly one trailing slash."""
     return base_url.rstrip("/") + "/"
@@ -57,7 +69,12 @@ def sample_collection_filenames(
     *,
     base_url: str,
 ) -> list[str]:
-    """Return ``samples`` filenames from the given collection."""
+    """Return ``samples`` filenames from the given collection.
+
+    ``collection_id`` may be the official STAC ID or any alias defined in
+    :data:`STAC_ID_ALIASES`.
+    """
+    collection_id = _norm_collection_id(collection_id)
     return list(
         itertools.islice(
             iter_asset_filenames(collection_id, base_url=base_url), samples
