@@ -120,3 +120,39 @@ def test_cli_schema_info(capsys):
     assert isinstance(data.get("examples"), list)
     assert data["examples"]
     assert all(isinstance(x, str) for x in data["examples"])
+
+
+def test_cli_stac_sample_custom_url(monkeypatch, capsys):
+    calls = {}
+
+    def fake_sample(collection, samples=5, *, base_url):
+        calls["collection"] = collection
+        calls["samples"] = samples
+        calls["base_url"] = base_url
+        return ["a", "b"]
+
+    monkeypatch.setattr(cli, "sample_collection_filenames", fake_sample)
+    sys.argv = [
+        "parseo",
+        "stac-sample",
+        "COL",
+        "--samples",
+        "2",
+        "--stac-url",
+        "http://example/",
+    ]
+    assert cli.main() == 0
+    out = capsys.readouterr().out.splitlines()
+    assert out == ["a", "b"]
+    assert calls == {
+        "collection": "COL",
+        "samples": 2,
+        "base_url": "http://example/",
+    }
+
+
+def test_cli_stac_sample_requires_url(capsys):
+    with pytest.raises(SystemExit):
+        cli.main(["stac-sample", "COL"])
+    err = capsys.readouterr().err
+    assert "--stac-url" in err

@@ -161,6 +161,21 @@ uvicorn main:app --reload
 The interactive page lets you call `/parse` and `/assemble` directly from the
 browser to verify your API.
 
+### Sample filenames from a STAC collection
+
+The ``stac-sample`` subcommand prints a few asset filenames from a STAC
+collection. The STAC API root must always be provided via ``--stac-url``:
+
+```bash
+parseo stac-sample S2 --samples 3 --stac-url https://catalogue.dataspace.copernicus.eu/stac/
+```
+
+A different STAC service can be targeted by supplying its URL:
+
+```bash
+parseo stac-sample my-collection --samples 2 --stac-url https://stac.example.com/
+```
+
 ---
 
 ## Command Line Interface
