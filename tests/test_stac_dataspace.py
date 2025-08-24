@@ -1,4 +1,5 @@
 import pytest
+import urllib.error
 import parseo.stac_dataspace as sd
 
 
@@ -67,3 +68,17 @@ def test_sample_collection_filenames_alias(monkeypatch):
 def test_list_collections_requires_base_url():
     with pytest.raises(TypeError):
         sd.list_collections()
+
+
+def test_iter_asset_filenames_bad_collection(monkeypatch):
+    def fake_read_json(url):
+        raise urllib.error.HTTPError(url, 404, "Not Found", None, None)
+
+    monkeypatch.setattr(sd, "_read_json", fake_read_json)
+    with pytest.raises(SystemExit) as exc:
+        list(sd.iter_asset_filenames("BAD", base_url="http://u"))
+    assert (
+        str(exc.value)
+        == "Collection 'BAD' not found at http://u/. Use `parseo stac-sample <collection> --stac-url <url>` with a valid collection ID."
+    )
+
