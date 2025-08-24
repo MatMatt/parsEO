@@ -161,7 +161,7 @@ uvicorn main:app --reload
 The interactive page lets you call `/parse` and `/assemble` directly from the
 browser to verify your API.
 
- ### List STAC collections
+### List STAC collections
 
 Use the ``list-stac-collections`` subcommand to list collection IDs exposed by a
 STAC API:
