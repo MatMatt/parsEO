@@ -11,6 +11,8 @@ from __future__ import annotations
 from pathlib import Path
 from urllib.parse import urlparse
 
+from .stac_dataspace import _norm_base
+
 def list_collections_client(base_url: str, *, deep: bool = False) -> list[str]:
     """Return collection IDs from a STAC API using ``pystac-client``.
 
@@ -26,7 +28,8 @@ def list_collections_client(base_url: str, *, deep: bool = False) -> list[str]:
             "pystac-client is required for list_collections_client"
         ) from exc
 
-    client = Client.open(base_url)
+    base = _norm_base(base_url)
+    client = Client.open(base)
     collections = {c.id for c in client.get_collections()}
     if not deep:
         return sorted(collections)
@@ -54,7 +57,7 @@ list_collections = list_collections_client
 def search_stac_and_download(
     *,
     stac_url: str,
-    collections: list[str],
+    collections: str | list[str],
     bbox: list[float] | tuple[float, float, float, float],
     datetime: str,
     dest_dir: str | Path,
@@ -64,6 +67,9 @@ def search_stac_and_download(
     The search is performed via :mod:`pystac-client` and the asset is retrieved
     with :mod:`requests`. ``dest_dir`` is created if needed and the path to the
     downloaded file is returned.
+
+    ``collections`` may be a single string or a list of strings. A lone
+    string will be wrapped in a list before querying.
 
     Raises
     ------
@@ -83,7 +89,11 @@ def search_stac_and_download(
         import requests
     except Exception as exc:  # pragma: no cover - exercised when dependency missing
         raise SystemExit("requests is required for search_stac_and_download") from exc
+    if isinstance(collections, str):
+        collections = [collections]
 
+
+    stac_url = _norm_base(stac_url)
     client = Client.open(stac_url)
     search = client.search(collections=collections, bbox=bbox, datetime=datetime)
     for item in search.items():
