@@ -92,7 +92,13 @@ def assemble(schema_path: str | Path, fields: Dict[str, Any]) -> str:
         if not sch.get("fields_order"):
             _, order = compile_template(template, sch.get("fields", {}))
             sch["fields_order"] = order
-        return _assemble_from_template(template, fields)
+        try:
+            return _assemble_from_template(template, fields)
+        except KeyError as exc:
+            name = exc.args[0]
+            raise ValueError(
+                f"Missing field '{name}' for schema {schema_path}"
+            ) from exc
 
     order = sch.get("fields_order")
     if not order or not isinstance(order, list):
