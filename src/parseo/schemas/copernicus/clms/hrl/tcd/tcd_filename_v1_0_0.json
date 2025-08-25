@@ -1,0 +1,21 @@
+{
+  "schema_id": "copernicus:clms:hrl:tcd",
+  "schema_version": "1.0.0",
+  "stac_version": "1.1.0",
+  "stac_extensions": ["raster", "eo"],
+  "description": "CLMS HRL Tree Cover Density product filename.",
+  "fields": {
+    "product_code": {"type": "string", "enum": ["TCD"], "description": "Product code"},
+    "reference_year": {"type": "string", "enum": ["2018"], "description": "Reference year"},
+    "resolution": {"type": "string", "pattern": "^\\d{3}m$", "description": "Spatial resolution"},
+    "aoi_code": {"type": "string", "pattern": "^[A-Z0-9]+$", "description": "Area of interest code"},
+    "epsg": {"type": "string", "pattern": "^EPSG\\d{4}$", "description": "Coordinate reference system"},
+    "version": {"type": "string", "pattern": "^\\d{3}$", "description": "Product version"},
+    "tile": {"type": "string", "pattern": "^[A-Z0-9]+$", "description": "Tile code"},
+    "extension": {"type": "string", "enum": ["tif"], "description": "File extension without leading dot"}
+  },
+  "template": "hrl_{product_code}_{reference_year}_{resolution}_{aoi_code}_{epsg}_v{version}_{tile}[.{extension}]",
+  "examples": [
+    "hrl_TCD_2018_010m_E042N18_EPSG3035_v100_E042N18.tif"
+  ]
+}
