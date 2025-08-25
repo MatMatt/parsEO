@@ -134,3 +134,31 @@ def test_hrvpp_st_variant():
     res = parse_auto(name)
     assert res.fields["tile_id"] == "W05S20-98765"
     assert res.fields["version"] == "V101"
+
+
+def test_hrvpp_vi_ndvi_example():
+    name = "VPP_NDVI_10D_010m_T32TNS_20240101_S2_V100.tif"
+    res = parse_auto(name)
+    assert res is not None
+    assert res.fields['metric'] == 'NDVI'
+    assert res.fields["composite_length"] == "10D"
+    assert res.fields["resolution"] == "010m"
+    assert res.fields["tile_id"] == "T32TNS"
+    assert res.fields["sensing_date"] == "20240101"
+    assert res.fields["platform"] == "S2"
+    assert res.fields["version"] == "V100"
+    assert res.fields["extension"] == "tif"
+
+
+def test_hrvpp_vi_lai_example():
+    name = "VPP_LAI_10D_010m_T32TNS_20240101_S2_V100.tif"
+    res = parse_auto(name)
+    assert res is not None
+    assert res.fields['metric'] == 'LAI'
+    assert res.fields["composite_length"] == "10D"
+    assert res.fields["resolution"] == "010m"
+    assert res.fields["tile_id"] == "T32TNS"
+    assert res.fields["sensing_date"] == "20240101"
+    assert res.fields["platform"] == "S2"
+    assert res.fields["version"] == "V100"
+    assert res.fields["extension"] == "tif"

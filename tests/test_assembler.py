@@ -129,6 +129,44 @@ def test_assemble_auto_fapar_schema():
     assert result == "CLMS_VPP_FAPAR_100m_T32TNS_20210101_20210110_V100_FAPAR.tif"
 
 
+def test_assemble_hrvpp_vi_ndvi_schema():
+    schema = (
+        Path(__file__).resolve().parents[1]
+        / "src/parseo/schemas/copernicus/clms/hr-vpp/vi/vi_filename_v0_0_0.json"
+    )
+    fields = {
+        "metric": "NDVI",
+        "composite_length": "10D",
+        "resolution": "010m",
+        "tile_id": "T32TNS",
+        "sensing_date": "20240101",
+        "platform": "S2",
+        "version": "V100",
+        "extension": "tif",
+    }
+    result = assemble(schema, fields)
+    assert result == "VPP_NDVI_10D_010m_T32TNS_20240101_S2_V100.tif"
+
+
+def test_assemble_hrvpp_vi_lai_schema():
+    schema = (
+        Path(__file__).resolve().parents[1]
+        / "src/parseo/schemas/copernicus/clms/hr-vpp/vi/vi_filename_v0_0_0.json"
+    )
+    fields = {
+        "metric": "LAI",
+        "composite_length": "10D",
+        "resolution": "010m",
+        "tile_id": "T32TNS",
+        "sensing_date": "20240101",
+        "platform": "S2",
+        "version": "V100",
+        "extension": "tif",
+    }
+    result = assemble(schema, fields)
+    assert result == "VPP_LAI_10D_010m_T32TNS_20240101_S2_V100.tif"
+
+
 def test_assemble_clms_st_schema():
     schema = (
         Path(__file__).resolve().parents[1]
