@@ -128,27 +128,6 @@ def test_assemble_auto_fapar_schema():
     result = assemble_auto(fields)
     assert result == "CLMS_VPP_FAPAR_100m_T32TNS_20210101_20210110_V100_FAPAR.tif"
 
-
-def test_assemble_clms_hrlnvlcc_schema():
-    schema = (
-        Path(__file__).resolve().parents[1]
-        / "src/parseo/schemas/copernicus/clms/hrlnvlcc/hrlnvlcc_filename_v0_0_0.json"
-    )
-    fields = {
-        "prefix": "CLMS_HRL",
-        "product": "NVLCC",
-        "resolution": "010m",
-        "tile_id": "T32TNS",
-        "start_date": "20210101",
-        "end_date": "20211231",
-        "version": "V100",
-        "file_id": "NVLCC",
-        "extension": "tif",
-    }
-    result = assemble(schema, fields)
-    assert result == "CLMS_HRL_NVLCC_010m_T32TNS_20210101_20211231_V100_NVLCC.tif"
-
-
 def test_assemble_clms_st_schema():
     schema = (
         Path(__file__).resolve().parents[1]

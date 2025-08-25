@@ -1,0 +1,22 @@
+{
+  "schema_id": "copernicus:clms:hr-vpp:vi",
+  "schema_version": "0.0.0",
+  "stac_version": "1.1.0",
+  "stac_extensions": ["raster", "eo"],
+  "description": "CLMS HR-VPP Vegetation Index product filename.",
+  "fields": {
+    "metric": {"type": "string", "enum": ["NDVI", "LAI"], "description": "Vegetation index metric"},
+    "composite_length": {"type": "string", "pattern": "^\\d{2}D$", "description": "Composite period length"},
+    "resolution": {"type": "string", "pattern": "^\\d{3}m$", "description": "Spatial resolution"},
+    "tile_id": {"type": "string", "pattern": "^T\\d{2}[C-HJ-NP-X][A-Z]{2}$", "description": "UTM tile identifier"},
+    "sensing_date": {"type": "string", "pattern": "^\\d{8}$", "description": "Acquisition date (YYYYMMDD)"},
+    "platform": {"type": "string", "enum": ["S2"], "description": "Sensor platform"},
+    "version": {"type": "string", "pattern": "^V\\d{3}$", "description": "Product version"},
+    "extension": {"type": "string", "enum": ["tif"], "description": "File extension without leading dot"}
+  },
+  "template": "VPP_{metric}_{composite_length}_{resolution}_{tile_id}_{sensing_date}_{platform}_{version}[.{extension}]",
+  "examples": [
+    "VPP_NDVI_10D_010m_T32TNS_20240101_S2_V100.tif",
+    "VPP_LAI_10D_010m_T32TNS_20240101_S2_V100.tif"
+  ]
+}
