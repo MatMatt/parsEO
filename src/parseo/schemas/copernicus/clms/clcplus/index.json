@@ -1,6 +1,6 @@
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "family": "CLCPLUS",
+    "family": "CLMS_CLCPLUS",
     "versions": [
         {
             "file": "clcplus_filename_v1_0_0.json",

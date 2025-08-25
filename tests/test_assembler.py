@@ -222,7 +222,7 @@ def test_assemble_clms_hrlvlcc_schema():
         / "src/parseo/schemas/copernicus/clms/hrlvlcc/hrlvlcc_filename_v0_0_0.json"
     )
     fields = {
-        "prefix": "CLMS_HRLVLC",
+        "prefix": "CLMS_HRLVLCC",
         "product": "IMD",
         "resolution": "010m",
         "tile_id": "T32TNS",
@@ -232,12 +232,12 @@ def test_assemble_clms_hrlvlcc_schema():
         "extension": "tif",
     }
     result = assemble(schema, fields)
-    assert result == "CLMS_HRLVLC_IMD_010m_T32TNS_20210101T000000_V100_IMD.tif"
+    assert result == "CLMS_HRLVLCC_IMD_010m_T32TNS_20210101T000000_V100_IMD.tif"
 
 
 def test_assemble_auto_hrlvlcc_schema():
     fields = {
-        "prefix": "CLMS_HRLVLC",
+        "prefix": "CLMS_HRLVLCC",
         "product": "IMD",
         "resolution": "010m",
         "tile_id": "T32TNS",
@@ -247,7 +247,39 @@ def test_assemble_auto_hrlvlcc_schema():
         "extension": "tif",
     }
     result = assemble_auto(fields)
-    assert result == "CLMS_HRLVLC_IMD_010m_T32TNS_20210101T000000_V100_IMD.tif"
+    assert result == "CLMS_HRLVLCC_IMD_010m_T32TNS_20210101T000000_V100_IMD.tif"
+
+
+def test_assemble_clms_clcplus_schema():
+    schema = (
+        Path(__file__).resolve().parents[1]
+        / "src/parseo/schemas/copernicus/clms/clcplus/clcplus_filename_v1_0_0.json"
+    )
+    fields = {
+        "prefix": "CLMS_CLCPLUS",
+        "variant": "BB",
+        "reference_year": "2023",
+        "resolution": "010m",
+        "tile_id": "E40N20",
+        "version": "V100",
+        "extension": "tif",
+    }
+    result = assemble(schema, fields)
+    assert result == "CLMS_CLCPLUS_BB_2023_010m_E40N20_V100.tif"
+
+
+def test_assemble_auto_clms_clcplus_schema():
+    fields = {
+        "prefix": "CLMS_CLCPLUS",
+        "variant": "BB",
+        "reference_year": "2023",
+        "resolution": "010m",
+        "tile_id": "E40N20",
+        "version": "V100",
+        "extension": "tif",
+    }
+    result = assemble_auto(fields)
+    assert result == "CLMS_CLCPLUS_BB_2023_010m_E40N20_V100.tif"
 
 
 def test_assemble_clms_hrlnvlcc_schema():
