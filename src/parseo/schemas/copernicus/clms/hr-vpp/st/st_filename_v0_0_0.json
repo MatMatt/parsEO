@@ -5,7 +5,7 @@
   "stac_extensions": ["raster", "eo"],
   "description": "CLMS HR-VPP Seasonal Trajectories Plant Phenology Index product filename.",
   "fields": {
-    "prefix": {"type": "string", "enum": ["ST"], "description": "Constant prefix"},
+    "prefix": {"type": "string", "enum": ["CLMS_VPP"], "description": "Constant prefix"},
     "timestamp": {"type": "string", "pattern": "^\\d{8}T\\d{6}$", "description": "Acquisition timestamp (YYYYMMDDTHHMMSS)"},
     "sensor": {"type": "string", "enum": ["S2"], "description": "Sensor platform"},
     "tile_id": {"type": "string", "pattern": "^[EW]\\d{2}[NS]\\d{2}-\\d{5}$", "description": "Regional tile identifier"},
@@ -16,6 +16,6 @@
   },
   "template": "{prefix}_{timestamp}_{sensor}_{tile_id}_{resolution}_{version}_{product}[.{extension}]",
   "examples": [
-    "ST_20240101T123045_S2_E15N45-01234_010m_V100_PPI.tif"
+    "CLMS_VPP_20240101T123045_S2_E15N45-01234_010m_V100_PPI.tif"
   ]
 }
