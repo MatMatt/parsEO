@@ -134,3 +134,16 @@ def test_hrvpp_st_variant():
     res = parse_auto(name)
     assert res.fields["tile_id"] == "W05S20-98765"
     assert res.fields["version"] == "V101"
+
+def test_hrl_tcd_example():
+    name = "hrl_TCD_2018_010m_E042N18_EPSG3035_v100_E042N18.tif"
+    res = parse_auto(name)
+    assert res is not None
+    assert res.fields["product_code"] == "TCD"
+    assert res.fields["reference_year"] == "2018"
+    assert res.fields["resolution"] == "010m"
+    assert res.fields["aoi_code"] == "E042N18"
+    assert res.fields["epsg"] == "EPSG3035"
+    assert res.fields["version"] == "100"
+    assert res.fields["tile"] == "E042N18"
+    assert res.fields["extension"] == "tif"

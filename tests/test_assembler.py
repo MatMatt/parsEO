@@ -216,3 +216,36 @@ def test_clear_schema_cache(tmp_path):
 
     clear_schema_cache()
     assert assemble(schema, fields) == "x-y"
+
+def test_assemble_hrl_tcd_schema():
+    schema = (
+        Path(__file__).resolve().parents[1]
+        / "src/parseo/schemas/copernicus/clms/hrl/tcd/tcd_filename_v1_0_0.json"
+    )
+    fields = {
+        "product_code": "TCD",
+        "reference_year": "2018",
+        "resolution": "010m",
+        "aoi_code": "E042N18",
+        "epsg": "EPSG3035",
+        "version": "100",
+        "tile": "E042N18",
+        "extension": "tif",
+    }
+    result = assemble(schema, fields)
+    assert result == "hrl_TCD_2018_010m_E042N18_EPSG3035_v100_E042N18.tif"
+
+
+def test_assemble_auto_hrl_tcd_schema():
+    fields = {
+        "product_code": "TCD",
+        "reference_year": "2018",
+        "resolution": "010m",
+        "aoi_code": "E042N18",
+        "epsg": "EPSG3035",
+        "version": "100",
+        "tile": "E042N18",
+        "extension": "tif",
+    }
+    result = assemble_auto(fields)
+    assert result == "hrl_TCD_2018_010m_E042N18_EPSG3035_v100_E042N18.tif"
