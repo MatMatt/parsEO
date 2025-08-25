@@ -62,7 +62,8 @@ def test_list_collections_alias(monkeypatch):
 
 
 
-def test_search_stac_and_download(monkeypatch, tmp_path):
+@pytest.mark.parametrize("collections", [["C"], "C"])
+def test_search_stac_and_download(monkeypatch, tmp_path, collections):
     fake_pc = types.SimpleNamespace(Client=FakeClientSearch)
     monkeypatch.setitem(sys.modules, "pystac_client", fake_pc)
 
@@ -89,7 +90,7 @@ def test_search_stac_and_download(monkeypatch, tmp_path):
     dest = tmp_path / "dl"
     path = ss.search_stac_and_download(
         stac_url="http://base",
-        collections=["C"],
+        collections=collections,
         bbox=[0, 0, 1, 1],
         datetime="2024",
         dest_dir=dest,
