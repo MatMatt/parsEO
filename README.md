@@ -165,9 +165,9 @@ browser to verify your API.
 
 ---
 
-## STAC metadata (not functional yet!)
+## STAC helpers
 
-Since filenames often reflect associated metadata or directory structures, `parsEO` aligns with STAC naming conventions whenever possible. The package provides helper functions to derive filename schemas from STAC catalogs. Although filenames usually precede catalog creation, future development aims for a bidirectional information flow (STAC ↔ filename). At present, the focus remains on collecting filename schemas supported by `parsEO`.
+Filenames often reflect associated metadata or directory structures, so `parsEO` aligns with STAC naming conventions whenever possible. The package ships with small utilities to interact with STAC APIs and catalogs, including helpers to list collections, sample asset filenames, and traverse catalogs stored on disk.
 
 Use the ``list-stac-collections`` subcommand to list collection IDs exposed by a
 STAC API. The STAC root URL must be supplied via ``--stac-url``:
@@ -248,6 +248,28 @@ for cid in stac_scraper.list_collections(stac_url):
 
 This functionality depends on the ``pystac-client`` and ``requests``
 packages being available at runtime.
+
+### Scrape a STAC catalog
+
+``parseo.scrape_catalog`` is a lightweight helper that walks a STAC catalog or
+collection and extracts basic metadata for each data asset using only the
+Python standard library.
+
+```python
+from parseo import scrape_catalog
+
+# Collect filenames and associated metadata from a catalog on disk
+entries = scrape_catalog("/path/to/catalog", limit=2)
+for e in entries:
+    print(e["filename"], e.get("id"), e.get("tile"))
+```
+
+Each entry includes the asset filename plus any of the fields ``id``,
+``product_type``, ``datetime``, ``tile`` and ``orbit`` discovered in adjacent
+JSON or XML metadata files.
+
+From the command line, related STAC utilities are available via the
+``list-stac-collections`` and ``stac-sample`` subcommands.
 
 ---
 
