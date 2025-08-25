@@ -35,6 +35,13 @@ def test_s3_example():
     assert res.fields["platform"] == "S3A"
 
 
+def test_hr_wsi_example():
+    name = "CLMS_WSI_FSC_020m_T32TNS_20211018T103021_S2A_V100_FSCOG.tif"
+    res = parse_auto(name)
+    assert res.match_family == "HR-WSI"
+    assert res.fields["product"] == "FSC"
+
+
 def test_near_miss_reports_field():
     name = "S2X_MSIL2A_20241123T224759_N0511_R101_T03VUL_20241123T230829.SAFE"
     with pytest.raises(parser.ParseError) as exc:
