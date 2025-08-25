@@ -277,23 +277,7 @@ def sample_collection_filenames(
     asset_role: str | None = None,
 ) -> dict[str, list[str]]:
     """Return sample asset filenames from a STAC collection.
-
-    Parameters
-    ----------
-    collection:
-        STAC collection ID or known alias.
-    samples:
-        Number of sample filenames to return. Defaults to five.
-    base_url:
-        Root URL of the STAC API.
-    asset_role:
-        Optional asset role to select specific assets. When omitted, the first
-        asset of each item is used.
-
-    Returns
-    -------
-    dict[str, list[str]]
-        Mapping of the normalized collection ID to a list of asset filenames.
+    Users should call :func:`scrape_catalog` instead.
     """
 
     try:  # pragma: no cover - exercised when dependency missing
