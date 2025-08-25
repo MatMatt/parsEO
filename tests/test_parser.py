@@ -134,4 +134,3 @@ def test_hrvpp_st_variant():
     res = parse_auto(name)
     assert res.fields["tile_id"] == "W05S20-98765"
     assert res.fields["version"] == "V101"
-

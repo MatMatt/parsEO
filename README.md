@@ -42,6 +42,8 @@ Currently included schemas cover:
   - High Resolution Layers: Vegetation & Land Cover Characteristics (HRLVLCC)
     (Imperviousness, Tree Cover Density, Forest Type, Grassland, Small Woody Features, Water & Wetness)
   - High Resolution Layers: Non-Vegetated Land Cover Change (HRL NVLCC)
+  - High Resolution Layers: Grasslands
+  - Natura 2000 (N2K) raster and vector
 ---
 
 ## Installation

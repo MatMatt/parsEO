@@ -1,0 +1,39 @@
+{
+  "schema_id": "copernicus:clms:n2k:vector",
+  "schema_version": "1.0.0",
+  "stac_version": "1.1.0",
+  "stac_extensions": ["vector"],
+  "description": "Copernicus Land Monitoring Service Natura 2000 vector dataset filename.",
+  "fields": {
+    "prefix": {
+      "type": "string",
+      "enum": ["n2k"],
+      "description": "Fixed prefix"
+    },
+    "reference_year": {
+      "type": "string",
+      "pattern": "^\\d{4}$",
+      "description": "Reference year"
+    },
+    "epsg": {
+      "type": "string",
+      "pattern": "^0?3035$",
+      "description": "EPSG code"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^v\\d+$",
+      "description": "Product version"
+    },
+    "extension": {
+      "type": "string",
+      "enum": ["gpkg", "zip"],
+      "description": "File extension without leading dot"
+    }
+  },
+  "template": "{prefix}_{reference_year}_{epsg}_{version}[.{extension}]",
+  "examples": [
+    "n2k_2018_3035_v1.gpkg",
+    "n2k_2020_3035_v2.zip"
+  ]
+}
