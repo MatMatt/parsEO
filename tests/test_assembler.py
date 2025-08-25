@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pytest
 
-from parseo import assemble, assemble_auto, clear_schema_cache
+from parseo import assemble, assemble_auto, clear_schema_cache, parse_auto
 
 
 def test_assemble_clms_fsc_schema():
@@ -231,3 +231,4 @@ def test_assemble_auto_hrl_imperviousness_schema(year):
     }
     result = assemble_auto(fields)
     assert result == f"hrl_IMD_{year}_10m_E40N20_EPSG3035_v100_E40N20.tif"
+
