@@ -169,6 +169,9 @@ browser to verify your API.
 
 Filenames often reflect associated metadata or directory structures, so `parsEO` aligns with STAC naming conventions whenever possible. The package ships with small utilities to interact with STAC APIs and catalogs, including helpers to list collections, sample asset filenames, and traverse catalogs stored on disk.
 
+The legacy `stac_dataspace` helper has been removed. Its functionality is covered by the new `scrape_catalog` function described below, which works with any STAC catalog served over HTTP or stored locally.
+
+
 Use the ``list-stac-collections`` subcommand to list collection IDs exposed by a
 STAC API. The STAC root URL must be supplied via ``--stac-url``:
 
