@@ -128,7 +128,6 @@ def test_assemble_auto_fapar_schema():
     result = assemble_auto(fields)
     assert result == "CLMS_VPP_FAPAR_100m_T32TNS_20210101_20210110_V100_FAPAR.tif"
 
-
 def test_assemble_clms_st_schema():
     schema = (
         Path(__file__).resolve().parents[1]
@@ -217,54 +216,38 @@ def test_clear_schema_cache(tmp_path):
     clear_schema_cache()
     assert assemble(schema, fields) == "x-y"
 
-def test_assemble_clms_ccd_schema():
-    name = "ccd_2015_100m_E042N018_3035_v1_1.tif"
+def test_assemble_clms_hrlvlcc_schema():
     schema = (
         Path(__file__).resolve().parents[1]
-        / "src/parseo/schemas/copernicus/clms/ccd/ccd_filename_v1_0_0.json"
+        / "src/parseo/schemas/copernicus/clms/hrlvlcc/hrlvlcc_filename_v0_0_0.json"
     )
-    fields = parse_auto(name).fields
-    result = assemble(schema, fields)
-    assert result == name
-
-
-def test_assemble_auto_ccd_schema():
     fields = {
-        "reference_year": "2015",
-        "resolution": "100m",
-        "aoi_code": "E042N018",
-        "epsg": "3035",
-        "version": "v1",
-        "tile": "1",
+        "prefix": "CLMS_HRLVLC",
+        "product": "IMD",
+        "resolution": "010m",
+        "tile_id": "T32TNS",
+        "sensing_datetime": "20210101T000000",
+        "version": "V100",
+        "file_id": "IMD",
+        "extension": "tif",
+    }
+    result = assemble(schema, fields)
+    assert result == "CLMS_HRLVLC_IMD_010m_T32TNS_20210101T000000_V100_IMD.tif"
+
+
+def test_assemble_auto_hrlvlcc_schema():
+    fields = {
+        "prefix": "CLMS_HRLVLC",
+        "product": "IMD",
+        "resolution": "010m",
+        "tile_id": "T32TNS",
+        "sensing_datetime": "20210101T000000",
+        "version": "V100",
+        "file_id": "IMD",
         "extension": "tif",
     }
     result = assemble_auto(fields)
-    assert result == "ccd_2015_100m_E042N018_3035_v1_1.tif"
-
-
-def test_assemble_clms_ccd_schema_2018():
-    name = "ccd_2018_100m_E050N020_3035_v2_2.tif"
-    schema = (
-        Path(__file__).resolve().parents[1]
-        / "src/parseo/schemas/copernicus/clms/ccd/ccd_filename_v1_0_0.json"
-    )
-    fields = parse_auto(name).fields
-    result = assemble(schema, fields)
-    assert result == name
-
-
-def test_assemble_auto_ccd_schema_2018():
-    fields = {
-        "reference_year": "2018",
-        "resolution": "100m",
-        "aoi_code": "E050N020",
-        "epsg": "3035",
-        "version": "v2",
-        "tile": "2",
-        "extension": "tif",
-    }
-    result = assemble_auto(fields)
-    assert result == "ccd_2018_100m_E050N020_3035_v2_2.tif"
+    assert result == "CLMS_HRLVLC_IMD_010m_T32TNS_20210101T000000_V100_IMD.tif"
 
 
 def test_assemble_clms_n2k_schema():

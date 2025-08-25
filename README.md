@@ -39,9 +39,11 @@ Currently included schemas cover:
   - Corine Land Cover (CLC)
   - High Resolution Water & Snow / Ice (HR-WSI)
   - High Resolution Vegetation Phenology & Productivity (HR-VPP)
+  - High Resolution Layers: Vegetation & Land Cover Characteristics (HRLVLCC)
+    (Imperviousness, Tree Cover Density, Forest Type, Grassland, Small Woody Features, Water & Wetness)
+  - High Resolution Layers: Non-Vegetated Land Cover Change (HRL NVLCC)
   - High Resolution Layers: Grasslands
-  - Natura 2000 (N2K) 100 m raster tiles
-  - Natura 2000 (N2K) vector dataset
+  - Natura 2000 (N2K) raster and vector
 ---
 
 ## Installation
@@ -366,6 +368,18 @@ parseo assemble \
   prefix=CLMS_VPP product=FAPAR resolution=100m tile_id=T32TNS \
   start_date=20210101 end_date=20210110 version=V100 file_id=FAPAR extension=tif
 # -> CLMS_VPP_FAPAR_100m_T32TNS_20210101_20210110_V100_FAPAR.tif
+
+# Example: CLMS HRLVLCC product (first field: prefix)
+parseo assemble \
+  prefix=CLMS_HRLVLC product=IMD resolution=010m tile_id=T32TNS \
+  sensing_datetime=20210101T000000 version=V100 file_id=IMD extension=tif
+# -> CLMS_HRLVLC_IMD_010m_T32TNS_20210101T000000_V100_IMD.tif
+
+# Example: CLMS HRL NVLCC product (first field: prefix)
+parseo assemble \
+  prefix=CLMS_HRL product=NVLCC resolution=010m tile_id=T32TNS \
+  start_date=20210101 end_date=20211231 version=V100 file_id=NVLCC extension=tif
+# -> CLMS_HRL_NVLCC_010m_T32TNS_20210101_20211231_V100_NVLCC.tif
 ```
 
 ---

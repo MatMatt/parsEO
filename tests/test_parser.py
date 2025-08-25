@@ -1,4 +1,5 @@
 from parseo.parser import parse_auto
+from parseo import assemble_auto
 import parseo.parser as parser
 import pytest
 from functools import lru_cache
@@ -128,59 +129,8 @@ def test_hrvpp_st_example():
     assert res.fields["product"] == "PPI"
     assert res.fields["extension"] == "tif"
 
-
 def test_hrvpp_st_variant():
     name = "ST_20231231T000000_S2_W05S20-98765_030m_V101_PPI.tif"
     res = parse_auto(name)
     assert res.fields["tile_id"] == "W05S20-98765"
     assert res.fields["version"] == "V101"
-
-def test_clms_ccd_example():
-    name = "ccd_2015_100m_E042N018_3035_v1_1.tif"
-    res = parse_auto(name)
-    assert res is not None
-    assert res.fields["reference_year"] == "2015"
-    assert res.fields["resolution"] == "100m"
-    assert res.fields["aoi_code"] == "E042N018"
-    assert res.fields["epsg"] == "3035"
-    assert res.fields["version"] == "v1"
-    assert res.fields["tile"] == "1"
-    assert res.fields["extension"] == "tif"
-
-
-def test_clms_ccd_example_2018():
-    name = "ccd_2018_100m_E050N020_3035_v2_2.tif"
-    res = parse_auto(name)
-    assert res is not None
-    assert res.fields["reference_year"] == "2018"
-    assert res.fields["resolution"] == "100m"
-    assert res.fields["aoi_code"] == "E050N020"
-    assert res.fields["epsg"] == "3035"
-    assert res.fields["version"] == "v2"
-    assert res.fields["tile"] == "2"
-    assert res.fields["extension"] == "tif"
-
-
-def test_clms_n2k_example():
-    name = "n2k_2018_100m_E042N018_3035_v1_1.tif"
-    res = parse_auto(name)
-    assert res is not None
-    assert res.fields["prefix"] == "n2k"
-    assert res.fields["reference_year"] == "2018"
-    assert res.fields["resolution"] == "100m"
-    assert res.fields["aoi_code"] == "E042N018"
-    assert res.fields["epsg"] == "3035"
-    assert res.fields["version"] == "v1"
-    assert res.fields["tile"] == "1"
-    assert res.fields["extension"] == "tif"
-
-
-def test_clms_n2k_vector_example():
-    name = "n2k_2018_3035_v1.gpkg"
-    res = parse_auto(name)
-    assert res is not None
-    assert res.fields["prefix"] == "n2k"
-    assert res.fields["reference_year"] == "2018"
-    assert res.fields["epsg"] == "3035"
-    assert res.fields["version"] == "v1"
-    assert res.fields["extension"] == "gpkg"

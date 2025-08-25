@@ -165,6 +165,20 @@ def _select_schema_by_first_compulsory(fields: Dict[str, Any]) -> Path:
         if first_key not in fields:
             continue
 
+        # Validate that the provided value for the first compulsory field
+        # matches the schema's expectations (enum/pattern). This helps
+        # disambiguate schemas sharing the same first field name but with
+        # different allowed values.
+        specs = sch.get("fields", {})
+        spec = specs.get(first_key, {})
+        value = str(fields[first_key])
+        if "enum" in spec and value not in spec["enum"]:
+            continue
+        if "pattern" in spec:
+            pattern = _field_regex({"pattern": spec["pattern"]})
+            if not re.fullmatch(pattern, value):
+                continue
+
         overlap = sum(1 for k in fields.keys() if k in order)
         key = (overlap, -len(order), str(p))
         if best is None or key > best:
