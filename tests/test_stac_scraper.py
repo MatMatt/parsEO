@@ -5,6 +5,8 @@ from pathlib import Path
 import pytest
 import parseo.stac_scraper as ss
 
+stac_url = "http://base"
+
 
 @pytest.mark.parametrize(
     "alias, expected",
