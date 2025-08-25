@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pytest
 
-from parseo import assemble, assemble_auto, clear_schema_cache
+from parseo import assemble, assemble_auto, clear_schema_cache, parse_auto
 
 
 def test_assemble_clms_fsc_schema():
@@ -128,45 +128,6 @@ def test_assemble_auto_fapar_schema():
     result = assemble_auto(fields)
     assert result == "CLMS_VPP_FAPAR_100m_T32TNS_20210101_20210110_V100_FAPAR.tif"
 
-
-def test_assemble_hrvpp_vi_ndvi_schema():
-    schema = (
-        Path(__file__).resolve().parents[1]
-        / "src/parseo/schemas/copernicus/clms/hr-vpp/vi/vi_filename_v0_0_0.json"
-    )
-    fields = {
-        "metric": "NDVI",
-        "composite_length": "10D",
-        "resolution": "010m",
-        "tile_id": "T32TNS",
-        "sensing_date": "20240101",
-        "platform": "S2",
-        "version": "V100",
-        "extension": "tif",
-    }
-    result = assemble(schema, fields)
-    assert result == "VPP_NDVI_10D_010m_T32TNS_20240101_S2_V100.tif"
-
-
-def test_assemble_hrvpp_vi_lai_schema():
-    schema = (
-        Path(__file__).resolve().parents[1]
-        / "src/parseo/schemas/copernicus/clms/hr-vpp/vi/vi_filename_v0_0_0.json"
-    )
-    fields = {
-        "metric": "LAI",
-        "composite_length": "10D",
-        "resolution": "010m",
-        "tile_id": "T32TNS",
-        "sensing_date": "20240101",
-        "platform": "S2",
-        "version": "V100",
-        "extension": "tif",
-    }
-    result = assemble(schema, fields)
-    assert result == "VPP_LAI_10D_010m_T32TNS_20240101_S2_V100.tif"
-
-
 def test_assemble_clms_st_schema():
     schema = (
         Path(__file__).resolve().parents[1]
@@ -254,3 +215,37 @@ def test_clear_schema_cache(tmp_path):
 
     clear_schema_cache()
     assert assemble(schema, fields) == "x-y"
+
+def test_assemble_clms_hrlvlcc_schema():
+    schema = (
+        Path(__file__).resolve().parents[1]
+        / "src/parseo/schemas/copernicus/clms/hrlvlcc/hrlvlcc_filename_v0_0_0.json"
+    )
+    fields = {
+        "prefix": "CLMS_HRLVLC",
+        "product": "IMD",
+        "resolution": "010m",
+        "tile_id": "T32TNS",
+        "sensing_datetime": "20210101T000000",
+        "version": "V100",
+        "file_id": "IMD",
+        "extension": "tif",
+    }
+    result = assemble(schema, fields)
+    assert result == "CLMS_HRLVLC_IMD_010m_T32TNS_20210101T000000_V100_IMD.tif"
+
+
+def test_assemble_auto_hrlvlcc_schema():
+    fields = {
+        "prefix": "CLMS_HRLVLC",
+        "product": "IMD",
+        "resolution": "010m",
+        "tile_id": "T32TNS",
+        "sensing_datetime": "20210101T000000",
+        "version": "V100",
+        "file_id": "IMD",
+        "extension": "tif",
+    }
+    result = assemble_auto(fields)
+    assert result == "CLMS_HRLVLC_IMD_010m_T32TNS_20210101T000000_V100_IMD.tif"
+

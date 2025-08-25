@@ -1,0 +1,34 @@
+{
+  "schema_id": "copernicus:clms:ua2018:lcf",
+  "schema_version": "1.0.0",
+  "stac_version": "1.1.0",
+  "stac_extensions": ["raster", "eo"],
+  "description": "CLMS Urban Atlas 2018 Land Cover Functional Areas filename.",
+  "fields": {
+    "aoi_code": {
+      "type": "string",
+      "pattern": "^[A-Z]{2}\\d{3}L\\d$",
+      "description": "Area of interest code"
+    },
+    "dataset": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9]+$",
+      "description": "Optional dataset token"
+    },
+    "reference_year": {
+      "type": "string",
+      "enum": ["2018"],
+      "description": "Reference year"
+    },
+    "extension": {
+      "type": "string",
+      "enum": ["gdb", "gpkg"],
+      "description": "File extension without leading dot"
+    }
+  },
+  "template": "{aoi_code}[_{dataset}]_ua{reference_year}_lcf[.{extension}]",
+  "examples": [
+    "DE001L1_v1_ua2018_lcf.gpkg",
+    "DE001L1_ua2018_lcf.gdb"
+  ]
+}

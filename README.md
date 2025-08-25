@@ -36,10 +36,12 @@ Currently included schemas cover:
 - **NASA MODIS**: Terra/Aqua MODIS products
 - **EUMETSAT missions**: MTG, Metop
 - **Copernicus Land Monitoring Service (CLMS)**:
-  - Corine Land Cover (CLC)  
-  - High Resolution Water & Snow / Ice (HR-WSI)  
+  - Corine Land Cover (CLC)
+  - High Resolution Water & Snow / Ice (HR-WSI)
   - High Resolution Vegetation Phenology & Productivity (HR-VPP)
-  - High Resolution Layers: Grasslands  
+  - High Resolution Layers: Vegetation & Land Cover Characteristics (HRLVLCC)
+    (Imperviousness, Tree Cover Density, Forest Type, Grassland, Small Woody Features, Water & Wetness)
+  - High Resolution Layers: Non-Vegetated Land Cover Change (HRL NVLCC)
 ---
 
 ## Installation
@@ -253,13 +255,16 @@ for cid in stac_scraper.list_collections(stac_url):
         stac_url=stac_url,
         collections=[cid],
         bbox=[13.0, 52.0, 13.5, 52.5],
-        datetime="2024-01-01/2024-01-02",
+        datetime="2024-01-01T00:00:00Z/2024-01-02T00:00:00Z",
         dest_dir="downloads",
     )
 ```
 
 This functionality depends on the ``pystac-client`` and ``requests``
 packages being available at runtime.
+
+All temporal constraints should be expressed as timezone-aware ISO 8601
+strings (e.g., ``2024-01-01T00:00:00Z``).
 
 ### Scrape a STAC catalog
 
@@ -361,6 +366,18 @@ parseo assemble \
   prefix=CLMS_VPP product=FAPAR resolution=100m tile_id=T32TNS \
   start_date=20210101 end_date=20210110 version=V100 file_id=FAPAR extension=tif
 # -> CLMS_VPP_FAPAR_100m_T32TNS_20210101_20210110_V100_FAPAR.tif
+
+# Example: CLMS HRLVLCC product (first field: prefix)
+parseo assemble \
+  prefix=CLMS_HRLVLC product=IMD resolution=010m tile_id=T32TNS \
+  sensing_datetime=20210101T000000 version=V100 file_id=IMD extension=tif
+# -> CLMS_HRLVLC_IMD_010m_T32TNS_20210101T000000_V100_IMD.tif
+
+# Example: CLMS HRL NVLCC product (first field: prefix)
+parseo assemble \
+  prefix=CLMS_HRL product=NVLCC resolution=010m tile_id=T32TNS \
+  start_date=20210101 end_date=20211231 version=V100 file_id=NVLCC extension=tif
+# -> CLMS_HRL_NVLCC_010m_T32TNS_20210101_20211231_V100_NVLCC.tif
 ```
 
 ---

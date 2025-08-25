@@ -1,0 +1,22 @@
+{
+  "schema_id": "copernicus:clms:hrlnvlcc",
+  "schema_version": "0.0.0",
+  "stac_version": "1.1.0",
+  "stac_extensions": ["raster", "eo"],
+  "description": "CLMS HRL Non-Vegetated Land Cover Change product filename.",
+  "fields": {
+    "prefix": {"type": "string", "enum": ["CLMS_HRL"], "description": "Constant prefix"},
+    "product": {"type": "string", "enum": ["NVLCC"], "description": "Product code"},
+    "resolution": {"type": "string", "enum": ["010m"], "description": "Spatial resolution"},
+    "tile_id": {"type": "string", "pattern": "^T\\d{2}[C-HJ-NP-X][A-Z]{2}$", "description": "UTM tile identifier"},
+    "start_date": {"type": "string", "pattern": "^\\d{8}$", "description": "Start date (YYYYMMDD)"},
+    "end_date": {"type": "string", "pattern": "^\\d{8}$", "description": "End date (YYYYMMDD)"},
+    "version": {"type": "string", "pattern": "^V\\d{3}$", "description": "Product version"},
+    "file_id": {"type": "string", "enum": ["NVLCC", "MTD"], "description": "File identifier"},
+    "extension": {"type": "string", "enum": ["tif", "xml"], "description": "File extension without leading dot"}
+  },
+  "template": "{prefix}_{product}_{resolution}_{tile_id}_{start_date}_{end_date}_{version}_{file_id}[.{extension}]",
+  "examples": [
+    "CLMS_HRL_NVLCC_010m_T32TNS_20210101_20211231_V100_NVLCC.tif"
+  ]
+}
