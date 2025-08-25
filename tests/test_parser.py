@@ -1,4 +1,5 @@
 from parseo.parser import parse_auto
+from parseo import assemble_auto
 import parseo.parser as parser
 import pytest
 from functools import lru_cache
@@ -134,3 +135,27 @@ def test_hrvpp_st_variant():
     res = parse_auto(name)
     assert res.fields["tile_id"] == "W05S20-98765"
     assert res.fields["version"] == "V101"
+
+def test_hrl_imperviousness_roundtrip_2012_10m():
+    name = "hrl_IMD_2012_10m_E40N20_EPSG3035_v100_E40N20.tif"
+    res = parse_auto(name)
+    assert res is not None
+    assert res.fields["reference_year"] == "2012"
+    assert res.fields["resolution"] == "10m"
+    assert assemble_auto(res.fields) == name
+
+
+def test_hrl_imperviousness_roundtrip_2018_100m():
+    name = "hrl_IMD_2018_100m_E60N10_EPSG3035_v101_E60N10.tif"
+    res = parse_auto(name)
+    assert res.fields["reference_year"] == "2018"
+    assert res.fields["resolution"] == "100m"
+    assert assemble_auto(res.fields) == name
+
+
+def test_hrl_imperviousness_roundtrip_2024_10m():
+    name = "hrl_IMD_2024_10m_E40N20_EPSG3035_v102_E40N20.tif"
+    res = parse_auto(name)
+    assert res.fields["reference_year"] == "2024"
+    assert res.fields["resolution"] == "10m"
+    assert assemble_auto(res.fields) == name

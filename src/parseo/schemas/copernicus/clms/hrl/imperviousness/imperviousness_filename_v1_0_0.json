@@ -1,0 +1,23 @@
+{
+  "schema_id": "copernicus:clms:hrl:imperviousness",
+  "schema_version": "1.0.0",
+  "stac_version": "1.1.0",
+  "stac_extensions": ["raster", "eo"],
+  "description": "CLMS HRL Imperviousness Density product filename.",
+  "fields": {
+    "product_code": {"type": "string", "enum": ["IMD"], "description": "Product code"},
+    "reference_year": {"type": "string", "enum": ["2012", "2018", "2024"], "description": "Reference year"},
+    "resolution": {"type": "string", "enum": ["10m", "100m"], "description": "Spatial resolution"},
+    "aoi_code": {"type": "string", "enum": ["E40N20", "E60N10"], "description": "Area of interest code"},
+    "epsg": {"type": "string", "enum": ["EPSG3035"], "description": "Spatial reference system"},
+    "version": {"type": "string", "pattern": "^\\d{3}$", "description": "Product version"},
+    "tile": {"type": "string", "pattern": "^E\\d{2,3}N\\d{2,3}$", "description": "Tile identifier"},
+    "extension": {"type": "string", "enum": ["tif"], "description": "File extension without leading dot"}
+  },
+  "template": "hrl_{product_code}_{reference_year}_{resolution}_{aoi_code}_{epsg}_v{version}_{tile}[.{extension}]",
+    "examples": [
+      "hrl_IMD_2012_10m_E40N20_EPSG3035_v100_E40N20.tif",
+      "hrl_IMD_2018_100m_E60N10_EPSG3035_v101_E60N10.tif",
+      "hrl_IMD_2024_10m_E40N20_EPSG3035_v102_E40N20.tif"
+    ]
+}

@@ -216,3 +216,18 @@ def test_clear_schema_cache(tmp_path):
 
     clear_schema_cache()
     assert assemble(schema, fields) == "x-y"
+
+@pytest.mark.parametrize("year", ["2012", "2018", "2024"])
+def test_assemble_auto_hrl_imperviousness_schema(year):
+    fields = {
+        "product_code": "IMD",
+        "reference_year": year,
+        "resolution": "10m",
+        "aoi_code": "E40N20",
+        "epsg": "EPSG3035",
+        "version": "100",
+        "tile": "E40N20",
+        "extension": "tif",
+    }
+    result = assemble_auto(fields)
+    assert result == f"hrl_IMD_{year}_10m_E40N20_EPSG3035_v100_E40N20.tif"
