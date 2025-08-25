@@ -169,3 +169,16 @@ def test_hrl_imperviousness_roundtrip_2024_10m():
     assert res.fields["reference_year"] == "2024"
     assert res.fields["resolution"] == "10m"
     assert assemble_auto(res.fields) == name
+
+def test_clcplus_example():
+    name = "CLCPLUS_BB_2023_010m_E40N20_V100.tif"
+    res = parse_auto(name)
+    assert res is not None
+    assert res.fields["prefix"] == "CLCPLUS"
+    assert res.fields["variant"] == "BB"
+    assert res.fields["reference_year"] == "2023"
+    assert res.fields["resolution"] == "010m"
+    assert res.fields["tile_id"] == "E40N20"
+    assert res.fields["version"] == "V100"
+    assert res.fields["extension"] == "tif"
+    assert assemble_auto(res.fields) == name
