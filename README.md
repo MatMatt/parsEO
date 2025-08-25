@@ -36,6 +36,7 @@ Currently included schemas cover:
 - **NASA MODIS**: Terra/Aqua MODIS products
 - **EUMETSAT missions**: MTG, Metop
 - **Copernicus Land Monitoring Service (CLMS)**:
+  - Riparian Zones (RZ) vector products
   - Corine Land Cover (CLC)
   - High Resolution Water & Snow / Ice (HR-WSI)
   - High Resolution Vegetation Phenology & Productivity (HR-VPP)
