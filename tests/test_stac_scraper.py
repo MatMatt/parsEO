@@ -2,6 +2,7 @@ import sys
 import types
 import json
 from pathlib import Path
+import datetime
 
 import pytest
 import parseo.stac_scraper as ss
@@ -219,3 +220,35 @@ def test_scrape_catalog(tmp_path):
 
     limited = ss.scrape_catalog(tmp_path, limit=1)
     assert len(limited) == 1
+
+
+def test_temporal_midpoint_requires_timezone():
+    start = datetime.datetime(2024, 1, 1)
+    end = datetime.datetime(2024, 1, 2, tzinfo=datetime.UTC)
+    with pytest.raises(ValueError):
+        ss._temporal_midpoint(start, end)
+
+
+def test_scrape_catalog_midpoint(tmp_path):
+    catalog = {"links": [{"rel": "item", "href": "item.json"}]}
+    item = {
+        "type": "Feature",
+        "assets": {"data": {"href": "data.tif"}, "meta": {"href": "meta.json"}},
+    }
+    meta = {
+        "id": "ID3",
+        "start_datetime": "2024-03-01T00:00:00Z",
+        "end_datetime": "2024-03-03T00:00:00Z",
+    }
+    (tmp_path / "catalog.json").write_text(json.dumps(catalog))
+    (tmp_path / "item.json").write_text(json.dumps(item))
+    (tmp_path / "meta.json").write_text(json.dumps(meta))
+
+    out = ss.scrape_catalog(tmp_path)
+    assert out == [
+        {
+            "filename": "data.tif",
+            "id": "ID3",
+            "datetime": "2024-03-02T00:00:00Z",
+        }
+    ]
