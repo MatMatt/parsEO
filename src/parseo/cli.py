@@ -7,8 +7,11 @@ import sys
 from typing import Any, Dict, List
 
 from parseo.parser import parse_auto, describe_schema, list_schemas  # parser helpers
-from parseo.stac_scraper import list_collections as list_collections_http
-from parseo.stac_scraper import sample_collection_filenames
+from parseo.stac_scraper import (
+    list_collections as list_collections_http,
+    sample_collection_filenames,
+    search_stac_and_download,
+)
 
 
 # ---------- small utilities ----------
@@ -67,6 +70,42 @@ def _build_arg_parser() -> argparse.ArgumentParser:
         "--deep",
         action="store_true",
         help="Recursively follow child catalogs to list nested collections",
+    )
+
+    # stac-download
+    p_stac_dl = sp.add_parser(
+        "stac-download",
+        help="Download the first asset matching a STAC search",
+    )
+    p_stac_dl.add_argument(
+        "--stac-url",
+        required=True,
+        help="Base URL of the STAC API",
+    )
+    p_stac_dl.add_argument(
+        "--collection",
+        action="append",
+        required=True,
+        dest="collections",
+        help="STAC collection ID (may be passed multiple times)",
+    )
+    p_stac_dl.add_argument(
+        "--bbox",
+        nargs=4,
+        type=float,
+        metavar=("MINX", "MINY", "MAXX", "MAXY"),
+        required=True,
+        help="Bounding box to search",
+    )
+    p_stac_dl.add_argument(
+        "--datetime",
+        required=True,
+        help="ISO 8601 datetime or range",
+    )
+    p_stac_dl.add_argument(
+        "--dest-dir",
+        default=".",
+        help="Directory to save the downloaded asset",
     )
 
     # assemble
@@ -205,6 +244,27 @@ def main(argv: List[str] | None = None) -> int:
     if args.cmd == "list-stac-collections":
         for cid in list_collections_http(base_url=args.stac_url, deep=args.deep):
             print(cid)
+        return 0
+
+    if args.cmd == "stac-download":
+        bbox = list(map(float, args.bbox))
+        cols = args.collections
+        collections_arg: str | list[str]
+        if len(cols) == 1:
+            collections_arg = cols[0]
+        else:
+            collections_arg = cols
+        try:
+            dest = search_stac_and_download(
+                stac_url=args.stac_url,
+                collections=collections_arg,
+                bbox=bbox,
+                datetime=args.datetime,
+                dest_dir=args.dest_dir,
+            )
+        except FileNotFoundError:
+            return 1
+        print(dest)
         return 0
 
     if args.cmd == "stac-sample":
