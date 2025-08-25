@@ -253,13 +253,16 @@ for cid in stac_scraper.list_collections(stac_url):
         stac_url=stac_url,
         collections=[cid],
         bbox=[13.0, 52.0, 13.5, 52.5],
-        datetime="2024-01-01/2024-01-02",
+        datetime="2024-01-01T00:00:00Z/2024-01-02T00:00:00Z",
         dest_dir="downloads",
     )
 ```
 
 This functionality depends on the ``pystac-client`` and ``requests``
 packages being available at runtime.
+
+All temporal constraints should be expressed as timezone-aware ISO 8601
+strings (e.g., ``2024-01-01T00:00:00Z``).
 
 ### Scrape a STAC catalog
 
