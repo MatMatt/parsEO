@@ -31,6 +31,7 @@ def merge_fields(
 
 
 def _field_regex(spec: Optional[Dict[str, Any]]) -> str:
+
     """Return a regex for a field spec.
 
     If *spec* is missing or empty, a permissive pattern ``.+`` is used.
@@ -49,10 +50,10 @@ def _field_regex(spec: Optional[Dict[str, Any]]) -> str:
         pattern = pattern[:-1]
     return pattern
 
-
 def compile_template(
     template: str, fields: Dict[str, Dict[str, Any]]
 ) -> Tuple[str, List[str]]:
+
     """Compile *template* into a regex pattern and extract field order.
 
     ``{field}`` placeholders are replaced using patterns or enums from

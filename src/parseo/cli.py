@@ -4,13 +4,10 @@ from __future__ import annotations
 import argparse
 import json
 import sys
-from importlib.resources import as_file, files
-from pathlib import Path
 from typing import Any, Dict, List
 
-from parseo.parser import parse_auto  # existing parser entrypoint
-
-SCHEMAS_ROOT = "schemas"
+from parseo.parser import parse_auto, describe_schema, list_schemas  # parser helpers
+from parseo.stac_dataspace import list_collections_http, sample_collection_filenames
 
 
 # ---------- small utilities ----------
@@ -24,7 +21,52 @@ def _build_arg_parser() -> argparse.ArgumentParser:
     p_parse.add_argument("filename")
 
     # list-schemas
-    sp.add_parser("list-schemas", help="List packaged schema JSON files")
+    sp.add_parser("list-schemas", help="List available schema families")
+
+    # schema-info
+    p_info = sp.add_parser("schema-info", help="Show details for a mission family")
+    p_info.add_argument("family", help="Mission family name, e.g. 'S2'")
+
+    # list-clms-products
+    sp.add_parser(
+        "list-clms-products",
+        help="List product names available in the CLMS dataset catalog",
+    )
+
+    # stac-sample
+    p_stac = sp.add_parser(
+        "stac-sample",
+        help="Print sample asset filenames from a STAC collection",
+    )
+    p_stac.add_argument("collection", help="STAC collection ID")
+    p_stac.add_argument(
+        "--samples", type=int, default=5, help="Number of filenames to list"
+    )
+    p_stac.add_argument(
+        "--stac-url",
+        required=True,
+        help="Base URL of the STAC API",
+    )
+    p_stac.add_argument(
+        "--asset-role",
+        help="Only include assets whose roles contain this value",
+    )
+
+    # list-stac-collections
+    p_stac_list = sp.add_parser(
+        "list-stac-collections",
+        help="List collection IDs available in a STAC API",
+    )
+    p_stac_list.add_argument(
+        "--stac-url",
+        required=True,
+        help="Base URL of the STAC API",
+    )
+    p_stac_list.add_argument(
+        "--deep",
+        action="store_true",
+        help="Recursively follow child catalogs to list nested collections",
+    )
 
     # assemble
     p_asm = sp.add_parser(
@@ -58,6 +100,8 @@ def _kv_pairs_to_dict(pairs: List[str]) -> Dict[str, str]:
         v = v.strip()
         if not k:
             raise SystemExit(f"Invalid field '{p}': empty key.")
+        if k in out:
+            raise SystemExit(f"Duplicate field '{k}'.")
         out[k] = v
     return out
 
@@ -123,9 +167,12 @@ def main(argv: List[str] | None = None) -> int:
             "valid": bool(getattr(res, "valid", False)),
             "fields": getattr(res, "fields", None),
         }
-        spath = getattr(res, "schema_path", None)
-        if spath:
-            out["schema_path"] = spath
+        version = getattr(res, "version", None)
+        if version:
+            out["version"] = version
+        status = getattr(res, "status", None)
+        if status:
+            out["status"] = status
         mfam = getattr(res, "match_family", None)
         if mfam:
             out["match_family"] = mfam
@@ -133,11 +180,43 @@ def main(argv: List[str] | None = None) -> int:
         return 0
 
     if args.cmd == "list-schemas":
-        base = files("parseo").joinpath(SCHEMAS_ROOT)
-        with as_file(base) as bp:
-            root = Path(bp)
-            for p in root.rglob("*.json"):
-                print(p.relative_to(root))
+        for fam in list_schemas():
+            print(fam)
+        return 0
+
+    if args.cmd == "schema-info":
+        try:
+            info = describe_schema(args.family)
+        except KeyError as e:
+            raise SystemExit(str(e))
+        print(json.dumps(info, indent=2, ensure_ascii=False))
+        return 0
+
+    if args.cmd == "list-clms-products":
+        try:
+            from parseo.clms_catalog import fetch_clms_products
+        except Exception as exc:  # pragma: no cover - import-time failures
+            raise SystemExit(f"Failed to load CLMS catalog scraper: {exc}")
+        for name in fetch_clms_products():
+            print(name)
+        return 0
+
+    if args.cmd == "list-stac-collections":
+        for cid in list_collections_http(base_url=args.stac_url, deep=args.deep):
+            print(cid)
+        return 0
+
+    if args.cmd == "stac-sample":
+        samples = sample_collection_filenames(
+            args.collection,
+            args.samples,
+            base_url=args.stac_url,
+            asset_role=args.asset_role,
+        )
+        for cid in sorted(samples):
+            print(f"{cid}:")
+            for fn in samples[cid]:
+                print(f"  {fn}")
         return 0
 
     if args.cmd == "assemble":

@@ -4,10 +4,11 @@ from __future__ import annotations
 from dataclasses import dataclass
 from importlib.resources import files, as_file
 from pathlib import Path
-from typing import Dict, Iterator, Optional
+from typing import Any, Dict, Iterator, Optional
 import re
 from functools import lru_cache
 from ._json import load_json
+from .template import compile_template, _field_regex
 
 # Root folder inside the package where JSON schemas live
 SCHEMAS_ROOT = "schemas"
@@ -18,8 +19,23 @@ class ParseResult:
     """Result of a parsing attempt."""
     valid: bool
     fields: Dict[str, str]
-    schema_path: str
+    version: Optional[str] = None
+    status: Optional[str] = None
     match_family: Optional[str] = None  # e.g., "S1", "S2", "LANDSAT"
+
+
+@dataclass(frozen=True)
+class ParseError(Exception):
+    """Raised when a filename nearly matches a schema but fails on a field."""
+
+    field: str
+    expected: str
+    value: str
+
+    def __str__(self) -> str:  # pragma: no cover - trivial
+        return (
+            f"Invalid value '{self.value}' for field '{self.field}': expected {self.expected}"
+        )
 
 
 @dataclass(frozen=True)
@@ -28,6 +44,8 @@ class _FamilyInfo:
 
     tokens: tuple[str, ...]
     schema_path: Path
+    version: Optional[str] = None
+    status: Optional[str] = None
 
 
 # ---------------------------
@@ -90,6 +108,7 @@ def _discover_family_info(pkg: str) -> Dict[str, _FamilyInfo]:
                 continue
             versions = data.get("versions") or []
             schema_file = None
+            current = None
             if isinstance(versions, list):
                 current = next(
                     (v for v in versions if v.get("status") == "current"),
@@ -102,20 +121,10 @@ def _discover_family_info(pkg: str) -> Dict[str, _FamilyInfo]:
             info[family.upper()] = _FamilyInfo(
                 tokens=_family_tokens_from_name(family),
                 schema_path=schema_file,
+                version=current.get("version") if isinstance(current, dict) else None,
+                status=current.get("status") if isinstance(current, dict) else None,
             )
     return info
-
-
-def _find_schema_by_hints(pkg: str, product: Optional[str]) -> Optional[Path]:
-    """Return the schema path for the hinted family, if available."""
-
-    if not product:
-        return None
-    info = _discover_family_info(pkg)
-    fam = info.get(product.upper())
-    if fam:
-        return fam.schema_path
-    return None
 
 
 # ---------------------------
@@ -132,51 +141,37 @@ def _compile_pattern(pattern: str) -> re.Pattern:
     return re.compile(pattern)
 
 
-def _expand_pattern(schema: Dict) -> Optional[str]:
-    """Expand ``filename_pattern`` placeholders using field definitions.
+def _pattern_from_schema(schema: Dict) -> Optional[str]:
+    """Return a compiled regex pattern derived from schema's template.
 
-    A pattern may reference field names using ``{{field}}`` tokens. For each
-    field definition, either an ``enum`` or a ``pattern`` is used to replace the
-    corresponding token. Anchors (``^``/``$``) in field patterns are stripped so
-    they integrate cleanly into the larger regex.
+    The result is cached inside the schema object. If a ``template`` key is
+    present it is compiled via :func:`compile_template`. Otherwise a legacy
+    ``filename_pattern`` is used as-is.
     """
 
-    cached = schema.get("_expanded_pattern")
+    cached = schema.get("_compiled_pattern")
     if cached:
         return cached
 
-    patt = schema.get("filename_pattern")
-    if not isinstance(patt, str):
-        return None
-
-    fields = schema.get("fields", {})
-    if not isinstance(fields, dict):
-        schema["_expanded_pattern"] = patt
-        return patt
-
-    def field_regex(spec: Dict) -> str:
-        if "enum" in spec:
-            return "(?:" + "|".join(re.escape(v) for v in spec["enum"]) + ")"
-        pattern = spec.get("pattern")
-        if pattern is None:
-            raise KeyError("Field spec missing 'pattern' or 'enum'")
-        if pattern.startswith("^"):
-            pattern = pattern[1:]
-        if pattern.endswith("$"):
-            pattern = pattern[:-1]
+    template = schema.get("template")
+    if isinstance(template, str):
+        fields = schema.get("fields", {})
+        pattern, order = compile_template(template, fields)
+        schema["_compiled_pattern"] = pattern
+        if "fields_order" not in schema and order:
+            schema["fields_order"] = order
         return pattern
 
-    for name, spec in fields.items():
-        placeholder = f"{{{{{name}}}}}"
-        if placeholder in patt:
-            patt = patt.replace(placeholder, field_regex(spec))
+    patt = schema.get("filename_pattern")
+    if isinstance(patt, str):
+        schema["_compiled_pattern"] = patt
+        return patt
 
-    schema["_expanded_pattern"] = patt
-    return patt
+    return None
 
 
 def _match_filename(name: str, schema: Dict) -> Optional[re.Match]:
-    patt = _expand_pattern(schema)
+    patt = _pattern_from_schema(schema)
     if not isinstance(patt, str) or not patt:
         return None
     rx = _compile_pattern(patt)
@@ -196,9 +191,128 @@ def _try_validate(name: str, schema: Dict) -> bool:
     return _match_filename(name, schema) is not None
 
 
+def _named_group_spans(pattern: str) -> Dict[str, tuple[int, int]]:
+    spans: Dict[str, tuple[int, int]] = {}
+    stack: list[tuple[Optional[str], int]] = []
+    i = 0
+    in_class = False
+    while i < len(pattern):
+        ch = pattern[i]
+        if ch == "\\":
+            i += 2
+            continue
+        if in_class:
+            if ch == "]":
+                in_class = False
+            i += 1
+            continue
+        if ch == "[":
+            in_class = True
+            i += 1
+            continue
+        if ch == "(":
+            if pattern.startswith("(?P<", i):
+                j = i + 4
+                k = pattern.index(">", j)
+                name = pattern[j:k]
+                stack.append((name, i))
+                i = k + 1
+            else:
+                stack.append((None, i))
+                i += 1
+            continue
+        if ch == ")":
+            name, start = stack.pop()
+            if name:
+                spans[name] = (start, i + 1)
+            i += 1
+            continue
+        i += 1
+    return spans
+
+
+def _explain_match_failure(name: str, schema: Dict) -> Optional[tuple[str, str, str]]:
+    pattern = _pattern_from_schema(schema)
+    fields = schema.get("fields", {})
+    order = schema.get("fields_order", [])
+    if not pattern or not order:
+        return None
+    spans = _named_group_spans(pattern)
+    for i, field in enumerate(order):
+        next_start = spans[order[i + 1]][0] if i + 1 < len(order) else len(pattern) - 1
+        prefix_pat = pattern[:next_start] + ".*$"
+        if not _compile_pattern(prefix_pat).match(name):
+            before_pat = pattern[:spans[field][0]]
+            m_before = _compile_pattern(before_pat).match(name)
+            start_pos = len(m_before.group(0)) if m_before else 0
+            spec = fields.get(field, {})
+            field_rx = re.compile(_field_regex(spec))
+            m_field = field_rx.match(name[start_pos:])
+            if m_field:
+                value = m_field.group(0)
+            else:
+                end_pos = len(name)
+                for sep in ["_", ".", "-"]:
+                    idx = name.find(sep, start_pos)
+                    if idx != -1:
+                        end_pos = min(end_pos, idx)
+                value = name[start_pos:end_pos]
+            if "enum" in spec:
+                expected = f"one of {spec['enum']}"
+            elif "pattern" in spec:
+                expected = f"pattern {spec['pattern']}"
+            else:
+                expected = "a different value"
+            return field, expected, value
+    return None
+
+
 # ---------------------------
 # Public API
 # ---------------------------
+
+
+def list_schemas(pkg: str = __package__) -> list[str]:
+    """Return a list of available mission family names."""
+
+    info = _discover_family_info(pkg)
+    return sorted(info.keys())
+
+
+def describe_schema(family: str, pkg: str = __package__) -> dict[str, Any]:
+    """Return schema metadata and field descriptions for ``family``."""
+
+    info = _discover_family_info(pkg)
+    meta = info.get(family.upper())
+    if meta is None:
+        raise KeyError(f"Unknown family: {family}")
+
+    schema = _load_json_from_path(meta.schema_path)
+    fields: Dict[str, Dict[str, Any]] = {}
+    for name, spec in schema.get("fields", {}).items():
+        if isinstance(spec, dict):
+            fields[name] = {
+                k: spec[k]
+                for k in ("type", "enum", "pattern", "description")
+                if k in spec
+            }
+
+    out: Dict[str, Any] = {
+        "schema_id": schema.get("schema_id"),
+        "description": schema.get("description"),
+        "fields": fields,
+    }
+
+    template = schema.get("template")
+    if isinstance(template, str):
+        out["template"] = template
+
+    examples = schema.get("examples")
+    if isinstance(examples, list):
+        out["examples"] = [e for e in examples if isinstance(e, str)]
+
+    return out
+
 
 def parse_auto(name: str) -> ParseResult:
     """
@@ -219,7 +333,8 @@ def parse_auto(name: str) -> ParseResult:
             break
 
     # Try hinted schema first (if any)
-    hinted = _find_schema_by_hints(pkg, product=product_hint)
+    hinted_meta = info.get(product_hint) if product_hint else None
+    hinted = hinted_meta.schema_path if hinted_meta else None
     if hinted and hinted.exists():
         try:
             schema = _load_json_from_path(hinted)
@@ -227,9 +342,16 @@ def parse_auto(name: str) -> ParseResult:
                 return ParseResult(
                     valid=True,
                     fields=_extract_fields(name, schema),
-                    schema_path=str(hinted),
+                    version=hinted_meta.version if hinted_meta else None,
+                    status=hinted_meta.status if hinted_meta else None,
                     match_family=product_hint,
                 )
+            mismatch = _explain_match_failure(name, schema)
+            if mismatch:
+                field, expected, value = mismatch
+                raise ParseError(field, expected, value)
+        except ParseError:
+            raise
         except Exception:
             # If hinted schema is unreadable, fall back to brute force
             pass
@@ -241,6 +363,7 @@ def parse_auto(name: str) -> ParseResult:
         raise FileNotFoundError(f"No schemas packaged under {pkg}/{SCHEMAS_ROOT}.")
 
     first_error: Optional[Exception] = None
+    near_miss: Optional[ParseError] = None
     for p in candidates:
         try:
             schema = _load_json_from_path(p)
@@ -249,12 +372,27 @@ def parse_auto(name: str) -> ParseResult:
                 first_error = e
             continue
         if _try_validate(name, schema):
+            matched_family = None
+            version = None
+            status = None
+            for fam_name, meta in info.items():
+                if meta.schema_path == p:
+                    matched_family = fam_name
+                    version = meta.version
+                    status = meta.status
+                    break
             return ParseResult(
                 valid=True,
                 fields=_extract_fields(name, schema),
-                schema_path=str(p),
-                match_family=product_hint,
+                version=version,
+                status=status,
+                match_family=matched_family or product_hint,
             )
+        if near_miss is None:
+            mismatch = _explain_match_failure(name, schema)
+            if mismatch:
+                field, expected, value = mismatch
+                near_miss = ParseError(field, expected, value)
 
     # Nothing matched — provide a helpful error listing what we saw
     with as_file(files(pkg).joinpath(SCHEMAS_ROOT)) as rp:
@@ -265,6 +403,8 @@ def parse_auto(name: str) -> ParseResult:
         f"Looked recursively under {pkg}/{SCHEMAS_ROOT}/ and found "
         f"{len(seen)} file(s): {seen[:8]}{'…' if len(seen) > 8 else ''}"
     )
+    if near_miss is not None:
+        raise near_miss
     if first_error is not None:
         msg += f". First error while reading schemas: {first_error}"
         raise RuntimeError(msg) from first_error

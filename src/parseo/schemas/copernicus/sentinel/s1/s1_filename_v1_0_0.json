@@ -10,25 +10,25 @@
       "enum": ["S1A", "S1B", "S1C"],
       "description": "Spacecraft unit"
     },
-    "mode": {
+    "instrument_mode": {
       "type": "string",
       "enum": ["SM", "IW", "EW", "WV"],
-      "description": "Acquisition mode"
+      "description": "Acquisition mode (sar:instrument_mode)"
     },
-    "product": {
+    "product_type": {
       "type": "string",
       "enum": ["RAW_", "SLC_", "OCN_", "GRDF", "GRDH", "GRDM", "GRDE"],
-      "description": "Product class/type"
+      "description": "Product class/type (sar:product_type)"
     },
-    "level": {
+    "processing_level": {
       "type": "string",
       "pattern": "^\\d[A-Z]{2}$",
       "description": "Processing level (e.g., 1SD)"
     },
-    "pol": {
+    "polarization": {
       "type": "string",
-      "enum": ["VV", "HH", "VH", "HV"],
-      "description": "Polarisation"
+      "enum": ["VV", "HH", "VH", "HV", "DV", "DH", "SV", "SH", "V", "H"],
+      "description": "Polarisation (sar:polarizations)"
     },
     "start_datetime": {
       "type": "string",
@@ -61,12 +61,12 @@
       "description": "File extension without leading dot"
     }
   },
-  "filename_pattern": "^(?P<platform>{{platform}})_(?P<mode>{{mode}})_(?P<product>{{product}})_(?P<level>{{level}})(?P<pol>{{pol}})_(?P<start_datetime>{{start_datetime}})_(?P<end_datetime>{{end_datetime}})_(?P<abs_orbit>{{abs_orbit}})_(?P<datatake>{{datatake}})_(?P<product_id>{{product_id}})(?:\\.(?P<extension>{{extension}}))?$",
+  "template": "{platform}_{instrument_mode}_{product_type}_{processing_level}{polarization}_{start_datetime}_{end_datetime}_{abs_orbit}_{datatake}_{product_id}[.{extension}]",
   "examples": [
-    "S1A_IW_SLC__1SDVV_20250105T053021_20250105T053048_A054321_D068F2E_ABC123.SAFE",
-    "S1B_EW_GRDH_1SHHH_20190101T000000_20190101T000030_A012345_D0ABCDE_ABCDEF",
-    "S1C_SM_OCN__1SVHV_20240701T101010_20240701T101111_A123456_D1A2B3C_1A2B3C.SAFE",
-    "S1A_EW_RAW__0SDVV_20230601T123456_20230601T123546_A210987_D0ABCDEF_123ABC.SAFE",
-    "S1B_SM_GRDE_1SHVV_20190315T120000_20190315T120030_A654321_D0FEDCB_DEF123"
+    "S1A_IW_SLC__1SDV_20250105T053021_20250105T053048_A054321_D068F2E_ABC123.SAFE",
+    "S1B_EW_GRDH_1SDH_20190101T000000_20190101T000030_A012345_D0ABCDE_ABCDEF",
+    "S1C_SM_OCN__1SSV_20240701T101010_20240701T101111_A123456_D1A2B3C_1A2B3C.SAFE",
+    "S1A_EW_RAW__0SDV_20230601T123456_20230601T123546_A210987_D0ABCDEF_123ABC.SAFE",
+    "S1B_SM_GRDE_1SDV_20190315T120000_20190315T120030_A654321_D0FEDCB_DEF123"
   ]
 }
