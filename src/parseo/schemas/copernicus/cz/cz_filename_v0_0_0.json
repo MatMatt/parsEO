@@ -1,0 +1,52 @@
+{
+  "schema_id": "copernicus:cz",
+  "schema_version": "0.0.0",
+  "stac_version": "1.1.0",
+  "stac_extensions": [
+    "vector"
+  ],
+  "description": "Schema for CZ vector products.",
+  "fields": {
+    "prefix": {
+      "type": "string",
+      "enum": [
+        "CZ"
+      ],
+      "description": "Constant prefix"
+    },
+    "product": {
+      "type": "string",
+      "pattern": "^[A-Z0-9]+$",
+      "description": "Product code"
+    },
+    "tile_id": {
+      "type": "string",
+      "pattern": "^T\\d{2}[C-HJ-NP-X][A-Z]{2}$",
+      "description": "UTM tile identifier"
+    },
+    "date": {
+      "type": "string",
+      "pattern": "^\\d{8}$",
+      "description": "Reference date (YYYYMMDD)"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^V\\d{3}$",
+      "description": "Product version"
+    },
+    "extension": {
+      "type": "string",
+      "enum": [
+        "gpkg",
+        "zip",
+        "xml"
+      ],
+      "description": "File extension without leading dot"
+    }
+  },
+  "template": "{prefix}_{product}_{tile_id}_{date}_{version}[.{extension}]",
+  "examples": [
+    "CZ_FOO_T32TNS_20210101_V100.gpkg",
+    "CZ_BAR_T32TNS_20210202_V101.zip"
+  ]
+}

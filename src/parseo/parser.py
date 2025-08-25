@@ -24,7 +24,7 @@ class ParseResult:
     match_family: Optional[str] = None  # e.g., "S1", "S2", "LANDSAT"
 
 
-@dataclass(frozen=True)
+@dataclass
 class ParseError(Exception):
     """Raised when a filename nearly matches a schema but fails on a field."""
 
@@ -326,11 +326,13 @@ def parse_auto(name: str) -> ParseResult:
 
     # Quick family hint based on discovered tokens
     product_hint = None
+    best_len = 0
     u = name.upper()
     for fam, meta in info.items():
-        if any(u.startswith(tok) for tok in meta.tokens):
-            product_hint = fam
-            break
+        for tok in meta.tokens:
+            if u.startswith(tok) and len(tok) > best_len:
+                product_hint = fam
+                best_len = len(tok)
 
     # Try hinted schema first (if any)
     hinted_meta = info.get(product_hint) if product_hint else None

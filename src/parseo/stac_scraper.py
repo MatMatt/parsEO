@@ -205,7 +205,6 @@ def scrape_catalog(root: str | Path, *, limit: int = 100) -> list[dict[str, str]
             text = read_text(path)
         except Exception:
             return {}
-        out: dict[str, str] = {}
         if path.lower().endswith(".json"):
             try:
                 data = json.loads(text)
