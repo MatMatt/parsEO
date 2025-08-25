@@ -258,9 +258,9 @@ Python standard library.
 ```python
 from parseo import scrape_catalog
 
-# Collect filenames and associated metadata from a catalog on disk
-entries = scrape_catalog("/path/to/catalog", limit=2)
-for e in entries:
+# Walk a small STAC example catalog hosted online
+catalog = "https://raw.githubusercontent.com/radiantearth/stac-spec/v1.0.0/examples/catalog.json"
+for e in scrape_catalog(catalog, limit=2):
     print(e["filename"], e.get("id"), e.get("tile"))
 ```
 
