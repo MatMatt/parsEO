@@ -11,6 +11,8 @@ from __future__ import annotations
 from pathlib import Path
 from urllib.parse import urlparse
 
+from .stac_dataspace import _norm_base
+
 # Mapping of common collection aliases to their official STAC IDs.
 # Keys and values are uppercase so lookups can be performed on normalized
 # ``str.upper`` versions of user supplied IDs.
