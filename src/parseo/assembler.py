@@ -166,7 +166,7 @@ def _select_schema_by_first_compulsory(fields: Dict[str, Any]) -> Path:
             continue
 
         overlap = sum(1 for k in fields.keys() if k in order)
-        key = (overlap, len(order), str(p))
+        key = (overlap, -len(order), str(p))
         if best is None or key > best:
             best = key
             best_path = p

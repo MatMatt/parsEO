@@ -266,3 +266,52 @@ def test_assemble_auto_ccd_schema_2018():
     result = assemble_auto(fields)
     assert result == "ccd_2018_100m_E050N020_3035_v2_2.tif"
 
+
+def test_assemble_clms_n2k_schema():
+    name = "n2k_2018_100m_E042N018_3035_v1_1.tif"
+    schema = (
+        Path(__file__).resolve().parents[1]
+        / "src/parseo/schemas/copernicus/clms/n2k/n2k_filename_v1_0_0.json"
+    )
+    fields = parse_auto(name).fields
+    result = assemble(schema, fields)
+    assert result == name
+
+
+def test_assemble_auto_n2k_schema():
+    fields = {
+        "prefix": "n2k",
+        "reference_year": "2018",
+        "resolution": "100m",
+        "aoi_code": "E042N018",
+        "epsg": "3035",
+        "version": "v1",
+        "tile": "1",
+        "extension": "tif",
+    }
+    result = assemble_auto(fields)
+    assert result == "n2k_2018_100m_E042N018_3035_v1_1.tif"
+
+
+def test_assemble_clms_n2k_vector_schema():
+    name = "n2k_2018_3035_v1.gpkg"
+    schema = (
+        Path(__file__).resolve().parents[1]
+        / "src/parseo/schemas/copernicus/clms/n2k/n2k_vector_filename_v1_0_0.json"
+    )
+    fields = parse_auto(name).fields
+    result = assemble(schema, fields)
+    assert result == name
+
+
+def test_assemble_auto_n2k_vector_schema():
+    fields = {
+        "prefix": "n2k",
+        "reference_year": "2018",
+        "epsg": "3035",
+        "version": "v1",
+        "extension": "gpkg",
+    }
+    result = assemble_auto(fields)
+    assert result == "n2k_2018_3035_v1.gpkg"
+

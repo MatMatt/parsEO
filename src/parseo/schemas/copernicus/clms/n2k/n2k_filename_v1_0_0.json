@@ -1,0 +1,53 @@
+{
+  "schema_id": "copernicus:clms:n2k",
+  "schema_version": "1.0.0",
+  "stac_version": "1.1.0",
+  "stac_extensions": ["raster", "eo"],
+  "description": "Copernicus Land Monitoring Service N2K product filename.",
+  "fields": {
+    "prefix": {
+      "type": "string",
+      "enum": ["n2k"],
+      "description": "Constant prefix"
+    },
+    "reference_year": {
+      "type": "string",
+      "pattern": "^\\d{4}$",
+      "description": "Reference year"
+    },
+    "resolution": {
+      "type": "string",
+      "enum": ["100m"],
+      "description": "Spatial resolution"
+    },
+    "aoi_code": {
+      "type": "string",
+      "pattern": "^E\\d{3}N\\d{3}$",
+      "description": "Area of interest code"
+    },
+    "epsg": {
+      "type": "string",
+      "pattern": "^0?3035$",
+      "description": "EPSG code"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^v\\d$",
+      "description": "Product version"
+    },
+    "tile": {
+      "type": "string",
+      "pattern": "^\\d$",
+      "description": "Tile number"
+    },
+    "extension": {
+      "type": "string",
+      "enum": ["tif"],
+      "description": "File extension without leading dot"
+    }
+  },
+  "template": "{prefix}_{reference_year}_{resolution}_{aoi_code}_{epsg}_{version}_{tile}[.{extension}]",
+  "examples": [
+    "n2k_2018_100m_E042N018_3035_v1_1.tif"
+  ]
+}

@@ -160,3 +160,27 @@ def test_clms_ccd_example_2018():
     assert res.fields["tile"] == "2"
     assert res.fields["extension"] == "tif"
 
+
+def test_clms_n2k_example():
+    name = "n2k_2018_100m_E042N018_3035_v1_1.tif"
+    res = parse_auto(name)
+    assert res is not None
+    assert res.fields["prefix"] == "n2k"
+    assert res.fields["reference_year"] == "2018"
+    assert res.fields["resolution"] == "100m"
+    assert res.fields["aoi_code"] == "E042N018"
+    assert res.fields["epsg"] == "3035"
+    assert res.fields["version"] == "v1"
+    assert res.fields["tile"] == "1"
+    assert res.fields["extension"] == "tif"
+
+
+def test_clms_n2k_vector_example():
+    name = "n2k_2018_3035_v1.gpkg"
+    res = parse_auto(name)
+    assert res is not None
+    assert res.fields["prefix"] == "n2k"
+    assert res.fields["reference_year"] == "2018"
+    assert res.fields["epsg"] == "3035"
+    assert res.fields["version"] == "v1"
+    assert res.fields["extension"] == "gpkg"
