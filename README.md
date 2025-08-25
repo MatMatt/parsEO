@@ -20,13 +20,13 @@ It also serves as an **authoritative definition of filename structures** through
 
 -   **Extensible**: New Copernicus or Landsat product families can be added by dropping schema definitions into the repo.
 
-    -   **STAC utilities**: Query STAC APIs to list collections or sample asset filenames, search and download assets, and scrape metadata from static STAC catalogs using lightweight helpers.
+-   **STAC utilities**: ***(does not really work yet!)*** Query STAC APIs to list collections or sample asset filenames, search and download assets, and scrape metadata from static STAC catalogs using lightweight helpers.
 
 ------------------------------------------------------------------------
 
 ## Supported Products
 
-Currently included schemas cover:
+Currently included schema cover:
 
 -   **Sentinel missions**: S1, S2, S3, S4, S5P, S6\
 -   **Landsat**: LT04, LT05, LE07, LC08, LC09\
@@ -168,7 +168,7 @@ The interactive page lets you call `/parse` and `/assemble` directly from the br
 
 ------------------------------------------------------------------------
 
-## STAC helpers and catalog scraping
+## STAC helpers and catalog scraping *(not functional yet!)*
 
 Filenames often reflect associated metadata or directory structures, so `parsEO` aligns with STAC naming conventions whenever possible. The package ships with lightweight utilities to interact with STAC APIs and catalogs, including helpers to list collections, sample asset filenames, search for downloadable assets, and traverse static catalogs stored on disk.
 

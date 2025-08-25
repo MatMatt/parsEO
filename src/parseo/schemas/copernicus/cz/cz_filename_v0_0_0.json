@@ -14,39 +14,45 @@
       ],
       "description": "Constant prefix"
     },
-    "product": {
+      "year": {
       "type": "string",
-      "pattern": "^[A-Z0-9]+$",
-      "description": "Product code"
+      "enum": ["2012","2018"],
+      "description": "Reference date (YYYY)"
     },
-    "tile_id": {
+    "delivery_unit": {
       "type": "string",
-      "pattern": "^T\\d{2}[C-HJ-NP-X][A-Z]{2}$",
+      "pattern": "^DU\\d{4}$",
       "description": "UTM tile identifier"
     },
-    "date": {
+    "projection": {
       "type": "string",
-      "pattern": "^\\d{8}$",
-      "description": "Reference date (YYYYMMDD)"
+      "enum": "3035",
+      "description": "Spatial projection"
     },
     "version": {
       "type": "string",
       "pattern": "^V\\d{3}$",
       "description": "Product version"
     },
+    "format": {
+      "type": "string",
+      "enum": [
+        "fgdb",
+        "geoPackage"
+      ],
+      "description": "File extension without leading dot"
+    },
     "extension": {
       "type": "string",
       "enum": [
         "gpkg",
-        "zip",
-        "xml"
+        "zip"
       ],
       "description": "File extension without leading dot"
     }
   },
-  "template": "{prefix}_{product}_{tile_id}_{date}_{version}[.{extension}]",
+  "template": "{prefix}_{year}_{delivery_unit}_{projection}_{version}_{format}[.{extension}]",
   "examples": [
-    "CZ_FOO_T32TNS_20210101_V100.gpkg",
-    "CZ_BAR_T32TNS_20210202_V101.zip"
+    "CZ_2012_DU004_3035_V010_fgdb.zip"
   ]
 }
