@@ -21,9 +21,9 @@ It also serves as an **authoritative definition of filename structures** through
 - **Extensible**:
   New Copernicus or Landsat product families can be added by dropping schema definitions into the repo.
 
-- **STAC utilities**:
-  Query STAC APIs to list collections or sample asset filenames, search and download assets,
-  and scrape catalog metadata using lightweight helpers.
+  - **STAC utilities**:
+    Query STAC APIs to list collections or sample asset filenames, search and download assets,
+    and scrape metadata from static STAC catalogs using lightweight helpers.
 
 ---
 
@@ -171,11 +171,11 @@ browser to verify your API.
 
 ## STAC helpers and catalog scraping
 
-Filenames often reflect associated metadata or directory structures, so `parsEO` aligns with STAC naming conventions whenever possible. The package ships with lightweight utilities to interact with STAC APIs and catalogs, including helpers to list collections, sample asset filenames, search for downloadable assets, and traverse catalogs stored on disk.
+Filenames often reflect associated metadata or directory structures, so `parsEO` aligns with STAC naming conventions whenever possible. The package ships with lightweight utilities to interact with STAC APIs and catalogs, including helpers to list collections, sample asset filenames, search for downloadable assets, and traverse static catalogs stored on disk.
 
 `list-stac-collections` and `stac-sample` rely on [`pystac-client`](https://github.com/stac-utils/pystac-client) for STAC API access. Install it alongside `parsEO` to use these commands.
 
-The legacy `stac_dataspace` helper has been removed. Its functionality is covered by the new `scrape_catalog` function described below, which works with any STAC catalog served over HTTP or stored locally.
+The legacy `stac_dataspace` helper has been removed. Its functionality is covered by the new `scrape_catalog` function described below, which walks STAC catalogs or collections served over HTTP or stored locally. It does not traverse STAC API endpoints.
 
 Use the ``list-stac-collections`` subcommand to list collection IDs exposed by a
 STAC API. The STAC root URL must be supplied via ``--stac-url``:
@@ -263,29 +263,30 @@ packages being available at runtime.
 
 ### Scrape a STAC catalog
 
-``parseo.scrape_catalog`` is a lightweight helper that walks a STAC catalog or
-collection and extracts basic metadata for each data asset using only the
-Python standard library.
+``parseo.scrape_catalog`` is a lightweight helper that walks a static STAC
+catalog or collection and extracts basic metadata for each data asset using only
+the Python standard library. STAC API roots should be accessed via the
+``list-stac-collections`` or ``stac-sample`` helpers instead.
 
 ```python
 from parseo import scrape_catalog
 
 # Walk a small STAC example catalog hosted online
 catalog = "https://raw.githubusercontent.com/radiantearth/stac-spec/v1.0.0/examples/catalog.json"
-for e in scrape_catalog(catalog, limit=2):
-    print(e["filename"], e.get("id"), e.get("tile"))
+for entry in scrape_catalog(catalog, limit=2):
+    print(entry)
 ```
 
 Which yields entries like:
 
 ```
-LC08_L1TP_038028_20180201_20180215_01_T1_B1.TIF LC80380282018032LGN00 None
-LC08_L1TP_038028_20180201_20180215_01_T1_B2.TIF LC80380282018032LGN00 None
+{'filename': 'LC08_L1TP_038028_20180201_20180215_01_T1_B1.TIF'}
+{'filename': 'LC08_L1TP_038028_20180201_20180215_01_T1_B2.TIF'}
 ```
 
-Each entry includes the asset filename plus any of the fields ``id``,
-``product_type``, ``datetime``, ``tile`` and ``orbit`` discovered in adjacent
-JSON or XML metadata files.
+When adjacent JSON or XML sidecar files are present, ``scrape_catalog`` also
+adds any of the fields ``id``, ``product_type``, ``datetime``, ``tile`` and
+``orbit`` found in those files to each entry.
 
 From the command line, the same helpers are available through parseo's
 ``list-stac-collections`` and ``stac-sample`` subcommands, both powered by
