@@ -134,3 +134,14 @@ def test_hrvpp_st_variant():
     res = parse_auto(name)
     assert res.fields["tile_id"] == "W05S20-98765"
     assert res.fields["version"] == "V101"
+
+
+def test_clms_hrlnvlcc_example():
+    name = "CLMS_HRL_NVLCC_010m_T32TNS_20210101_20211231_V100_NVLCC.tif"
+    res = parse_auto(name)
+    assert res is not None
+    assert res.fields["product"] == "NVLCC"
+    assert res.fields["tile_id"] == "T32TNS"
+    assert res.fields["start_date"] == "20210101"
+    assert res.fields["end_date"] == "20211231"
+    assert res.fields["version"] == "V100"

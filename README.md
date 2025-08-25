@@ -36,10 +36,11 @@ Currently included schemas cover:
 - **NASA MODIS**: Terra/Aqua MODIS products
 - **EUMETSAT missions**: MTG, Metop
 - **Copernicus Land Monitoring Service (CLMS)**:
-  - Corine Land Cover (CLC)  
-  - High Resolution Water & Snow / Ice (HR-WSI)  
+  - Corine Land Cover (CLC)
+  - High Resolution Water & Snow / Ice (HR-WSI)
   - High Resolution Vegetation Phenology & Productivity (HR-VPP)
-  - High Resolution Layers: Grasslands  
+  - High Resolution Layers: Grasslands
+  - High Resolution Layers: Non-Vegetated Land Cover Change (HRL NVLCC)
 ---
 
 ## Installation
@@ -364,6 +365,12 @@ parseo assemble \
   prefix=CLMS_VPP product=FAPAR resolution=100m tile_id=T32TNS \
   start_date=20210101 end_date=20210110 version=V100 file_id=FAPAR extension=tif
 # -> CLMS_VPP_FAPAR_100m_T32TNS_20210101_20210110_V100_FAPAR.tif
+
+# Example: CLMS HRL NVLCC product (first field: prefix)
+parseo assemble \
+  prefix=CLMS_HRL product=NVLCC resolution=010m tile_id=T32TNS \
+  start_date=20210101 end_date=20211231 version=V100 file_id=NVLCC extension=tif
+# -> CLMS_HRL_NVLCC_010m_T32TNS_20210101_20211231_V100_NVLCC.tif
 ```
 
 ---
