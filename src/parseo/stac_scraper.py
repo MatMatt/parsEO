@@ -11,7 +11,20 @@ from __future__ import annotations
 from pathlib import Path
 from urllib.parse import urlparse
 
-from .stac_dataspace import _norm_base
+# Mapping of common collection aliases to their official STAC IDs.
+# Keys and values are uppercase so lookups can be performed on normalized
+# ``str.upper`` versions of user supplied IDs.
+STAC_ID_ALIASES: dict[str, str] = {
+    "SENTINEL2_L2A": "SENTINEL-2-L2A",
+    "S2_L2A": "SENTINEL-2-L2A",
+    "SENTINEL2_L1C": "SENTINEL-2-L1C",
+    "S2_L1C": "SENTINEL-2-L1C",
+}
+
+def _norm_collection_id(collection_id: str) -> str:
+    """Return the official STAC collection ID for ``collection_id``."""
+    cid = collection_id.upper()
+    return STAC_ID_ALIASES.get(cid, cid)
 
 def list_collections_client(base_url: str, *, deep: bool = False) -> list[str]:
     """Return collection IDs from a STAC API using ``pystac-client``.
@@ -92,6 +105,7 @@ def search_stac_and_download(
     if isinstance(collections, str):
         collections = [collections]
 
+    collections = [_norm_collection_id(c) for c in collections]
 
     stac_url = _norm_base(stac_url)
     client = Client.open(stac_url)
