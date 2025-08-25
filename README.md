@@ -262,6 +262,18 @@ for cid in stac_scraper.list_collections(stac_url):
     )
 ```
 
+The same functionality is exposed via the ``stac-download`` CLI subcommand.
+
+```bash
+parseo stac-download --stac-url https://catalogue.dataspace.copernicus.eu/stac \
+  --collection SENTINEL-2-L2A --bbox 13.0 52.0 13.5 52.5 \
+  --datetime 2024-01-01T00:00:00Z/2024-01-02T00:00:00Z \
+  --dest-dir downloads
+```
+
+It prints the path of the downloaded asset and exits with a non-zero code if no
+matching asset is found.
+
 This functionality depends on the ``pystac-client`` and ``requests``
 packages being available at runtime.
 
@@ -371,9 +383,9 @@ parseo assemble \
 
 # Example: CLMS HRLVLCC product (first field: prefix)
 parseo assemble \
-  prefix=CLMS_HRLVLC product=IMD resolution=010m tile_id=T32TNS \
+  prefix=CLMS_HRLVLCC product=IMD resolution=010m tile_id=T32TNS \
   sensing_datetime=20210101T000000 version=V100 file_id=IMD extension=tif
-# -> CLMS_HRLVLC_IMD_010m_T32TNS_20210101T000000_V100_IMD.tif
+# -> CLMS_HRLVLCC_IMD_010m_T32TNS_20210101T000000_V100_IMD.tif
 
 # Example: CLMS HRL NVLCC product (first field: prefix)
 parseo assemble \

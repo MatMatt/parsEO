@@ -1,6 +1,6 @@
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "family": "HRL-NVLCC",
+    "family": "HRLNVLCC",
     "versions": [
         {
             "file": "hrlnvlcc_filename_v0_0_0.json",
