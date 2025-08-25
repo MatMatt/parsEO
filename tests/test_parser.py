@@ -157,3 +157,15 @@ def test_clc_example():
     assert res.fields["prefix"] == "CLC"
     assert res.fields["reference_year"] == "2018"
     assert res.fields["product"] == "CLC2018"
+
+def test_cgls_ndvi_example():
+    name = "c_gls_NDVI300_202306050000_GLOBE_PROBAV_V2.2.1.nc"
+    res = parse_auto(name)
+    assert res is not None
+    assert res.fields["prefix"] == "c_gls"
+    assert res.fields["product"] == "NDVI"
+    assert res.fields["resolution"] == "300"
+    assert res.fields["region"] == "GLOBE"
+    assert res.fields["sensor"] == "PROBAV"
+    assert res.fields["version"] == "V2.2.1"
+    assert res.fields["extension"] == "nc"

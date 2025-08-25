@@ -2,54 +2,16 @@
   "schema_id": "copernicus:cz",
   "schema_version": "0.0.0",
   "stac_version": "1.1.0",
-  "stac_extensions": [
-    "vector"
-  ],
+  "stac_extensions": ["vector"],
   "description": "Schema for CZ vector products.",
   "fields": {
-    "prefix": {
-      "type": "string",
-      "enum": [
-        "CZ"
-      ],
-      "description": "Constant prefix"
-    },
-      "year": {
-      "type": "string",
-      "enum": ["2012","2018"],
-      "description": "Reference date (YYYY)"
-    },
-    "delivery_unit": {
-      "type": "string",
-      "pattern": "^DU\\d{4}$",
-      "description": "UTM tile identifier"
-    },
-    "projection": {
-      "type": "string",
-      "enum": "3035",
-      "description": "Spatial projection"
-    },
-    "version": {
-      "type": "string",
-      "pattern": "^V\\d{3}$",
-      "description": "Product version"
-    },
-    "format": {
-      "type": "string",
-      "enum": [
-        "fgdb",
-        "geoPackage"
-      ],
-      "description": "File extension without leading dot"
-    },
-    "extension": {
-      "type": "string",
-      "enum": [
-        "gpkg",
-        "zip"
-      ],
-      "description": "File extension without leading dot"
-    }
+    "prefix": {"type": "string", "enum": ["CZ"], "description": "Constant prefix"},
+    "year": {"type": "string", "enum": ["2012", "2018"], "description": "Reference date (YYYY)"},
+    "delivery_unit": {"type": "string", "pattern": "^DU\\d{4}$", "description": "UTM tile identifier"},
+    "projection": {"type": "string", "enum": ["3035"], "description": "Spatial projection"},
+    "version": {"type": "string", "pattern": "^V\\d{3}$", "description": "Product version"},
+    "format": {"type": "string", "enum": ["fgdb", "geoPackage"], "description": "Product format"},
+    "extension": {"type": "string", "enum": ["gpkg", "zip"], "description": "File extension without leading dot"}
   },
   "template": "{prefix}_{year}_{delivery_unit}_{projection}_{version}_{format}[.{extension}]",
   "examples": [
