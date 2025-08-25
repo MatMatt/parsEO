@@ -11,6 +11,8 @@ from __future__ import annotations
 from pathlib import Path
 from urllib.parse import urlparse
 
+from .stac_dataspace import _norm_base
+
 def list_collections_client(base_url: str, *, deep: bool = False) -> list[str]:
     """Return collection IDs from a STAC API using ``pystac-client``.
 
@@ -26,7 +28,8 @@ def list_collections_client(base_url: str, *, deep: bool = False) -> list[str]:
             "pystac-client is required for list_collections_client"
         ) from exc
 
-    client = Client.open(base_url)
+    base = _norm_base(base_url)
+    client = Client.open(base)
     collections = {c.id for c in client.get_collections()}
     if not deep:
         return sorted(collections)
@@ -90,6 +93,7 @@ def search_stac_and_download(
         collections = [collections]
 
 
+    stac_url = _norm_base(stac_url)
     client = Client.open(stac_url)
     search = client.search(collections=collections, bbox=bbox, datetime=datetime)
     for item in search.items():
