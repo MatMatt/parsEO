@@ -1,9 +1,9 @@
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "family": "HRL",
+    "family": "CZ",
     "versions": [
         {
-            "file": "hrl_imd_filename_v0_0_0.json",
+            "file": "cz_filename_v0_0_0.json",
             "version": "0.0.0",
             "status": "current"
         }

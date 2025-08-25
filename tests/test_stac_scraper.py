@@ -1,7 +1,6 @@
 import sys
 import types
 import json
-from pathlib import Path
 import datetime
 
 import pytest

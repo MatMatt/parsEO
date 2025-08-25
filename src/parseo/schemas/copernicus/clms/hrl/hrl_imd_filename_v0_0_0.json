@@ -1,0 +1,22 @@
+{
+  "schema_id": "copernicus:clms:hrl:imd",
+  "schema_version": "0.0.0",
+  "stac_version": "1.1.0",
+  "stac_extensions": ["raster"],
+  "description": "CLMS HRL Imperviousness Density product filename.",
+  "fields": {
+    "prefix": {"type": "string", "enum": ["hrl"], "description": "Constant prefix"},
+    "product": {"type": "string", "enum": ["IMD"], "description": "Product code"},
+    "reference_year": {"type": "string", "pattern": "^\\d{4}$", "description": "Reference year"},
+    "resolution": {"type": "string", "pattern": "^\\d{2}m$", "description": "Spatial resolution"},
+    "tile_id": {"type": "string", "pattern": "^[EW]\\d{2}[NS]\\d{2}$", "description": "Grid tile identifier"},
+    "crs": {"type": "string", "pattern": "^EPSG\\d{4,5}$", "description": "Coordinate reference system"},
+    "version": {"type": "string", "pattern": "^v\\d{3}$", "description": "Product version"},
+    "tile_id_2": {"type": "string", "pattern": "^[EW]\\d{2}[NS]\\d{2}$", "description": "Repeated tile identifier"},
+    "extension": {"type": "string", "enum": ["tif"], "description": "File extension without leading dot"}
+  },
+  "template": "{prefix}_{product}_{reference_year}_{resolution}_{tile_id}_{crs}_{version}_{tile_id_2}[.{extension}]",
+  "examples": [
+    "hrl_IMD_2024_10m_E40N20_EPSG3035_v102_E40N20.tif"
+  ]
+}
