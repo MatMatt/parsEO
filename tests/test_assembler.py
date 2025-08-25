@@ -134,7 +134,7 @@ def test_assemble_clms_st_schema():
         / "src/parseo/schemas/copernicus/clms/hr-vpp/st/st_filename_v0_0_0.json"
     )
     fields = {
-        "prefix": "ST",
+        "prefix": "CLMS_VPP",
         "timestamp": "20240101T123045",
         "sensor": "S2",
         "tile_id": "E15N45-01234",
@@ -144,12 +144,12 @@ def test_assemble_clms_st_schema():
         "extension": "tif",
     }
     result = assemble(schema, fields)
-    assert result == "ST_20240101T123045_S2_E15N45-01234_010m_V100_PPI.tif"
+    assert result == "CLMS_VPP_20240101T123045_S2_E15N45-01234_010m_V100_PPI.tif"
 
 
 def test_assemble_auto_st_schema():
     fields = {
-        "prefix": "ST",
+        "prefix": "CLMS_VPP",
         "timestamp": "20231231T000000",
         "sensor": "S2",
         "tile_id": "W05S20-98765",
@@ -159,7 +159,7 @@ def test_assemble_auto_st_schema():
         "extension": "tif",
     }
     result = assemble_auto(fields)
-    assert result == "ST_20231231T000000_S2_W05S20-98765_030m_V101_PPI.tif"
+    assert result == "CLMS_VPP_20231231T000000_S2_W05S20-98765_030m_V101_PPI.tif"
 
 
 def test_assemble_s2_invalid_processing_baseline():
@@ -222,7 +222,7 @@ def test_assemble_clms_hrlvlcc_schema():
         / "src/parseo/schemas/copernicus/clms/hrlvlcc/hrlvlcc_filename_v0_0_0.json"
     )
     fields = {
-        "prefix": "CLMS_HRLVLC",
+        "prefix": "CLMS_HRLVLCC",
         "product": "IMD",
         "resolution": "010m",
         "tile_id": "T32TNS",
@@ -232,12 +232,12 @@ def test_assemble_clms_hrlvlcc_schema():
         "extension": "tif",
     }
     result = assemble(schema, fields)
-    assert result == "CLMS_HRLVLC_IMD_010m_T32TNS_20210101T000000_V100_IMD.tif"
+    assert result == "CLMS_HRLVLCC_IMD_010m_T32TNS_20210101T000000_V100_IMD.tif"
 
 
 def test_assemble_auto_hrlvlcc_schema():
     fields = {
-        "prefix": "CLMS_HRLVLC",
+        "prefix": "CLMS_HRLVLCC",
         "product": "IMD",
         "resolution": "010m",
         "tile_id": "T32TNS",
@@ -247,7 +247,7 @@ def test_assemble_auto_hrlvlcc_schema():
         "extension": "tif",
     }
     result = assemble_auto(fields)
-    assert result == "CLMS_HRLVLC_IMD_010m_T32TNS_20210101T000000_V100_IMD.tif"
+    assert result == "CLMS_HRLVLCC_IMD_010m_T32TNS_20210101T000000_V100_IMD.tif"
 
 
 def test_assemble_clms_n2k_schema():

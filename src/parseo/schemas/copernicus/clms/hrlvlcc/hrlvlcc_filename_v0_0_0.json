@@ -5,7 +5,7 @@
   "stac_extensions": ["raster", "eo"],
   "description": "CLMS HRL Vegetation & Land Cover Characteristics product filename.",
   "fields": {
-    "prefix": {"type": "string", "enum": ["CLMS_HRLVLCC"], "description": "Constant prefix"},
+    "prefix": {"type": "string", "enum": ["CLMS_HRLVLC"], "description": "Constant prefix"},
     "product": {
       "type": "string",
       "enum": ["IMD", "TCD", "FTY", "GRA", "SWF", "WAW"],
@@ -24,6 +24,6 @@
   },
   "template": "{prefix}_{product}_{resolution}_{tile_id}_{sensing_datetime}_{version}_{file_id}[.{extension}]",
   "examples": [
-    "CLMS_HRLVLC_IMD_010m_T32TNS_20210101T000000_V100_IMD.tif"
+    "CLMS_HRLVLCC_IMD_010m_T32TNS_20210101T000000_V100_IMD.tif"
   ]
 }

@@ -34,11 +34,12 @@ Currently included schemas cover:
 -   **EUMETSAT missions**: MTG, Metop
 -   **Copernicus Land Monitoring Service (CLMS)**:
     -   Corine Land Cover (CLC)
-    -   High Resolution Water & Snow / Ice (HR-WSI)
+    -   High Resolution Water, Snow & Ice (HR-WSI)
     -   High Resolution Vegetation Phenology & Productivity (HR-VPP)
     -   High Resolution Layers: Vegetation & Land Cover Characteristics (HRLVLCC)
     -   High Resolution Layers: Non-Vegetated Land Cover Change (HRL NVLCC)
     -   Natura 2000 (N2K) raster and vector
+    -   Riparian Zones (RZ) vector products
 
 ## Installation
 
@@ -354,9 +355,9 @@ parseo assemble \
 
 # Example: CLMS HRLVLCC product (first field: prefix)
 parseo assemble \
-  prefix=CLMS_HRLVLC product=IMD resolution=010m tile_id=T32TNS \
+  prefix=CLMS_HRLVLCC product=IMD resolution=010m tile_id=T32TNS \
   sensing_datetime=20210101T000000 version=V100 file_id=IMD extension=tif
-# -> CLMS_HRLVLC_IMD_010m_T32TNS_20210101T000000_V100_IMD.tif
+# -> CLMS_HRLVLCC_IMD_010m_T32TNS_20210101T000000_V100_IMD.tif
 
 # Example: CLMS HRL NVLCC product (first field: prefix)
 parseo assemble \

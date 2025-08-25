@@ -35,6 +35,13 @@ def test_s3_example():
     assert res.fields["platform"] == "S3A"
 
 
+def test_hr_wsi_example():
+    name = "CLMS_WSI_FSC_020m_T32TNS_20211018T103021_S2A_V100_FSCOG.tif"
+    res = parse_auto(name)
+    assert res.match_family == "HR-WSI"
+    assert res.fields["product"] == "FSC"
+
+
 def test_near_miss_reports_field():
     name = "S2X_MSIL2A_20241123T224759_N0511_R101_T03VUL_20241123T230829.SAFE"
     with pytest.raises(parser.ParseError) as exc:
@@ -117,10 +124,10 @@ def test_modis_example():
 
 
 def test_hrvpp_st_example():
-    name = "ST_20240101T123045_S2_E15N45-01234_010m_V100_PPI.tif"
+    name = "CLMS_VPP_20240101T123045_S2_E15N45-01234_010m_V100_PPI.tif"
     res = parse_auto(name)
     assert res is not None
-    assert res.fields["prefix"] == "ST"
+    assert res.fields["prefix"] == "CLMS_VPP"
     assert res.fields["timestamp"] == "20240101T123045"
     assert res.fields["sensor"] == "S2"
     assert res.fields["tile_id"] == "E15N45-01234"
@@ -130,7 +137,23 @@ def test_hrvpp_st_example():
     assert res.fields["extension"] == "tif"
 
 def test_hrvpp_st_variant():
-    name = "ST_20231231T000000_S2_W05S20-98765_030m_V101_PPI.tif"
+    name = "CLMS_VPP_20231231T000000_S2_W05S20-98765_030m_V101_PPI.tif"
     res = parse_auto(name)
     assert res.fields["tile_id"] == "W05S20-98765"
     assert res.fields["version"] == "V101"
+
+
+def test_ccd_example():
+    name = "ccd_2015_100m_E042N018_3035_v1_1.tif"
+    res = parse_auto(name)
+    assert res.fields["prefix"] == "ccd"
+    assert res.fields["reference_year"] == "2015"
+    assert res.fields["aoi_code"] == "E042N018"
+
+
+def test_clc_example():
+    name = "CLC2018_CLC2018_V2020_20u1.tif"
+    res = parse_auto(name)
+    assert res.fields["prefix"] == "CLC"
+    assert res.fields["reference_year"] == "2018"
+    assert res.fields["product"] == "CLC2018"

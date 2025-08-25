@@ -5,6 +5,11 @@
   "stac_extensions": ["raster", "eo"],
   "description": "Copernicus Land Monitoring Service CCD product filename.",
   "fields": {
+    "prefix": {
+      "type": "string",
+      "enum": ["ccd"],
+      "description": "Constant prefix"
+    },
     "reference_year": {
       "type": "string",
       "enum": ["2015", "2018"],
@@ -41,7 +46,7 @@
       "description": "File extension without leading dot"
     }
   },
-  "template": "ccd_{reference_year}_{resolution}_{aoi_code}_{epsg}_{version}_{tile}[.{extension}]",
+  "template": "{prefix}_{reference_year}_{resolution}_{aoi_code}_{epsg}_{version}_{tile}[.{extension}]",
   "examples": [
     "ccd_2015_100m_E042N018_3035_v1_1.tif",
     "ccd_2018_100m_E050N020_3035_v2_2.tif"

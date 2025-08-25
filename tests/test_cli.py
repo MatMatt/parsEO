@@ -99,6 +99,7 @@ def test_list_schemas_exposes_known_families():
     fams = list_schemas()
     assert "S2" in fams
     assert "S1" in fams
+    assert "HR-WSI" in fams
 
 
 def test_cli_list_schemas_outputs_families(capsys):
@@ -106,6 +107,7 @@ def test_cli_list_schemas_outputs_families(capsys):
     out = capsys.readouterr().out.splitlines()
     assert "S1" in out
     assert "S2" in out
+    assert "HR-WSI" in out
     assert all("index.json" not in line for line in out)
 
 
