@@ -272,7 +272,6 @@ def scrape_catalog(root: str | Path, *, limit: int = 100) -> list[dict[str, str]
 def sample_collection_filenames(*args, **kwargs) -> dict[str, list[str]]:  # pragma: no cover
     """Deprecated placeholder for backward compatibility.
 
-    The original implementation relied on the removed ``stac_dataspace`` module.
     Users should call :func:`scrape_catalog` instead.
     """
     raise SystemExit("sample_collection_filenames is no longer supported")
