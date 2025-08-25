@@ -134,3 +134,21 @@ def test_hrvpp_st_variant():
     res = parse_auto(name)
     assert res.fields["tile_id"] == "W05S20-98765"
     assert res.fields["version"] == "V101"
+
+
+
+@pytest.mark.parametrize(
+    "name,ext",
+    [
+        ("DE001L1_v1_ua2018_lcf.gdb", "gdb"),
+        ("DE001L1_v1_ua2018_lcf.gpkg", "gpkg"),
+    ],
+)
+def test_ua2018_lcf(name, ext):
+    res = parse_auto(name)
+    assert res is not None
+    assert res.fields["aoi_code"] == "DE001L1"
+    assert res.fields["dataset"] == "v1"
+    assert res.fields["reference_year"] == "2018"
+    assert res.fields["extension"] == ext
+    assert "document" not in res.fields
