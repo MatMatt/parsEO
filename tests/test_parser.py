@@ -129,7 +129,6 @@ def test_hrvpp_st_example():
     assert res.fields["product"] == "PPI"
     assert res.fields["extension"] == "tif"
 
-
 def test_hrvpp_st_variant():
     name = "ST_20231231T000000_S2_W05S20-98765_030m_V101_PPI.tif"
     res = parse_auto(name)
