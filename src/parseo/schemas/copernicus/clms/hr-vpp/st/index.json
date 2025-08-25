@@ -1,6 +1,6 @@
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "family": "HR-VPP-ST",
+    "family": "CLMS_VPP-ST",
     "versions": [
         {
             "file": "st_filename_v0_0_0.json",
