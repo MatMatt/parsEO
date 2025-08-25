@@ -1,5 +1,6 @@
 import sys
 import types
+import json
 from pathlib import Path
 
 import pytest
@@ -154,3 +155,67 @@ def test_search_stac_and_download_http_error(monkeypatch, tmp_path):
             datetime="2024",
             dest_dir=tmp_path,
         )
+
+
+def test_scrape_catalog(tmp_path):
+    catalog = {
+        "links": [
+            {"rel": "item", "href": "item1.json"},
+            {"rel": "item", "href": "item2.json"},
+        ]
+    }
+    item1 = {
+        "type": "Feature",
+        "assets": {
+            "data": {"href": "data1.tif"},
+            "meta": {"href": "data1.json"},
+        },
+    }
+    item2 = {
+        "type": "Feature",
+        "assets": {
+            "data": {"href": "data2.tif"},
+            "meta": {"href": "data2.xml"},
+        },
+    }
+    (tmp_path / "catalog.json").write_text(json.dumps(catalog))
+    (tmp_path / "item1.json").write_text(json.dumps(item1))
+    (tmp_path / "item2.json").write_text(json.dumps(item2))
+    (tmp_path / "data1.json").write_text(
+        json.dumps(
+            {
+                "id": "ID1",
+                "product_type": "PT1",
+                "datetime": "2024-01-01",
+                "tile": "T1",
+                "orbit": "O1",
+            }
+        )
+    )
+    (tmp_path / "data2.xml").write_text(
+        "<root><id>ID2</id><product_type>PT2</product_type>"
+        "<datetime>2024-02-02</datetime><tile>T2</tile><orbit>O2</orbit></root>"
+    )
+
+    out = ss.scrape_catalog(tmp_path)
+    assert out == [
+        {
+            "filename": "data1.tif",
+            "id": "ID1",
+            "product_type": "PT1",
+            "datetime": "2024-01-01",
+            "tile": "T1",
+            "orbit": "O1",
+        },
+        {
+            "filename": "data2.tif",
+            "id": "ID2",
+            "product_type": "PT2",
+            "datetime": "2024-02-02",
+            "tile": "T2",
+            "orbit": "O2",
+        },
+    ]
+
+    limited = ss.scrape_catalog(tmp_path, limit=1)
+    assert len(limited) == 1
