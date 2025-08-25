@@ -54,7 +54,7 @@ list_collections = list_collections_client
 def search_stac_and_download(
     *,
     stac_url: str,
-    collections: list[str],
+    collections: str | list[str],
     bbox: list[float] | tuple[float, float, float, float],
     datetime: str,
     dest_dir: str | Path,
@@ -64,6 +64,9 @@ def search_stac_and_download(
     The search is performed via :mod:`pystac-client` and the asset is retrieved
     with :mod:`requests`. ``dest_dir`` is created if needed and the path to the
     downloaded file is returned.
+
+    ``collections`` may be a single string or a list of strings. A lone
+    string will be wrapped in a list before querying.
 
     Raises
     ------
@@ -83,6 +86,9 @@ def search_stac_and_download(
         import requests
     except Exception as exc:  # pragma: no cover - exercised when dependency missing
         raise SystemExit("requests is required for search_stac_and_download") from exc
+    if isinstance(collections, str):
+        collections = [collections]
+
 
     client = Client.open(stac_url)
     search = client.search(collections=collections, bbox=bbox, datetime=datetime)
