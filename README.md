@@ -371,9 +371,9 @@ parseo assemble \
 
 # Example: CLMS HRLVLCC product (first field: prefix)
 parseo assemble \
-  prefix=CLMS_HRLVLC product=IMD resolution=010m tile_id=T32TNS \
+  prefix=CLMS_HRLVLCC product=IMD resolution=010m tile_id=T32TNS \
   sensing_datetime=20210101T000000 version=V100 file_id=IMD extension=tif
-# -> CLMS_HRLVLC_IMD_010m_T32TNS_20210101T000000_V100_IMD.tif
+# -> CLMS_HRLVLCC_IMD_010m_T32TNS_20210101T000000_V100_IMD.tif
 
 # Example: CLMS HRL NVLCC product (first field: prefix)
 parseo assemble \

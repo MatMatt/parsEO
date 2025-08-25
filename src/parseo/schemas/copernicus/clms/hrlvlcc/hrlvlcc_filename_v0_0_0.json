@@ -24,6 +24,6 @@
   },
   "template": "{prefix}_{product}_{resolution}_{tile_id}_{sensing_datetime}_{version}_{file_id}[.{extension}]",
   "examples": [
-    "CLMS_HRLVLC_IMD_010m_T32TNS_20210101T000000_V100_IMD.tif"
+    "CLMS_HRLVLCC_IMD_010m_T32TNS_20210101T000000_V100_IMD.tif"
   ]
 }
