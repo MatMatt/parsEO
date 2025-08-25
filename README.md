@@ -18,8 +18,12 @@ It also serves as an **authoritative definition of filename structures** through
   parsEO does not assume a fixed folder depth. Products can live in arbitrary directory structures,  
   and the schema only describes the filename itself.
 
-- **Extensible**:  
+- **Extensible**:
   New Copernicus or Landsat product families can be added by dropping schema definitions into the repo.
+
+- **STAC utilities**:
+  Query STAC APIs to list collections or sample asset filenames, search and download assets,
+  and scrape catalog metadata using lightweight helpers.
 
 ---
 
@@ -165,9 +169,9 @@ browser to verify your API.
 
 ---
 
-## STAC helpers
+## STAC helpers and catalog scraping
 
-Filenames often reflect associated metadata or directory structures, so `parsEO` aligns with STAC naming conventions whenever possible. The package ships with small utilities to interact with STAC APIs and catalogs, including helpers to list collections, sample asset filenames, and traverse catalogs stored on disk.
+Filenames often reflect associated metadata or directory structures, so `parsEO` aligns with STAC naming conventions whenever possible. The package ships with lightweight utilities to interact with STAC APIs and catalogs, including helpers to list collections, sample asset filenames, search for downloadable assets, and traverse catalogs stored on disk.
 
 `list-stac-collections` and `stac-sample` rely on [`pystac-client`](https://github.com/stac-utils/pystac-client) for STAC API access. Install it alongside `parsEO` to use these commands.
 
@@ -270,6 +274,13 @@ from parseo import scrape_catalog
 catalog = "https://raw.githubusercontent.com/radiantearth/stac-spec/v1.0.0/examples/catalog.json"
 for e in scrape_catalog(catalog, limit=2):
     print(e["filename"], e.get("id"), e.get("tile"))
+```
+
+Which yields entries like:
+
+```
+LC08_L1TP_038028_20180201_20180215_01_T1_B1.TIF LC80380282018032LGN00 None
+LC08_L1TP_038028_20180201_20180215_01_T1_B2.TIF LC80380282018032LGN00 None
 ```
 
 Each entry includes the asset filename plus any of the fields ``id``,
