@@ -11,6 +11,7 @@ from urllib.parse import urljoin, urlparse
 import json
 import urllib.request
 import xml.etree.ElementTree as ET
+import datetime
 
 def _norm_base(base_url: str) -> str:
     """Return ``base_url`` with exactly one trailing slash."""
@@ -25,6 +26,24 @@ STAC_ID_ALIASES: dict[str, str] = {
     "SENTINEL2_L1C": "SENTINEL-2-L1C",
     "S2_L1C": "SENTINEL-2-L1C",
 }
+
+
+def _temporal_midpoint(
+    start: datetime.datetime, end: datetime.datetime | None = None
+) -> datetime.datetime:
+    """Return the midpoint between ``start`` and ``end``.
+
+    ``end`` defaults to the current UTC time. Both datetimes must be
+    timezone-aware.
+    """
+
+    if start.tzinfo is None or start.tzinfo.utcoffset(start) is None:
+        raise ValueError("start must be timezone-aware")
+    if end is None:
+        end = datetime.datetime.now(datetime.UTC)
+    if end.tzinfo is None or end.tzinfo.utcoffset(end) is None:
+        raise ValueError("end must be timezone-aware")
+    return start + (end - start) / 2
 
 def _norm_collection_id(collection_id: str) -> str:
     """Return the official STAC collection ID for ``collection_id``."""
@@ -85,7 +104,9 @@ def search_stac_and_download(
     downloaded file is returned.
 
     ``collections`` may be a single string or a list of strings. A lone
-    string will be wrapped in a list before querying.
+    string will be wrapped in a list before querying. ``datetime`` should be
+    an ISO 8601 string with timezone information, optionally expressing a
+    range (e.g., ``2024-01-01T00:00:00Z/2024-01-02T00:00:00Z``).
 
     Raises
     ------
@@ -153,7 +174,10 @@ def scrape_catalog(root: str | Path, *, limit: int = 100) -> list[dict[str, str]
     list of dict
         Each dictionary contains the asset ``filename`` plus any of the fields
         ``id``, ``product_type``, ``datetime``, ``tile`` and ``orbit`` extracted
-        from adjacent metadata files.
+        from adjacent metadata files. When ``start_datetime`` and
+        ``end_datetime`` are available, ``datetime`` is set to their temporal
+        midpoint, using the current UTC time if only ``start_datetime`` is
+        present.
     """
 
     results: list[dict[str, str]] = []
@@ -203,6 +227,24 @@ def scrape_catalog(root: str | Path, *, limit: int = 100) -> list[dict[str, str]
                 "tile": grab("tile", "mgrs:tile", "s2:mgrs_tile"),
                 "orbit": grab("orbit", "s2:orbit"),
             }
+            if not out_fields.get("datetime"):
+                start = grab("start_datetime")
+                end = grab("end_datetime")
+                if start:
+                    try:
+                        start_dt = datetime.datetime.fromisoformat(
+                            start.replace("Z", "+00:00")
+                        )
+                        end_dt = (
+                            datetime.datetime.fromisoformat(end.replace("Z", "+00:00"))
+                            if end
+                            else None
+                        )
+                        out_fields["datetime"] = _temporal_midpoint(
+                            start_dt, end_dt
+                        ).isoformat().replace("+00:00", "Z")
+                    except Exception:
+                        pass
             return {k: v for k, v in out_fields.items() if v}
 
         # XML parsing
@@ -225,6 +267,24 @@ def scrape_catalog(root: str | Path, *, limit: int = 100) -> list[dict[str, str]
             "tile": find_text("tile", "TILE"),
             "orbit": find_text("orbit", "ORBIT"),
         }
+        if not out_fields.get("datetime"):
+            start = find_text("start_datetime")
+            end = find_text("end_datetime")
+            if start:
+                try:
+                    start_dt = datetime.datetime.fromisoformat(
+                        start.replace("Z", "+00:00")
+                    )
+                    end_dt = (
+                        datetime.datetime.fromisoformat(end.replace("Z", "+00:00"))
+                        if end
+                        else None
+                    )
+                    out_fields["datetime"] = _temporal_midpoint(
+                        start_dt, end_dt
+                    ).isoformat().replace("+00:00", "Z")
+                except Exception:
+                    pass
         return {k: v for k, v in out_fields.items() if v}
 
     def scrape(node: str) -> None:
