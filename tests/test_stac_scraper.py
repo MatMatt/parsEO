@@ -6,6 +6,19 @@ import pytest
 import parseo.stac_scraper as ss
 
 
+@pytest.mark.parametrize(
+    "alias, expected",
+    [
+        ("sentinel-2-l2a", "SENTINEL-2-L2A"),
+        ("s2_l2a", "SENTINEL-2-L2A"),
+        ("sentinel-2-l1c", "SENTINEL-2-L1C"),
+        ("sentinel2_l1c", "SENTINEL-2-L1C"),
+    ],
+)
+def test_norm_collection_id_aliases(alias, expected):
+    assert ss._norm_collection_id(alias) == expected
+
+
 class FakeCollection:
     def __init__(self, id):
         self.id = id
@@ -41,13 +54,15 @@ class FakeSearch:
 
 
 class FakeClientSearch(FakeClient):
+    expected: list[str] = []
+
     @staticmethod
     def open(url):
         assert url == "http://base"
         return FakeClientSearch()
 
     def search(self, **kwargs):
-        assert kwargs["collections"] == ["C"]
+        assert kwargs["collections"] == self.expected
         assert kwargs["bbox"] == [0, 0, 1, 1]
         assert kwargs["datetime"] == "2024"
         return FakeSearch()
@@ -62,8 +77,9 @@ def test_list_collections_alias(monkeypatch):
 
 
 
-@pytest.mark.parametrize("collections", [["C"], "C"])
+@pytest.mark.parametrize("collections", [["s2_l2a"], "s2_l2a"])
 def test_search_stac_and_download(monkeypatch, tmp_path, collections):
+    FakeClientSearch.expected = ["SENTINEL-2-L2A"]
     fake_pc = types.SimpleNamespace(Client=FakeClientSearch)
     monkeypatch.setitem(sys.modules, "pystac_client", fake_pc)
 
@@ -100,6 +116,7 @@ def test_search_stac_and_download(monkeypatch, tmp_path, collections):
 
 
 def test_search_stac_and_download_http_error(monkeypatch, tmp_path):
+    FakeClientSearch.expected = ["C"]
     fake_pc = types.SimpleNamespace(Client=FakeClientSearch)
     monkeypatch.setitem(sys.modules, "pystac_client", fake_pc)
 
