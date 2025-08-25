@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pytest
 
-from parseo import assemble, assemble_auto, clear_schema_cache
+from parseo import assemble, assemble_auto, clear_schema_cache, parse_auto
 
 
 def test_assemble_clms_fsc_schema():
@@ -216,3 +216,53 @@ def test_clear_schema_cache(tmp_path):
 
     clear_schema_cache()
     assert assemble(schema, fields) == "x-y"
+
+def test_assemble_clms_ccd_schema():
+    name = "ccd_2015_100m_E042N018_3035_v1_1.tif"
+    schema = (
+        Path(__file__).resolve().parents[1]
+        / "src/parseo/schemas/copernicus/clms/ccd/ccd_filename_v1_0_0.json"
+    )
+    fields = parse_auto(name).fields
+    result = assemble(schema, fields)
+    assert result == name
+
+
+def test_assemble_auto_ccd_schema():
+    fields = {
+        "reference_year": "2015",
+        "resolution": "100m",
+        "aoi_code": "E042N018",
+        "epsg": "3035",
+        "version": "v1",
+        "tile": "1",
+        "extension": "tif",
+    }
+    result = assemble_auto(fields)
+    assert result == "ccd_2015_100m_E042N018_3035_v1_1.tif"
+
+
+def test_assemble_clms_ccd_schema_2018():
+    name = "ccd_2018_100m_E050N020_3035_v2_2.tif"
+    schema = (
+        Path(__file__).resolve().parents[1]
+        / "src/parseo/schemas/copernicus/clms/ccd/ccd_filename_v1_0_0.json"
+    )
+    fields = parse_auto(name).fields
+    result = assemble(schema, fields)
+    assert result == name
+
+
+def test_assemble_auto_ccd_schema_2018():
+    fields = {
+        "reference_year": "2018",
+        "resolution": "100m",
+        "aoi_code": "E050N020",
+        "epsg": "3035",
+        "version": "v2",
+        "tile": "2",
+        "extension": "tif",
+    }
+    result = assemble_auto(fields)
+    assert result == "ccd_2018_100m_E050N020_3035_v2_2.tif"
+
