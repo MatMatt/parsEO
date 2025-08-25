@@ -126,8 +126,9 @@ filename = assemble_auto(fields)
 print(filename)
 # -> S2B_MSIL2A_20241123T224759_N0511_R101_T03VUL_20241123T230829.SAFE
 ```
+---
 
-### Run as a web API
+## Run as a web API
 
 parsEO functions can be exposed through a web service. The example below uses
 [FastAPI](https://fastapi.tiangolo.com), which provides an automatic Swagger UI
@@ -162,7 +163,9 @@ and open [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs) to access Swag
 The interactive page lets you call `/parse` and `/assemble` directly from the
 browser to verify your API.
 
-### STAC metadata (not functional yet!)
+---
+
+## STAC metadata (not functional yet!)
 
 Since filenames often reflect associated metadata or directory structures, `parsEO` aligns with STAC naming conventions whenever possible. The package provides helper functions to derive filename schemas from STAC catalogs. Although filenames usually precede catalog creation, future development aims for a bidirectional information flow (STAC ↔ filename). At present, the focus remains on collecting filename schemas supported by `parsEO`.
 
