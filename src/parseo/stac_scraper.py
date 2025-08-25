@@ -18,13 +18,15 @@ def _norm_base(base_url: str) -> str:
     return base_url.rstrip("/") + "/"
 
 # Mapping of common collection aliases to their official STAC IDs.
-# Keys and values are uppercase so lookups can be performed on normalized
-# ``str.upper`` versions of user supplied IDs.
+#
+# Lookups are performed case-insensitively by normalizing the user supplied
+# identifier with ``str.upper`` and checking against these keys.  The mapped
+# values retain the canonical casing required by the STAC API.
 STAC_ID_ALIASES: dict[str, str] = {
-    "SENTINEL2_L2A": "SENTINEL-2-L2A",
-    "S2_L2A": "SENTINEL-2-L2A",
-    "SENTINEL2_L1C": "SENTINEL-2-L1C",
-    "S2_L1C": "SENTINEL-2-L1C",
+    "SENTINEL2_L2A": "sentinel-2-l2a",
+    "S2_L2A": "sentinel-2-l2a",
+    "SENTINEL2_L1C": "sentinel-2-l1c",
+    "S2_L1C": "sentinel-2-l1c",
 }
 
 
@@ -47,8 +49,8 @@ def _temporal_midpoint(
 
 def _norm_collection_id(collection_id: str) -> str:
     """Return the official STAC collection ID for ``collection_id``."""
-    cid = collection_id.upper()
-    return STAC_ID_ALIASES.get(cid, cid)
+    cid_upper = collection_id.upper()
+    return STAC_ID_ALIASES.get(cid_upper, collection_id)
 
 def list_collections_client(base_url: str, *, deep: bool = False) -> list[str]:
     """Return collection IDs from a STAC API using ``pystac-client``.
