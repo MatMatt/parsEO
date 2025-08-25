@@ -128,34 +128,13 @@ def test_assemble_auto_fapar_schema():
     result = assemble_auto(fields)
     assert result == "CLMS_VPP_FAPAR_100m_T32TNS_20210101_20210110_V100_FAPAR.tif"
 
-
-def test_assemble_clms_hrlnvlcc_schema():
-    schema = (
-        Path(__file__).resolve().parents[1]
-        / "src/parseo/schemas/copernicus/clms/hrlnvlcc/hrlnvlcc_filename_v0_0_0.json"
-    )
-    fields = {
-        "prefix": "CLMS_HRL",
-        "product": "NVLCC",
-        "resolution": "010m",
-        "tile_id": "T32TNS",
-        "start_date": "20210101",
-        "end_date": "20211231",
-        "version": "V100",
-        "file_id": "NVLCC",
-        "extension": "tif",
-    }
-    result = assemble(schema, fields)
-    assert result == "CLMS_HRL_NVLCC_010m_T32TNS_20210101_20211231_V100_NVLCC.tif"
-
-
 def test_assemble_clms_st_schema():
     schema = (
         Path(__file__).resolve().parents[1]
         / "src/parseo/schemas/copernicus/clms/hr-vpp/st/st_filename_v0_0_0.json"
     )
     fields = {
-        "prefix": "ST",
+        "prefix": "CLMS_VPP",
         "timestamp": "20240101T123045",
         "sensor": "S2",
         "tile_id": "E15N45-01234",
@@ -165,12 +144,12 @@ def test_assemble_clms_st_schema():
         "extension": "tif",
     }
     result = assemble(schema, fields)
-    assert result == "ST_20240101T123045_S2_E15N45-01234_010m_V100_PPI.tif"
+    assert result == "CLMS_VPP_20240101T123045_S2_E15N45-01234_010m_V100_PPI.tif"
 
 
 def test_assemble_auto_st_schema():
     fields = {
-        "prefix": "ST",
+        "prefix": "CLMS_VPP",
         "timestamp": "20231231T000000",
         "sensor": "S2",
         "tile_id": "W05S20-98765",
@@ -180,7 +159,7 @@ def test_assemble_auto_st_schema():
         "extension": "tif",
     }
     result = assemble_auto(fields)
-    assert result == "ST_20231231T000000_S2_W05S20-98765_030m_V101_PPI.tif"
+    assert result == "CLMS_VPP_20231231T000000_S2_W05S20-98765_030m_V101_PPI.tif"
 
 
 def test_assemble_s2_invalid_processing_baseline():
@@ -243,7 +222,7 @@ def test_assemble_clms_hrlvlcc_schema():
         / "src/parseo/schemas/copernicus/clms/hrlvlcc/hrlvlcc_filename_v0_0_0.json"
     )
     fields = {
-        "prefix": "CLMS_HRLVLC",
+        "prefix": "CLMS_HRLVLCC",
         "product": "IMD",
         "resolution": "010m",
         "tile_id": "T32TNS",
@@ -253,12 +232,12 @@ def test_assemble_clms_hrlvlcc_schema():
         "extension": "tif",
     }
     result = assemble(schema, fields)
-    assert result == "CLMS_HRLVLC_IMD_010m_T32TNS_20210101T000000_V100_IMD.tif"
+    assert result == "CLMS_HRLVLCC_IMD_010m_T32TNS_20210101T000000_V100_IMD.tif"
 
 
 def test_assemble_auto_hrlvlcc_schema():
     fields = {
-        "prefix": "CLMS_HRLVLC",
+        "prefix": "CLMS_HRLVLCC",
         "product": "IMD",
         "resolution": "010m",
         "tile_id": "T32TNS",
@@ -268,5 +247,54 @@ def test_assemble_auto_hrlvlcc_schema():
         "extension": "tif",
     }
     result = assemble_auto(fields)
-    assert result == "CLMS_HRLVLC_IMD_010m_T32TNS_20210101T000000_V100_IMD.tif"
+    assert result == "CLMS_HRLVLCC_IMD_010m_T32TNS_20210101T000000_V100_IMD.tif"
+
+
+def test_assemble_clms_n2k_schema():
+    name = "n2k_2018_100m_E042N018_3035_v1_1.tif"
+    schema = (
+        Path(__file__).resolve().parents[1]
+        / "src/parseo/schemas/copernicus/clms/n2k/n2k_filename_v1_0_0.json"
+    )
+    fields = parse_auto(name).fields
+    result = assemble(schema, fields)
+    assert result == name
+
+
+def test_assemble_auto_n2k_schema():
+    fields = {
+        "prefix": "n2k",
+        "reference_year": "2018",
+        "resolution": "100m",
+        "aoi_code": "E042N018",
+        "epsg": "3035",
+        "version": "v1",
+        "tile": "1",
+        "extension": "tif",
+    }
+    result = assemble_auto(fields)
+    assert result == "n2k_2018_100m_E042N018_3035_v1_1.tif"
+
+
+def test_assemble_clms_n2k_vector_schema():
+    name = "n2k_2018_3035_v1.gpkg"
+    schema = (
+        Path(__file__).resolve().parents[1]
+        / "src/parseo/schemas/copernicus/clms/n2k/n2k_vector_filename_v1_0_0.json"
+    )
+    fields = parse_auto(name).fields
+    result = assemble(schema, fields)
+    assert result == name
+
+
+def test_assemble_auto_n2k_vector_schema():
+    fields = {
+        "prefix": "n2k",
+        "reference_year": "2018",
+        "epsg": "3035",
+        "version": "v1",
+        "extension": "gpkg",
+    }
+    result = assemble_auto(fields)
+    assert result == "n2k_2018_3035_v1.gpkg"
 

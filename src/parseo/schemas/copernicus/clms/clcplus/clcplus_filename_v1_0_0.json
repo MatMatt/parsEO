@@ -5,7 +5,7 @@
   "stac_extensions": ["raster", "eo"],
   "description": "CLCplus product filename.",
   "fields": {
-    "prefix": {"type": "string", "enum": ["CLCPLUS"], "description": "Dataset prefix"},
+    "prefix": {"type": "string", "enum": ["CLMS_CLCPLUS"], "description": "Dataset prefix"},
     "variant": {"type": "string", "enum": ["BB"], "description": "Product variant"},
     "reference_year": {"type": "string", "pattern": "^\\d{4}$", "description": "Reference year"},
     "resolution": {"type": "string", "pattern": "^\\d{3}m$", "description": "Spatial resolution"},
@@ -15,6 +15,6 @@
   },
   "template": "{prefix}_{variant}_{reference_year}_{resolution}_{tile_id}_{version}[.{extension}]",
   "examples": [
-    "CLCPLUS_BB_2023_010m_E40N20_V100.tif"
+    "CLMS_CLCPLUS_BB_2023_010m_E40N20_V100.tif"
   ]
 }

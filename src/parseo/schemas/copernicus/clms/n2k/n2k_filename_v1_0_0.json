@@ -1,18 +1,18 @@
 {
-  "schema_id": "copernicus:clms:ccd",
+  "schema_id": "copernicus:clms:n2k",
   "schema_version": "1.0.0",
   "stac_version": "1.1.0",
   "stac_extensions": ["raster", "eo"],
-  "description": "Copernicus Land Monitoring Service CCD product filename.",
+  "description": "Copernicus Land Monitoring Service N2K product filename.",
   "fields": {
     "prefix": {
       "type": "string",
-      "enum": ["ccd"],
+      "enum": ["n2k"],
       "description": "Constant prefix"
     },
     "reference_year": {
       "type": "string",
-      "enum": ["2015", "2018"],
+      "pattern": "^\\d{4}$",
       "description": "Reference year"
     },
     "resolution": {
@@ -48,7 +48,6 @@
   },
   "template": "{prefix}_{reference_year}_{resolution}_{aoi_code}_{epsg}_{version}_{tile}[.{extension}]",
   "examples": [
-    "ccd_2015_100m_E042N018_3035_v1_1.tif",
-    "ccd_2018_100m_E050N020_3035_v2_2.tif"
+    "n2k_2018_100m_E042N018_3035_v1_1.tif"
   ]
 }

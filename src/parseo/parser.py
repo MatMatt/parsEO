@@ -337,6 +337,7 @@ def parse_auto(name: str) -> ParseResult:
     # Try hinted schema first (if any)
     hinted_meta = info.get(product_hint) if product_hint else None
     hinted = hinted_meta.schema_path if hinted_meta else None
+    near_miss: Optional[ParseError] = None
     if hinted and hinted.exists():
         try:
             schema = _load_json_from_path(hinted)
@@ -351,9 +352,7 @@ def parse_auto(name: str) -> ParseResult:
             mismatch = _explain_match_failure(name, schema)
             if mismatch:
                 field, expected, value = mismatch
-                raise ParseError(field, expected, value)
-        except ParseError:
-            raise
+                near_miss = ParseError(field, expected, value)
         except Exception:
             # If hinted schema is unreadable, fall back to brute force
             pass
@@ -365,7 +364,6 @@ def parse_auto(name: str) -> ParseResult:
         raise FileNotFoundError(f"No schemas packaged under {pkg}/{SCHEMAS_ROOT}.")
 
     first_error: Optional[Exception] = None
-    near_miss: Optional[ParseError] = None
     for p in candidates:
         try:
             schema = _load_json_from_path(p)

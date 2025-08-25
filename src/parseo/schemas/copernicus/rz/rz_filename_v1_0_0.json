@@ -1,0 +1,48 @@
+{
+  "schema_id": "copernicus:rz",
+  "schema_version": "1.0.0",
+  "stac_version": "1.1.0",
+  "description": "Copernicus RZ product filename.",
+  "fields": {
+    "product_id": {
+      "type": "string",
+      "enum": ["RZ"],
+      "description": "Product family identifier"
+    },
+    "acquisition_date": {
+      "type": "string",
+      "pattern": "^\\d{8}$",
+      "description": "Acquisition date (YYYYMMDD)"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^V\\d{3,4}$",
+      "description": "Product version"
+    },
+    "tile_id": {
+      "type": "string",
+      "pattern": "^[EW]\\d{2}N\\d{2}$",
+      "description": "Tile identifier (EPSG:3035 grid)"
+    },
+    "resolution": {
+      "type": "string",
+      "enum": ["R05m", "R10m", "R20m", "R40m", "R60m", "R100m"],
+      "description": "Spatial resolution"
+    },
+    "format": {
+      "type": "string",
+      "enum": ["GPKG"],
+      "description": "Data format token"
+    },
+    "extension": {
+      "type": "string",
+      "enum": ["gpkg", "zip"],
+      "description": "File extension without leading dot"
+    }
+  },
+  "template": "{product_id}_{acquisition_date}_{version}_{tile_id}_{resolution}_{format}.{extension}",
+  "examples": [
+    "RZ_20240115_V2023_E40N20_R10m_GPKG.zip"
+  ]
+}
+
