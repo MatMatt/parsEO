@@ -1,9 +1,37 @@
-from __future__ import annotations
+"""Utility helpers for working with filename templates."""
 
 import re
-from typing import Dict, Tuple, List
+from typing import Any, Dict, List, Optional, Tuple
 
-def _field_regex(spec: Dict | None) -> str:
+
+def merge_fields(
+    fields: Dict[str, Any],
+    defaults: Optional[Dict[str, Any]] = None,
+) -> Dict[str, Any]:
+    """Merge ``fields`` with optional ``defaults``.
+
+    Parameters
+    ----------
+    fields:
+        Mandatory mapping of field names to values.
+    defaults:
+        Optional default values. When provided, they are updated with the
+        values from ``fields`` and the merged dictionary is returned.
+
+    Returns
+    -------
+    Dict[str, Any]
+        The merged mapping of field values.
+    """
+    if defaults:
+        merged = defaults.copy()
+        merged.update(fields)
+        return merged
+    return dict(fields)
+
+
+def _field_regex(spec: Optional[Dict[str, Any]]) -> str:
+
     """Return a regex for a field spec.
 
     If *spec* is missing or empty, a permissive pattern ``.+`` is used.
@@ -22,7 +50,10 @@ def _field_regex(spec: Dict | None) -> str:
         pattern = pattern[:-1]
     return pattern
 
-def compile_template(template: str, fields: Dict[str, Dict]) -> Tuple[str, List[str]]:
+def compile_template(
+    template: str, fields: Dict[str, Dict[str, Any]]
+) -> Tuple[str, List[str]]:
+
     """Compile *template* into a regex pattern and extract field order.
 
     ``{field}`` placeholders are replaced using patterns or enums from
