@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pytest
 
-from parseo import assemble, assemble_auto, clear_schema_cache
+from parseo import assemble, assemble_auto, clear_schema_cache, parse_auto
 
 
 def test_assemble_clms_fsc_schema():
@@ -129,6 +129,26 @@ def test_assemble_auto_fapar_schema():
     assert result == "CLMS_VPP_FAPAR_100m_T32TNS_20210101_20210110_V100_FAPAR.tif"
 
 
+def test_assemble_clms_hrlnvlcc_schema():
+    schema = (
+        Path(__file__).resolve().parents[1]
+        / "src/parseo/schemas/copernicus/clms/hrlnvlcc/hrlnvlcc_filename_v0_0_0.json"
+    )
+    fields = {
+        "prefix": "CLMS_HRL",
+        "product": "NVLCC",
+        "resolution": "010m",
+        "tile_id": "T32TNS",
+        "start_date": "20210101",
+        "end_date": "20211231",
+        "version": "V100",
+        "file_id": "NVLCC",
+        "extension": "tif",
+    }
+    result = assemble(schema, fields)
+    assert result == "CLMS_HRL_NVLCC_010m_T32TNS_20210101_20211231_V100_NVLCC.tif"
+
+
 def test_assemble_clms_st_schema():
     schema = (
         Path(__file__).resolve().parents[1]
@@ -216,3 +236,19 @@ def test_clear_schema_cache(tmp_path):
 
     clear_schema_cache()
     assert assemble(schema, fields) == "x-y"
+
+@pytest.mark.parametrize("year", ["2012", "2018", "2024"])
+def test_assemble_auto_hrl_imperviousness_schema(year):
+    fields = {
+        "product_code": "IMD",
+        "reference_year": year,
+        "resolution": "10m",
+        "aoi_code": "E40N20",
+        "epsg": "EPSG3035",
+        "version": "100",
+        "tile": "E40N20",
+        "extension": "tif",
+    }
+    result = assemble_auto(fields)
+    assert result == f"hrl_IMD_{year}_10m_E40N20_EPSG3035_v100_E40N20.tif"
+
