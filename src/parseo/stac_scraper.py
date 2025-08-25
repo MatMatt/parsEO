@@ -269,9 +269,45 @@ def scrape_catalog(root: str | Path, *, limit: int = 100) -> list[dict[str, str]
     return results
 
 
-def sample_collection_filenames(*args, **kwargs) -> dict[str, list[str]]:  # pragma: no cover
-    """Deprecated placeholder for backward compatibility.
-
+def sample_collection_filenames(
+    collection: str,
+    samples: int = 5,
+    *,
+    base_url: str,
+    asset_role: str | None = None,
+) -> dict[str, list[str]]:
+    """Return sample asset filenames from a STAC collection.
     Users should call :func:`scrape_catalog` instead.
     """
-    raise SystemExit("sample_collection_filenames is no longer supported")
+
+    try:  # pragma: no cover - exercised when dependency missing
+        from pystac_client import Client
+    except Exception as exc:  # pragma: no cover - same as above
+        raise SystemExit(
+            "pystac-client is required for sample_collection_filenames"
+        ) from exc
+
+    cid = _norm_collection_id(collection)
+    base = _norm_base(base_url)
+    client = Client.open(base)
+
+    search = client.search(collections=[cid], max_items=samples)
+    results: list[str] = []
+
+    for item in search.items():
+        asset = None
+        if asset_role:
+            for a in item.assets.values():
+                roles = a.roles or []
+                if asset_role in roles:
+                    asset = a
+                    break
+        if asset is None and item.assets:
+            asset = next(iter(item.assets.values()))
+        if not asset:
+            continue
+        href = asset.href or ""
+        name = asset.title or Path(urlparse(href).path).name
+        results.append(name)
+
+    return {cid: results}

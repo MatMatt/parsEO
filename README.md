@@ -169,6 +169,8 @@ browser to verify your API.
 
 Filenames often reflect associated metadata or directory structures, so `parsEO` aligns with STAC naming conventions whenever possible. The package ships with small utilities to interact with STAC APIs and catalogs, including helpers to list collections, sample asset filenames, and traverse catalogs stored on disk.
 
+`list-stac-collections` and `stac-sample` rely on [`pystac-client`](https://github.com/stac-utils/pystac-client) for STAC API access. Install it alongside `parsEO` to use these commands.
+
 The legacy `stac_dataspace` helper has been removed. Its functionality is covered by the new `scrape_catalog` function described below, which works with any STAC catalog served over HTTP or stored locally.
 
 Use the ``list-stac-collections`` subcommand to list collection IDs exposed by a
@@ -212,6 +214,10 @@ SENTINEL-2:
 Asset filenames are taken from each asset's ``title`` when available; if not,
 the filename is parsed from the ``href``.  OData-style links such as
 ``Products('NAME')/$value`` are handled automatically.
+
+The command is backed by ``parseo.stac_scraper.sample_collection_filenames``,
+which queries the STAC API for a handful of items and extracts representative
+asset filenames.
 
 Known collection aliases are automatically mapped to their official STAC IDs:
 
@@ -270,6 +276,9 @@ Each entry includes the asset filename plus any of the fields ``id``,
 ``product_type``, ``datetime``, ``tile`` and ``orbit`` discovered in adjacent
 JSON or XML metadata files.
 
+From the command line, the same helpers are available through parseo's
+``list-stac-collections`` and ``stac-sample`` subcommands, both powered by
+``parseo.stac_scraper``.
 
 ---
 
