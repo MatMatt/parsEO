@@ -1,17 +1,20 @@
-"""STAC helpers backed by ``pystac-client``.
+"""STAC helper utilities.
 
-This module mirrors the utilities in :mod:`parseo.stac_dataspace` but relies on
-``pystac-client`` for STAC catalog traversal.  Use these helpers when the extra
-features of ``pystac-client`` are required.  For a lightweight alternative that
-only depends on the Python standard library see
-:mod:`parseo.stac_dataspace`.
+Functions in this module either use :mod:`pystac-client` for interacting with
+remote STAC APIs or rely solely on the Python standard library for lightweight
+catalog scraping.
 """
 from __future__ import annotations
 
 from pathlib import Path
-from urllib.parse import urlparse
+from urllib.parse import urljoin, urlparse
+import json
+import urllib.request
+import xml.etree.ElementTree as ET
 
-from .stac_dataspace import _norm_base
+def _norm_base(base_url: str) -> str:
+    """Return ``base_url`` with exactly one trailing slash."""
+    return base_url.rstrip("/") + "/"
 
 # Mapping of common collection aliases to their official STAC IDs.
 # Keys and values are uppercase so lookups can be performed on normalized
@@ -31,10 +34,8 @@ def _norm_collection_id(collection_id: str) -> str:
 def list_collections_client(base_url: str, *, deep: bool = False) -> list[str]:
     """Return collection IDs from a STAC API using ``pystac-client``.
 
-    Parameters mirror :func:`parseo.stac_dataspace.list_collections_http` but
-    this variant requires the optional ``pystac-client`` dependency.  It is
-    suitable when more advanced STAC handling is needed, at the cost of pulling
-    in the external library.
+    When ``deep`` is ``True`` the traversal follows child catalogs in addition
+    to the top-level ``/collections`` endpoint.
     """
     try:
         from pystac_client import Client
@@ -65,7 +66,7 @@ def list_collections_client(base_url: str, *, deep: bool = False) -> list[str]:
     return sorted(collections)
 
 
-# Backwards compatible alias mirroring :mod:`parseo.stac_dataspace`
+# Backwards compatible alias for ``list_collections_client``
 list_collections = list_collections_client
 
 
@@ -134,3 +135,144 @@ def search_stac_and_download(
             except requests.HTTPError:
                 continue
     raise FileNotFoundError("No matching assets found")
+
+
+def scrape_catalog(root: str | Path, *, limit: int = 100) -> list[dict[str, str]]:
+    """Recursively walk a STAC catalog and gather metadata for data assets.
+
+    Parameters
+    ----------
+    root:
+        Path or URL to a STAC catalog, collection or item.  When a directory is
+        supplied ``catalog.json`` is assumed to be the starting point.
+    limit:
+        Maximum number of asset entries to return.
+
+    Returns
+    -------
+    list of dict
+        Each dictionary contains the asset ``filename`` plus any of the fields
+        ``id``, ``product_type``, ``datetime``, ``tile`` and ``orbit`` extracted
+        from adjacent metadata files.
+    """
+
+    results: list[dict[str, str]] = []
+
+    def is_url(path: str) -> bool:
+        return urlparse(path).scheme in {"http", "https"}
+
+    def resolve(base: str, href: str) -> str:
+        if is_url(base):
+            base_dir = base if base.endswith("/") else base.rsplit("/", 1)[0] + "/"
+            return urljoin(base_dir, href)
+        base_path = Path(base)
+        if base_path.is_dir():
+            return str(base_path / href)
+        return str(base_path.parent / href)
+
+    def read_text(path: str) -> str:
+        if is_url(path):
+            with urllib.request.urlopen(path) as resp:  # type: ignore[call-arg]
+                return resp.read().decode("utf-8")
+        return Path(path).read_text(encoding="utf-8")
+
+    def parse_metadata(path: str) -> dict[str, str]:
+        try:
+            text = read_text(path)
+        except Exception:
+            return {}
+        out: dict[str, str] = {}
+        if path.lower().endswith(".json"):
+            try:
+                data = json.loads(text)
+            except json.JSONDecodeError:
+                return {}
+
+            def grab(*names: str) -> str | None:
+                for name in names:
+                    if name in data:
+                        return data[name]
+                    if "properties" in data and name in data["properties"]:
+                        return data["properties"][name]
+                return None
+
+            out_fields = {
+                "id": grab("id", "ID"),
+                "product_type": grab("product_type", "productType"),
+                "datetime": grab("datetime", "date"),
+                "tile": grab("tile", "mgrs:tile", "s2:mgrs_tile"),
+                "orbit": grab("orbit", "s2:orbit"),
+            }
+            return {k: v for k, v in out_fields.items() if v}
+
+        # XML parsing
+        try:
+            root = ET.fromstring(text)
+        except ET.ParseError:
+            return {}
+
+        def find_text(*names: str) -> str | None:
+            for name in names:
+                elem = root.find(f".//{name}")
+                if elem is not None and elem.text:
+                    return elem.text
+            return None
+
+        out_fields = {
+            "id": find_text("id", "ID"),
+            "product_type": find_text("product_type", "productType"),
+            "datetime": find_text("datetime", "date"),
+            "tile": find_text("tile", "TILE"),
+            "orbit": find_text("orbit", "ORBIT"),
+        }
+        return {k: v for k, v in out_fields.items() if v}
+
+    def scrape(node: str) -> None:
+        if len(results) >= limit:
+            return
+        text = read_text(node)
+        data = json.loads(text)
+        if data.get("type") == "Feature":
+            assets = data.get("assets", {})
+            meta: dict[str, str] = {}
+            for asset in assets.values():
+                href = asset.get("href")
+                if not href:
+                    continue
+                if href.lower().endswith((".json", ".xml", "manifest.safe", ".safe")):
+                    meta.update(parse_metadata(resolve(node, href)))
+            for asset in assets.values():
+                href = asset.get("href")
+                if not href or href.lower().endswith((".json", ".xml", "manifest.safe", ".safe")):
+                    continue
+                filename = Path(urlparse(href).path).name
+                entry = {"filename": filename}
+                entry.update(meta)
+                results.append(entry)
+                if len(results) >= limit:
+                    return
+        else:
+            for link in data.get("links", []):
+                if link.get("rel") in {"child", "item"}:
+                    href = link.get("href")
+                    if href:
+                        scrape(resolve(node, href))
+                        if len(results) >= limit:
+                            return
+
+    start = str(root)
+    if not is_url(start):
+        p = Path(start)
+        if p.is_dir():
+            start = str(p / "catalog.json")
+    scrape(start)
+    return results
+
+
+def sample_collection_filenames(*args, **kwargs) -> dict[str, list[str]]:  # pragma: no cover
+    """Deprecated placeholder for backward compatibility.
+
+    The original implementation relied on the removed ``stac_dataspace`` module.
+    Users should call :func:`scrape_catalog` instead.
+    """
+    raise SystemExit("sample_collection_filenames is no longer supported")
