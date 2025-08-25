@@ -80,6 +80,8 @@ print(res.fields["variant"])   # GA
 
 ### Assemble a filename
 
+Assemble with known schema (eventually faster):
+
 ```python
 from pathlib import Path
 from parseo import assemble
@@ -151,17 +153,18 @@ def assemble_endpoint(schema: str, fields: dict):
     return {"filename": filename}
 ```
 
-Start the server and open [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
-to access Swagger UI:
-
+Start the server:
 ```bash
 uvicorn main:app --reload
 ```
+and open [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs) to access Swagger UI.
 
 The interactive page lets you call `/parse` and `/assemble` directly from the
 browser to verify your API.
 
-### List STAC collections
+### STAC metadata (not functional yet!)
+
+Since filenames often reflect associated metadata or directory structures, `parsEO` aligns with STAC naming conventions whenever possible. The package provides helper functions to derive filename schemas from STAC catalogs. Although filenames usually precede catalog creation, future development aims for a bidirectional information flow (STAC ↔ filename). At present, the focus remains on collecting filename schemas supported by `parsEO`.
 
 Use the ``list-stac-collections`` subcommand to list collection IDs exposed by a
 STAC API. The STAC root URL must be supplied via ``--stac-url``:
@@ -181,8 +184,6 @@ LANDSAT-7
 ...
 
 ```
-
-Each collection ID is printed on its own line.
 
 ### Sample filenames from a STAC collection
 
