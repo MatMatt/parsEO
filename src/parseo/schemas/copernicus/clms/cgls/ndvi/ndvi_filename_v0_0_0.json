@@ -1,0 +1,22 @@
+{
+  "schema_id": "copernicus:clms:cgls:ndvi",
+  "schema_version": "0.0.0",
+  "stac_version": "1.1.0",
+  "stac_extensions": ["raster", "eo"],
+  "description": "CLMS CGLS NDVI product filename.",
+  "fields": {
+    "prefix": {"type": "string", "enum": ["c_gls"], "description": "Constant prefix"},
+    "product": {"type": "string", "enum": ["NDVI"], "description": "Product code"},
+    "resolution": {"type": "string", "enum": ["300", "1km"], "description": "Spatial resolution"},
+    "sensing_datetime": {"type": "string", "pattern": "^\\d{12}$", "description": "Acquisition datetime (UTC)"},
+    "region": {"type": "string", "pattern": "^[A-Z0-9-]+$", "description": "Region identifier"},
+    "sensor": {"type": "string", "pattern": "^[A-Z0-9-]+$", "description": "Sensor identifier"},
+    "version": {"type": "string", "pattern": "^V\\d+(?:\\.\\d+){1,2}$", "description": "Product version"},
+    "extension": {"type": "string", "enum": ["nc", "tif", "zip"], "description": "File extension without leading dot"}
+  },
+  "template": "{prefix}_{product}{resolution}_{sensing_datetime}_{region}[_{sensor}]_{version}[.{extension}]",
+  "examples": [
+    "c_gls_NDVI300_202306050000_GLOBE_PROBAV_V2.2.1.nc",
+    "c_gls_NDVI1km_202106050000_EURO_PROBAV_V2.1.1.nc"
+  ]
+}

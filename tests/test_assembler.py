@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pytest
 
-from parseo import assemble, assemble_auto, clear_schema_cache
+from parseo import assemble, assemble_auto, clear_schema_cache, parse_auto
 
 
 def test_assemble_clms_fsc_schema():
@@ -298,3 +298,21 @@ def test_assemble_auto_n2k_vector_schema():
     result = assemble_auto(fields)
     assert result == "n2k_2018_3035_v1.gpkg"
 
+
+def test_assemble_cgls_ndvi_schema():
+    schema = (
+        Path(__file__).resolve().parents[1]
+        / "src/parseo/schemas/copernicus/clms/cgls/ndvi/ndvi_filename_v0_0_0.json"
+    )
+    fields = {
+        "prefix": "c_gls",
+        "product": "NDVI",
+        "resolution": "300",
+        "sensing_datetime": "202306050000",
+        "region": "GLOBE",
+        "sensor": "PROBAV",
+        "version": "V2.2.1",
+        "extension": "nc",
+    }
+    result = assemble(schema, fields)
+    assert result == "c_gls_NDVI300_202306050000_GLOBE_PROBAV_V2.2.1.nc"
