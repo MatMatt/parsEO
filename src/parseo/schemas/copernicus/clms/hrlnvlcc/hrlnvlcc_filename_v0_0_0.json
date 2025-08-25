@@ -5,7 +5,7 @@
   "stac_extensions": ["raster", "eo"],
   "description": "CLMS HRL Non-Vegetated Land Cover Change product filename.",
   "fields": {
-    "prefix": {"type": "string", "enum": ["CLMS_HRL"], "description": "Constant prefix"},
+    "prefix": {"type": "string", "enum": ["CLMS_HRLNVLCC"], "description": "Constant prefix"},
     "product": {"type": "string", "enum": ["NVLCC"], "description": "Product code"},
     "resolution": {"type": "string", "enum": ["010m"], "description": "Spatial resolution"},
     "tile_id": {"type": "string", "pattern": "^T\\d{2}[C-HJ-NP-X][A-Z]{2}$", "description": "UTM tile identifier"},
@@ -17,6 +17,6 @@
   },
   "template": "{prefix}_{product}_{resolution}_{tile_id}_{start_date}_{end_date}_{version}_{file_id}[.{extension}]",
   "examples": [
-    "CLMS_HRL_NVLCC_010m_T32TNS_20210101_20211231_V100_NVLCC.tif"
+    "CLMS_HRLNVLCC_NVLCC_010m_T32TNS_20210101_20211231_V100_NVLCC.tif"
   ]
 }

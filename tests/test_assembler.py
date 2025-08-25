@@ -250,6 +250,48 @@ def test_assemble_auto_hrlvlcc_schema():
     assert result == "CLMS_HRLVLC_IMD_010m_T32TNS_20210101T000000_V100_IMD.tif"
 
 
+def test_assemble_clms_hrlnvlcc_schema():
+    schema = (
+        Path(__file__).resolve().parents[1]
+        / "src/parseo/schemas/copernicus/clms/hrlnvlcc/hrlnvlcc_filename_v0_0_0.json"
+    )
+    fields = {
+        "prefix": "CLMS_HRLNVLCC",
+        "product": "NVLCC",
+        "resolution": "010m",
+        "tile_id": "T32TNS",
+        "start_date": "20210101",
+        "end_date": "20211231",
+        "version": "V100",
+        "file_id": "NVLCC",
+        "extension": "tif",
+    }
+    result = assemble(schema, fields)
+    assert (
+        result
+        == "CLMS_HRLNVLCC_NVLCC_010m_T32TNS_20210101_20211231_V100_NVLCC.tif"
+    )
+
+
+def test_assemble_auto_hrlnvlcc_schema():
+    fields = {
+        "prefix": "CLMS_HRLNVLCC",
+        "product": "NVLCC",
+        "resolution": "010m",
+        "tile_id": "T32TNS",
+        "start_date": "20210101",
+        "end_date": "20211231",
+        "version": "V100",
+        "file_id": "NVLCC",
+        "extension": "tif",
+    }
+    result = assemble_auto(fields)
+    assert (
+        result
+        == "CLMS_HRLNVLCC_NVLCC_010m_T32TNS_20210101_20211231_V100_NVLCC.tif"
+    )
+
+
 def test_assemble_clms_n2k_schema():
     name = "n2k_2018_100m_E042N018_3035_v1_1.tif"
     schema = (
