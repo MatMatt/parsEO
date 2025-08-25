@@ -5,6 +5,7 @@ from importlib.resources import as_file, files
 from pathlib import Path
 import re
 from typing import Any, Dict
+from functools import lru_cache
 
 from ._json import load_json
 from .template import compile_template, _field_regex
@@ -13,8 +14,14 @@ from .template import compile_template, _field_regex
 SCHEMAS_ROOT = "schemas"
 
 
+@lru_cache(maxsize=None)
 def _load_schema(schema_path: str | Path) -> Dict[str, Any]:
-    return load_json(schema_path)
+    return load_json(str(schema_path))
+
+
+def clear_schema_cache() -> None:
+    """Clear the cached schemas."""
+    _load_schema.cache_clear()
 
 
 def _assemble_from_template(template: str, fields: Dict[str, Any]) -> str:
@@ -135,7 +142,7 @@ def _select_schema_by_first_compulsory(fields: Dict[str, Any]) -> Path:
 
     for p in _iter_schema_paths():
         try:
-            sch = load_json(p)
+            sch = _load_schema(p)
         except Exception:
             continue
 
