@@ -5,10 +5,10 @@
   "stac_extensions": ["raster", "eo"],
   "description": "Corine Land Cover product filename.",
   "fields": {
-    "project": {
+    "prefix": {
       "type": "string",
-      "enum": ["CLC", "U"],
-      "description": "Project code"
+      "enum": ["CLC"],
+      "description": "Constant prefix"
     },
     "reference_year": {
       "type": "string",
@@ -36,7 +36,7 @@
       "description": "File extension without leading dot"
     }
   },
-  "template": "{project}{reference_year}_{product}_{version}_{resolution}[.{extension}]",
+  "template": "{prefix}{reference_year}_{product}_{version}_{resolution}[.{extension}]",
   "examples": [
     "CLC2018_CLC2018_V2020_20u1.tif"
   ]
