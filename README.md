@@ -270,9 +270,6 @@ Each entry includes the asset filename plus any of the fields ``id``,
 ``product_type``, ``datetime``, ``tile`` and ``orbit`` discovered in adjacent
 JSON or XML metadata files.
 
-From the command line, the same helpers are available through parseo's
-``list-stac-collections`` and ``stac-sample`` subcommands, both powered by
-``parseo.stac_scraper``.
 
 ---
 
