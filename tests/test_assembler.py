@@ -58,7 +58,7 @@ def test_assemble_auto_modis_schema():
 def test_assemble_clms_fapar_schema():
     schema = (
         Path(__file__).resolve().parents[1]
-        / "src/parseo/schemas/copernicus/clms/hr-vpp/fapar_filename_v0_0_0.json"
+        / "src/parseo/schemas/copernicus/clms/hr-vpp/fapar/fapar_filename_v0_0_0.json"
     )
     fields = {
         "prefix": "CLMS_VPP",
@@ -94,7 +94,7 @@ def test_assemble_auto_fapar_schema():
 def test_assemble_clms_st_schema():
     schema = (
         Path(__file__).resolve().parents[1]
-        / "src/parseo/schemas/copernicus/clms/hr-vpp/st_filename_v0_0_0.json"
+        / "src/parseo/schemas/copernicus/clms/hr-vpp/st/st_filename_v0_0_0.json"
     )
     fields = {
         "prefix": "ST",
