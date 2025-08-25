@@ -171,6 +171,7 @@ Filenames often reflect associated metadata or directory structures, so `parsEO`
 
 The legacy `stac_dataspace` helper has been removed. Its functionality is covered by the new `scrape_catalog` function described below, which works with any STAC catalog served over HTTP or stored locally.
 
+
 Use the ``list-stac-collections`` subcommand to list collection IDs exposed by a
 STAC API. The STAC root URL must be supplied via ``--stac-url``:
 
