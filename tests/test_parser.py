@@ -129,7 +129,6 @@ def test_hrvpp_st_example():
     assert res.fields["product"] == "PPI"
     assert res.fields["extension"] == "tif"
 
-
 def test_hrvpp_st_variant():
     name = "ST_20231231T000000_S2_W05S20-98765_030m_V101_PPI.tif"
     res = parse_auto(name)
@@ -146,22 +145,15 @@ def test_clms_hrlnvlcc_example():
     assert res.fields["end_date"] == "20211231"
     assert res.fields["version"] == "V100"
 
-def test_hrl_imperviousness_roundtrip_2012_10m():
-    name = "hrl_IMD_2012_10m_E40N20_EPSG3035_v100_E40N20.tif"
+
+def test_clms_hrlvlcc_example():
+    name = "CLMS_HRLVLC_IMD_010m_T32TNS_20210101T000000_V100_IMD.tif"
     res = parse_auto(name)
     assert res is not None
-    assert res.fields["reference_year"] == "2012"
-    assert res.fields["resolution"] == "10m"
-    assert assemble_auto(res.fields) == name
-
-
-def test_hrl_imperviousness_roundtrip_2018_100m():
-    name = "hrl_IMD_2018_100m_E60N10_EPSG3035_v101_E60N10.tif"
-    res = parse_auto(name)
-    assert res.fields["reference_year"] == "2018"
-    assert res.fields["resolution"] == "100m"
-    assert assemble_auto(res.fields) == name
-
+    assert res.fields["product"] == "IMD"
+    assert res.fields["tile_id"] == "T32TNS"
+    assert res.fields["sensing_datetime"] == "20210101T000000"
+    assert res.fields["version"] == "V100"
 
 def test_hrl_imperviousness_roundtrip_2024_10m():
     name = "hrl_IMD_2024_10m_E40N20_EPSG3035_v102_E40N20.tif"

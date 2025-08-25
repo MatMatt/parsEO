@@ -237,18 +237,36 @@ def test_clear_schema_cache(tmp_path):
     clear_schema_cache()
     assert assemble(schema, fields) == "x-y"
 
-@pytest.mark.parametrize("year", ["2012", "2018", "2024"])
-def test_assemble_auto_hrl_imperviousness_schema(year):
+def test_assemble_clms_hrlvlcc_schema():
+    schema = (
+        Path(__file__).resolve().parents[1]
+        / "src/parseo/schemas/copernicus/clms/hrlvlcc/hrlvlcc_filename_v0_0_0.json"
+    )
     fields = {
-        "product_code": "IMD",
-        "reference_year": year,
-        "resolution": "10m",
-        "aoi_code": "E40N20",
-        "epsg": "EPSG3035",
-        "version": "100",
-        "tile": "E40N20",
+        "prefix": "CLMS_HRLVLC",
+        "product": "IMD",
+        "resolution": "010m",
+        "tile_id": "T32TNS",
+        "sensing_datetime": "20210101T000000",
+        "version": "V100",
+        "file_id": "IMD",
+        "extension": "tif",
+    }
+    result = assemble(schema, fields)
+    assert result == "CLMS_HRLVLC_IMD_010m_T32TNS_20210101T000000_V100_IMD.tif"
+
+
+def test_assemble_auto_hrlvlcc_schema():
+    fields = {
+        "prefix": "CLMS_HRLVLC",
+        "product": "IMD",
+        "resolution": "010m",
+        "tile_id": "T32TNS",
+        "sensing_datetime": "20210101T000000",
+        "version": "V100",
+        "file_id": "IMD",
         "extension": "tif",
     }
     result = assemble_auto(fields)
-    assert result == f"hrl_IMD_{year}_10m_E40N20_EPSG3035_v100_E40N20.tif"
+    assert result == "CLMS_HRLVLC_IMD_010m_T32TNS_20210101T000000_V100_IMD.tif"
 

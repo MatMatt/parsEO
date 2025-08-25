@@ -1,10 +1,10 @@
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "family": "HRL-TCD",
+    "family": "HRLVLCC",
     "versions": [
         {
-            "file": "tcd_filename_v1_0_0.json",
-            "version": "1.0.0",
+            "file": "hrlvlcc_filename_v0_0_0.json",
+            "version": "0.0.0",
             "status": "current"
         }
     ]
