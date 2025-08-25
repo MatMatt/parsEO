@@ -134,3 +134,19 @@ def test_hrvpp_st_variant():
     res = parse_auto(name)
     assert res.fields["tile_id"] == "W05S20-98765"
     assert res.fields["version"] == "V101"
+
+
+def test_ccd_example():
+    name = "ccd_2015_100m_E042N018_3035_v1_1.tif"
+    res = parse_auto(name)
+    assert res.fields["prefix"] == "ccd"
+    assert res.fields["reference_year"] == "2015"
+    assert res.fields["aoi_code"] == "E042N018"
+
+
+def test_clc_example():
+    name = "CLC2018_CLC2018_V2020_20u1.tif"
+    res = parse_auto(name)
+    assert res.fields["prefix"] == "CLC"
+    assert res.fields["reference_year"] == "2018"
+    assert res.fields["product"] == "CLC2018"
