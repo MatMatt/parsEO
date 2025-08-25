@@ -14,7 +14,7 @@ class FakeCollection:
 class FakeClient:
     @staticmethod
     def open(url):
-        assert url == "http://base"
+        assert url == "http://base/"
         return FakeClient()
 
     def get_collections(self):
@@ -43,7 +43,7 @@ class FakeSearch:
 class FakeClientSearch(FakeClient):
     @staticmethod
     def open(url):
-        assert url == "http://base"
+        assert url == "http://base/"
         return FakeClientSearch()
 
     def search(self, **kwargs):
@@ -54,16 +54,18 @@ class FakeClientSearch(FakeClient):
 
 
 
-def test_list_collections_alias(monkeypatch):
+@pytest.mark.parametrize("base_url", ["http://base", "http://base/"])
+def test_list_collections_alias(monkeypatch, base_url):
     fake_pc = types.SimpleNamespace(Client=FakeClient)
     monkeypatch.setitem(sys.modules, "pystac_client", fake_pc)
-    out = ss.list_collections("http://base")
+    out = ss.list_collections(base_url)
     assert out == ["A", "B"]
 
 
 
 @pytest.mark.parametrize("collections", [["C"], "C"])
-def test_search_stac_and_download(monkeypatch, tmp_path, collections):
+@pytest.mark.parametrize("stac_url", ["http://base", "http://base/"])
+def test_search_stac_and_download(monkeypatch, tmp_path, collections, stac_url):
     fake_pc = types.SimpleNamespace(Client=FakeClientSearch)
     monkeypatch.setitem(sys.modules, "pystac_client", fake_pc)
 
@@ -89,7 +91,7 @@ def test_search_stac_and_download(monkeypatch, tmp_path, collections):
 
     dest = tmp_path / "dl"
     path = ss.search_stac_and_download(
-        stac_url="http://base",
+        stac_url=stac_url,
         collections=collections,
         bbox=[0, 0, 1, 1],
         datetime="2024",
