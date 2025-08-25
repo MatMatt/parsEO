@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pytest
 
-from parseo import assemble, assemble_auto
+from parseo import assemble, assemble_auto, clear_schema_cache
 
 
 def test_assemble_clms_fsc_schema():
@@ -161,3 +161,20 @@ def test_assemble_s2_invalid_generation_datetime():
     }
     with pytest.raises(ValueError):
         assemble(schema, fields)
+
+
+def test_clear_schema_cache(tmp_path):
+    clear_schema_cache()
+    schema = tmp_path / "schema.json"
+    schema.write_text('{"fields_order": ["a", "b"], "joiner": "_"}')
+    fields = {"a": "x", "b": "y"}
+
+    assert assemble(schema, fields) == "x_y"
+
+    schema.write_text('{"fields_order": ["a", "b"], "joiner": "-"}')
+
+    # Cached schema remains in effect
+    assert assemble(schema, fields) == "x_y"
+
+    clear_schema_cache()
+    assert assemble(schema, fields) == "x-y"
