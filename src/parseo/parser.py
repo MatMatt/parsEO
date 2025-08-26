@@ -4,7 +4,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from importlib.resources import files, as_file
 from pathlib import Path
-from typing import Any, Dict, Iterator, Optional
+from typing import Any, Dict, Iterator, Optional, Iterable
 import re
 from functools import lru_cache
 from ._json import load_json
@@ -411,19 +411,33 @@ def parse_auto(name: str) -> ParseResult:
     raise RuntimeError(msg)
 
 
-def validate_schema_examples(pkg: str | None = None) -> list[str]:
-    """Validate that schema examples parse and assemble correctly.
+def validate_schema_examples(
+    paths: Iterable[str | Path] | None = None,
+    pkg: str = __package__,
+) -> None:
+    """Validate example filenames declared in schema files.
 
-    Returns a list of failure messages. The list is empty if all examples
-    round-trip successfully.
+    Parameters
+    ----------
+    paths: Iterable[str | Path], optional
+        Specific schema JSON files to validate. When omitted, all bundled
+        schemas for *pkg* are checked.
+    pkg: str, optional
+        Package name from which to discover schemas when *paths* is ``None``.
+
+    Raises
+    ------
+    ValueError
+        If an example cannot be parsed or fails to reassemble to the original
+        string.
     """
 
-    from .assembler import assemble
-
-    pkg = pkg or __package__
     _get_schema_paths.cache_clear()
-    failures: list[str] = []
-    for schema_path in _get_schema_paths(pkg):
+    schema_paths = [Path(p) for p in paths] if paths else _get_schema_paths(pkg)
+
+    from .assembler import assemble  # local import to avoid cycle
+
+    for schema_path in schema_paths:
         schema = _load_json_from_path(schema_path)
         examples = schema.get("examples")
         if not isinstance(examples, list):
@@ -431,26 +445,11 @@ def validate_schema_examples(pkg: str | None = None) -> list[str]:
         for example in examples:
             if not isinstance(example, str):
                 continue
-            try:
-                result = parse_auto(example)
-            except Exception as exc:  # pragma: no cover - unexpected
-                failures.append(
-                    f"{schema_path}: parsing failed for {example!r}: {exc}"
-                )
-                continue
-            if not result.valid:
-                failures.append(f"{schema_path}: parsing failed for {example!r}")
-                continue
-            fields = {k: v for k, v in result.fields.items() if v is not None}
-            try:
-                assembled = assemble(schema_path, fields)
-            except Exception as exc:  # pragma: no cover - unexpected
-                failures.append(
-                    f"{schema_path}: assembling failed for {example!r}: {exc}"
-                )
-                continue
+            res = parse_auto(example)
+            if not res.valid:
+                raise ValueError(f"Parsing failed for {example}")
+            fields = {k: v for k, v in res.fields.items() if v is not None}
+            assembled = assemble(schema_path, fields)
             if assembled != example:
-                failures.append(
-                    f"{schema_path}: assembled {assembled!r} != example {example!r}"
-                )
-    return failures
+                raise ValueError(f"Round trip failed for {example}")
+

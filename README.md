@@ -125,6 +125,21 @@ print(filename)
 # -> S2B_MSIL2A_20241123T224759_N0511_R101_T03VUL_20241123T230829.SAFE
 ```
 
+### Validate schema examples
+
+When adding a new schema, use `validate_schema_examples` to ensure that the
+filenames listed under its `examples` section still parse and reassemble
+correctly.
+
+```python
+from parseo.parser import validate_schema_examples
+
+validate_schema_examples("src/parseo/schemas/copernicus/sentinel/s2/s2_filename_v1_0_0.json")
+```
+
+The project's tests call this helper so that schema examples stay in sync with
+the parser over time.
+
 ### Run as a web API
 
 parsEO functions can be exposed through a web service. The example below uses
