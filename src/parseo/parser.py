@@ -452,3 +452,4 @@ def validate_schema_examples(
             assembled = assemble(schema_path, fields)
             if assembled != example:
                 raise ValueError(f"Round trip failed for {example}")
+
