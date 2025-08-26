@@ -409,3 +409,48 @@ def parse_auto(name: str) -> ParseResult:
         msg += f". First error while reading schemas: {first_error}"
         raise RuntimeError(msg) from first_error
     raise RuntimeError(msg)
+
+
+def validate_schema_examples(pkg: str | None = None) -> list[str]:
+    """Validate that schema examples parse and assemble correctly.
+
+    Returns a list of failure messages. The list is empty if all examples
+    round-trip successfully.
+    """
+
+    from .assembler import assemble
+
+    pkg = pkg or __package__
+    _get_schema_paths.cache_clear()
+    failures: list[str] = []
+    for schema_path in _get_schema_paths(pkg):
+        schema = _load_json_from_path(schema_path)
+        examples = schema.get("examples")
+        if not isinstance(examples, list):
+            continue
+        for example in examples:
+            if not isinstance(example, str):
+                continue
+            try:
+                result = parse_auto(example)
+            except Exception as exc:  # pragma: no cover - unexpected
+                failures.append(
+                    f"{schema_path}: parsing failed for {example!r}: {exc}"
+                )
+                continue
+            if not result.valid:
+                failures.append(f"{schema_path}: parsing failed for {example!r}")
+                continue
+            fields = {k: v for k, v in result.fields.items() if v is not None}
+            try:
+                assembled = assemble(schema_path, fields)
+            except Exception as exc:  # pragma: no cover - unexpected
+                failures.append(
+                    f"{schema_path}: assembling failed for {example!r}: {exc}"
+                )
+                continue
+            if assembled != example:
+                failures.append(
+                    f"{schema_path}: assembled {assembled!r} != example {example!r}"
+                )
+    return failures
