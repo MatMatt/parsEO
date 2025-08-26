@@ -276,6 +276,10 @@ The 'assemble' command requires parseo.assembler, which is part of the standard 
 Reinstall parseo with assembler support or provide your own `parseo/assembler.py`
 implementing `assemble(schema_path, fields)` to enable this command.
 
+The `list-clms-products` subcommand queries the public Copernicus Land Monitoring Service (CLMS)
+dataset catalog and prints the available product names. Use this to discover valid identifiers
+when working with CLMS filename schemas.
+
 ```bash
 # Parse a filename
 parseo parse S1A_IW_SLC__1SDV_20250105T053021_20250105T053048_A054321_D068F2E_ABC123.SAFE
@@ -290,6 +294,13 @@ parseo list-schemas
 #    S4
 #    S5P
 #    S6
+
+# List CLMS products from the dataset catalog
+parseo list-clms-products
+# -> Corine Land Cover (CLC)
+#    High Resolution Water & Snow / Ice (HR-WSI)
+#    High Resolution Vegetation Phenology & Productivity (HR-VPP)
+#    ...
 
 # Inspect a specific schema
 parseo schema-info S2
