@@ -1,6 +1,6 @@
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "family": "HR-VPP-FAPAR",
+    "family": "HR-VPP-PPI",
     "versions": [
         {
             "file": "../vegetation_index_filename_v0_0_0.json",

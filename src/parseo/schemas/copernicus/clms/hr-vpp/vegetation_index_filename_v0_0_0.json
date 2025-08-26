@@ -1,18 +1,18 @@
 {
-  "schema_id": "copernicus:clms:hr-vpp:fapar",
+  "schema_id": "copernicus:clms:hr-vpp:vegetation-index",
   "schema_version": "0.0.0",
   "stac_version": "1.1.0",
   "stac_extensions": ["raster", "eo"],
-  "description": "CLMS HR-VPP Fraction of Absorbed Photosynthetically Active Radiation product filename.",
+  "description": "CLMS HR-VPP Vegetation Indices (FAPAR, LAI, NDVI, PPI, FCOVER, DMP) product filename.",
   "fields": {
     "prefix": {"type": "string", "enum": ["CLMS_VPP"], "description": "Constant prefix"},
-    "product": {"type": "string", "enum": ["FAPAR"], "description": "Product code"},
+    "product": {"type": "string", "enum": ["FAPAR", "LAI", "NDVI", "PPI", "FCOVER", "DMP"], "description": "Product code"},
     "resolution": {"type": "string", "enum": ["100m"], "description": "Spatial resolution"},
     "tile_id": {"type": "string", "pattern": "^T\\d{2}[C-HJ-NP-X][A-Z]{2}$", "description": "UTM tile identifier"},
     "start_date": {"type": "string", "pattern": "^\\d{8}$", "description": "Start date (YYYYMMDD)"},
     "end_date": {"type": "string", "pattern": "^\\d{8}$", "description": "End date (YYYYMMDD)"},
     "version": {"type": "string", "pattern": "^V\\d{3}$", "description": "Product version"},
-    "file_id": {"type": "string", "enum": ["FAPAR", "MTD"], "description": "File identifier"},
+    "file_id": {"type": "string", "enum": ["FAPAR", "LAI", "NDVI", "PPI", "FCOVER", "DMP", "MTD"], "description": "File identifier"},
     "extension": {"type": "string", "enum": ["tif", "xml"], "description": "File extension without leading dot"}
   },
   "template": "{prefix}_{product}_{resolution}_{tile_id}_{start_date}_{end_date}_{version}_{file_id}[.{extension}]",

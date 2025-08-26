@@ -159,7 +159,27 @@ def _select_schema_by_first_compulsory(fields: Dict[str, Any]) -> Path:
         if not order:
             continue
 
-        first_key = order[0]
+        specs = sch.get("fields", {})
+        first_key = None
+        for name in order:
+            spec = specs.get(name, {})
+            enums = spec.get("enum")
+            field_val = fields.get(name)
+            if enums is not None:
+                enums = [str(e) for e in enums]
+                if len(enums) == 1 and field_val == enums[0]:
+                    continue
+                if field_val is not None and field_val not in enums:
+                    first_key = None
+                    break
+                first_key = name
+                break
+            else:
+                first_key = name
+                break
+        if not first_key:
+            continue
+
         seen_first_keys.add(first_key)
 
         if first_key not in fields:
