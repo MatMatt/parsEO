@@ -2,15 +2,13 @@
 
 The routines in this module intentionally rely only on :mod:`urllib` from the
 Python standard library to avoid pulling in heavier dependencies.  For a
-``pystac-client`` based alternative see :mod:`parseo.stac_scraper`.
-
-The Copernicus Data Space Ecosystem STAC root URL is available as
-``CDSE_STAC_URL`` for convenience but is not used as a default.  All helper
+``pystac-client`` based alternative see :mod:`parseo.stac_scraper`.  All helper
 functions require explicitly passing the ``base_url`` of the STAC service.
 """
 from __future__ import annotations
 
 from collections.abc import Iterable
+from functools import lru_cache
 from pathlib import Path
 from urllib.parse import urljoin, urlparse
 import urllib.error
@@ -20,24 +18,14 @@ import itertools
 import re
 from string import Template
 
-CDSE_STAC_URL = "https://catalogue.dataspace.copernicus.eu/stac/"
+def _norm_collection_id(collection_id: str, *, base_url: str) -> str:
+    """Resolve ``collection_id`` to the official ID from the STAC API."""
 
-
-# Mapping of common collection aliases to their official STAC IDs.
-# Keys are case-insensitive aliases as they might appear in user commands.
-# Accepted formats include variants such as "SENTINEL2_L1C",
-# "SENTINEL-2-L1C", or "S2_L2A".
-STAC_ID_ALIASES: dict[str, str] = {
-    "SENTINEL2_L2A": "sentinel-2-l2a",
-    "S2_L2A": "sentinel-2-l2a",
-    "SENTINEL2_L1C": "sentinel-2-l1c",
-    "SENTINEL-2-L1C": "sentinel-2-l1c",
-}
-
-
-def _norm_collection_id(collection_id: str) -> str:
-    """Return the official STAC collection ID for ``collection_id``."""
-    return STAC_ID_ALIASES.get(collection_id.upper(), collection_id)
+    norm = re.sub(r"[^A-Za-z0-9]", "", collection_id).upper()
+    for cid in _list_collections_cached(base_url):
+        if re.sub(r"[^A-Za-z0-9]", "", cid).upper() == norm:
+            return cid
+    return collection_id
 
 
 def _norm_base(base_url: str) -> str:
@@ -117,6 +105,13 @@ def list_collections_http(base_url: str, *, deep: bool = False) -> list[str]:
 list_collections = list_collections_http
 
 
+@lru_cache(maxsize=32)
+def _list_collections_cached(base_url: str) -> tuple[str, ...]:
+    """Cached helper returning collection IDs for ``base_url``."""
+
+    return tuple(list_collections_http(base_url))
+
+
 def iter_asset_filenames(
     collection_id: str,
     *,
@@ -133,6 +128,7 @@ def iter_asset_filenames(
     characters outside ``[A-Za-z0-9._-]`` are replaced with ``_``.
     """
     base = _norm_base(base_url)
+    collection_id = _norm_collection_id(collection_id, base_url=base)
     url = urljoin(base, f"collections/{collection_id}/items?limit={limit}")
     remaining = limit
     first_request = True
@@ -208,6 +204,7 @@ def iter_collection_tree(
     parameter is forwarded to :func:`iter_asset_filenames`.
     """
     base = _norm_base(base_url)
+    collection_id = _norm_collection_id(collection_id, base_url=base)
     url = urljoin(base, f"collections/{collection_id}")
     try:
         data = _read_json(url)
@@ -249,12 +246,12 @@ def sample_collection_filenames(
 ) -> dict[str, list[str]]:
     """Return ``samples`` filenames for each leaf collection.
 
-    ``collection_id`` may be the official STAC ID or any alias defined in
-    :data:`STAC_ID_ALIASES`.  When ``collection_id`` has child collections, a
-    sample is collected from each leaf.  Only assets whose ``roles`` include
-    ``asset_role`` are returned when the parameter is supplied.
+    ``collection_id`` may be the official STAC ID or any case/format variant
+    resolvable via :func:`list_collections_http`.  When ``collection_id`` has
+    child collections, a sample is collected from each leaf.  Only assets whose
+    ``roles`` include ``asset_role`` are returned when the parameter is
+    supplied.
     """
-    collection_id = _norm_collection_id(collection_id)
     out: dict[str, list[str]] = {}
     for cid, fn in iter_collection_tree(
         collection_id, base_url=base_url, limit=samples, asset_role=asset_role

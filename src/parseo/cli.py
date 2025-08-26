@@ -7,7 +7,7 @@ import sys
 from typing import Any, Dict, List
 
 from parseo.parser import parse_auto, describe_schema, list_schemas  # parser helpers
-from parseo.stac_dataspace import list_collections_http, sample_collection_filenames
+from parseo.stac_http import list_collections_http, sample_collection_filenames
 
 
 # ---------- small utilities ----------
