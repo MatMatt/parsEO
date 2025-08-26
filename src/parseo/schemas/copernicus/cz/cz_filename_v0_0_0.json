@@ -26,7 +26,7 @@
     },
     "projection": {
       "type": "string",
-      "enum": "3035",
+        "enum": ["3035"],
       "description": "Spatial projection"
     },
     "version": {
@@ -53,6 +53,6 @@
   },
   "template": "{prefix}_{year}_{delivery_unit}_{projection}_{version}_{format}[.{extension}]",
   "examples": [
-    "CZ_2012_DU004_3035_V010_fgdb.zip"
+    "CZ_2012_DU0004_3035_V010_fgdb.zip"
   ]
 }

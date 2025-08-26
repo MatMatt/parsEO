@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pytest
 
-from parseo import assemble, assemble_auto, clear_schema_cache
+from parseo import assemble, assemble_auto, clear_schema_cache, parse_auto
 
 
 def test_assemble_clms_fsc_schema():

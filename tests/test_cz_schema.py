@@ -11,29 +11,31 @@ def test_assemble_cz_schema():
     schema = _schema_path()
     fields = {
         "prefix": "CZ",
-        "product": "FOO",
-        "tile_id": "T32TNS",
-        "date": "20210101",
-        "version": "V100",
-        "extension": "gpkg",
+        "year": "2012",
+        "delivery_unit": "DU0004",
+        "projection": "3035",
+        "version": "V010",
+        "format": "fgdb",
+        "extension": "zip",
     }
     result = assemble(schema, fields)
-    assert result == "CZ_FOO_T32TNS_20210101_V100.gpkg"
+    assert result == "CZ_2012_DU0004_3035_V010_fgdb.zip"
 
 
 def test_cz_roundtrip_auto():
-    name = "CZ_FOO_T32TNS_20210101_V100.gpkg"
+    name = "CZ_2012_DU0004_3035_V010_fgdb.zip"
     res = parse_auto(name)
-    assert res.fields["product"] == "FOO"
-    assert res.fields["tile_id"] == "T32TNS"
-    assert res.fields["date"] == "20210101"
-    assert res.fields["version"] == "V100"
+    assert res.fields["year"] == "2012"
+    assert res.fields["delivery_unit"] == "DU0004"
+    assert res.fields["projection"] == "3035"
+    assert res.fields["version"] == "V010"
+    assert res.fields["format"] == "fgdb"
     assert assemble_auto(res.fields) == name
 
 
 def test_cz_vector_roundtrip_auto():
-    name = "CZ_BAR_T32TNS_20210202_V101.zip"
+    name = "CZ_2018_DU0005_3035_V011_geoPackage.gpkg"
     res = parse_auto(name)
-    assert res.fields["product"] == "BAR"
-    assert res.fields["extension"] == "zip"
+    assert res.fields["format"] == "geoPackage"
+    assert res.fields["extension"] == "gpkg"
     assert assemble_auto(res.fields) == name
