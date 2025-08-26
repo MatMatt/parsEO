@@ -11,27 +11,28 @@ def test_assemble_cz_schema():
     fields = {
         "prefix": "CZ",
         "year": "2012",
-        "delivery_unit": "DU0001",
+        "delivery_unit": "DU0004",
         "projection": "3035",
         "version": "V010",
         "format": "fgdb",
         "extension": "zip",
     }
     result = assemble(schema, fields)
-    assert result == "CZ_2012_DU0001_3035_V010_fgdb.zip"
+    assert result == "CZ_2012_DU0004_3035_V010_fgdb.zip"
+
 
 def test_cz_roundtrip_auto():
-    name = "CZ_2018_DU0002_3035_V020_fgdb.zip"
+    name = "CZ_2012_DU0004_3035_V010_fgdb.zip"
     res = parse_auto(name)
-    assert res.fields["year"] == "2018"
-    assert res.fields["delivery_unit"] == "DU0002"
+    assert res.fields["year"] == "2012"
+    assert res.fields["delivery_unit"] == "DU0004"
     assert res.fields["projection"] == "3035"
-    assert res.fields["version"] == "V020"
+    assert res.fields["version"] == "V010"
     assert res.fields["format"] == "fgdb"
     assert assemble_auto(res.fields) == name
 
 def test_cz_vector_roundtrip_auto():
-    name = "CZ_2012_DU1234_3035_V100_geoPackage.gpkg"
+    name = "CZ_2018_DU0005_3035_V011_geoPackage.gpkg"
     res = parse_auto(name)
     assert res.fields["format"] == "geoPackage"
     assert res.fields["extension"] == "gpkg"
