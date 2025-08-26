@@ -243,7 +243,8 @@ for cid in stac_scraper.list_collections(stac_url):
 ```
 
 This functionality depends on the ``pystac-client`` and ``requests``
-packages being available at runtime.
+packages being available at runtime.  If either is missing an
+``ImportError`` is raised.
 
 ---
 

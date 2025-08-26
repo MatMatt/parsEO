@@ -1,6 +1,5 @@
 import sys
 import types
-from pathlib import Path
 
 import pytest
 import parseo.stac_scraper as ss
@@ -125,6 +124,53 @@ def test_search_stac_and_download_http_error(monkeypatch, tmp_path):
     monkeypatch.setitem(sys.modules, "requests", fake_requests)
 
     with pytest.raises(FileNotFoundError):
+        ss.search_stac_and_download(
+            stac_url="http://base",
+            collections=["C"],
+            bbox=[0, 0, 1, 1],
+            datetime="2024",
+            dest_dir=tmp_path,
+        )
+
+
+def test_missing_pystac_client(monkeypatch, tmp_path):
+    import builtins
+
+    orig_import = builtins.__import__
+
+    def fake_import(name, *args, **kwargs):
+        if name == "pystac_client":
+            raise ModuleNotFoundError
+        return orig_import(name, *args, **kwargs)
+
+    monkeypatch.setattr(builtins, "__import__", fake_import)
+    with pytest.raises(ImportError):
+        ss.list_collections_client("http://base")
+    with pytest.raises(ImportError):
+        ss.search_stac_and_download(
+            stac_url="http://base",
+            collections=["C"],
+            bbox=[0, 0, 1, 1],
+            datetime="2024",
+            dest_dir=tmp_path,
+        )
+
+
+def test_missing_requests(monkeypatch, tmp_path):
+    fake_pc = types.SimpleNamespace(Client=FakeClientSearch)
+    monkeypatch.setitem(sys.modules, "pystac_client", fake_pc)
+
+    import builtins
+
+    orig_import = builtins.__import__
+
+    def fake_import(name, *args, **kwargs):
+        if name == "requests":
+            raise ModuleNotFoundError
+        return orig_import(name, *args, **kwargs)
+
+    monkeypatch.setattr(builtins, "__import__", fake_import)
+    with pytest.raises(ImportError):
         ss.search_stac_and_download(
             stac_url="http://base",
             collections=["C"],

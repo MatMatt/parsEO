@@ -18,11 +18,16 @@ def list_collections_client(base_url: str, *, deep: bool = False) -> list[str]:
     this variant requires the optional ``pystac-client`` dependency.  It is
     suitable when more advanced STAC handling is needed, at the cost of pulling
     in the external library.
+
+    Raises
+    ------
+    ImportError
+        If ``pystac-client`` is not installed.
     """
     try:
         from pystac_client import Client
     except Exception as exc:  # pragma: no cover - exercised when dependency missing
-        raise SystemExit(
+        raise ImportError(
             "pystac-client is required for list_collections_client"
         ) from exc
 
@@ -67,6 +72,8 @@ def search_stac_and_download(
 
     Raises
     ------
+    ImportError
+        If ``pystac-client`` or ``requests`` is not installed.
     FileNotFoundError
         If the STAC search yields no downloadable assets or all downloads
         fail.
@@ -75,14 +82,16 @@ def search_stac_and_download(
     try:
         from pystac_client import Client
     except Exception as exc:  # pragma: no cover - exercised when dependency missing
-        raise SystemExit(
+        raise ImportError(
             "pystac-client is required for search_stac_and_download"
         ) from exc
 
     try:
         import requests
     except Exception as exc:  # pragma: no cover - exercised when dependency missing
-        raise SystemExit("requests is required for search_stac_and_download") from exc
+        raise ImportError(
+            "requests is required for search_stac_and_download"
+        ) from exc
 
     client = Client.open(stac_url)
     search = client.search(collections=collections, bbox=bbox, datetime=datetime)
