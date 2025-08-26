@@ -14,3 +14,16 @@ def load_schema_by_name(root_dir: str, fname: str):
 def match_example(pattern: str, example: str):
     rx = re.compile(pattern)
     return bool(rx.match(example))
+
+
+def schema_examples_list():
+    """Return a list of (schema_path, example) tuples for all schemas."""
+    root = pathlib.Path(__file__).resolve().parents[1] / "src/parseo/schemas"
+    examples = []
+    for p in root.rglob("*.json"):
+        if p.name == "index.json":
+            continue
+        data = json.loads(p.read_text(encoding="utf-8"))
+        for ex in data.get("examples", []):
+            examples.append((p, ex))
+    return examples

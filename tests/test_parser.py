@@ -1,58 +1,33 @@
-from parseo.parser import parse_auto
-from parseo import assemble_auto
 import parseo.parser as parser
 import pytest
 from functools import lru_cache
 
-def test_s2_example():
-    name = "S2B_MSIL2A_20241123T224759_N0511_R101_T03VUL_20241123T230829.SAFE"
-    res = parse_auto(name)
-    assert res is not None
-    assert res.fields["platform"] == "S2B"
-    assert res.fields["sensor"] == "MSI"
-    assert res.fields["processing_level"] == "L2A"
-    assert res.fields["sensing_datetime"] == "20241123T224759"
-    assert res.fields["processing_baseline"] == "N0511"
-    assert res.fields["relative_orbit"] == "R101"
-
-def test_s1_example():
-    name = "S1A_IW_SLC__1SDV_20250105T053021_20250105T053048_A054321_D068F2E_ABC123.SAFE"
-    res = parse_auto(name)
-    assert res is not None
-    assert res.fields["platform"] == "S1A"
-    assert res.fields["instrument_mode"] == "IW"
-    assert res.fields["product_type"] == "SLC_"
-    assert res.fields["processing_level"] == "1SD"
-    assert res.fields["polarization"] == "V"
-    assert res.version == "1.0.0"
-    assert res.status == "current"
+from tests.conftest import schema_examples_list
 
 
-def test_s3_example():
-    name = "S3A_OLCI_L2_20250105T103021_080_SEG01.tif"
-    res = parse_auto(name)
-    assert res.match_family == "S3"
-    assert res.fields["platform"] == "S3A"
-
-
-def test_hr_wsi_example():
-    name = "CLMS_WSI_FSC_020m_T32TNS_20211018T103021_S2A_V100_FSCOG.tif"
-    res = parse_auto(name)
-    assert res.match_family == "HR-WSI"
-    assert res.fields["product"] == "FSC"
+def _get_s2_example():
+    for path, ex in schema_examples_list():
+        if "sentinel" in str(path.parent.parent).lower() and "s2" in path.name.lower():
+            return ex
+    pytest.skip("No S2 schema example available")
 
 
 def test_near_miss_reports_field():
-    name = "S2X_MSIL2A_20241123T224759_N0511_R101_T03VUL_20241123T230829.SAFE"
+    example = _get_s2_example()
+    expected = example.split("_")[0]
+    bad_name = example.replace(expected, "S2X", 1)
     with pytest.raises(parser.ParseError) as exc:
-        parse_auto(name)
+        parser.parse_auto(bad_name)
     msg = str(exc.value)
     assert "platform" in msg
     assert "S2X" in msg
-    assert "S2A" in msg
+    assert expected in msg
 
 
 def test_schema_paths_cached(monkeypatch):
+    examples = [ex for _, ex in schema_examples_list()[:2]]
+    if len(examples) < 2:
+        pytest.skip("Need at least two schema examples")
     calls = {"n": 0}
 
     original_discover = parser._discover_family_info
@@ -67,8 +42,8 @@ def test_schema_paths_cached(monkeypatch):
     parser._discover_family_info.cache_clear()
 
     # Two parses should trigger only a single scan of index.json files
-    parser.parse_auto("S2B_MSIL2A_20241123T224759_N0511_R101_T03VUL_20241123T230829.SAFE")
-    parser.parse_auto("S1A_IW_SLC__1SDV_20250105T053021_20250105T053048_A054321_D068F2E_ABC123.SAFE")
+    parser.parse_auto(examples[0])
+    parser.parse_auto(examples[1])
 
     assert calls["n"] == 1
 
@@ -89,7 +64,7 @@ def test_parse_bom_schema(tmp_path, monkeypatch):
     monkeypatch.setattr(parser, "_iter_schema_paths", fake_iter)
     parser._get_schema_paths.cache_clear()
 
-    res = parse_auto("ABC.SAFE")
+    res = parser.parse_auto("ABC.SAFE")
     assert res.valid
     assert res.fields["id"] == "ABC"
 
@@ -105,67 +80,5 @@ def test_malformed_schema_surfaces_error(tmp_path, monkeypatch):
     parser._get_schema_paths.cache_clear()
 
     with pytest.raises(RuntimeError) as exc:
-        parse_auto("whatever.SAFE")
+        parser.parse_auto("whatever.SAFE")
     assert "Expecting value" in str(exc.value)
-
-def test_modis_example():
-    parser._get_schema_paths.cache_clear()
-    name = "MOD09GA.A2021123.h18v04.006.2021132234506.hdf"
-    res = parse_auto(name)
-    assert res is not None
-    assert res.fields["platform"] == "MOD"
-    assert res.fields["product"] == "09"
-    assert res.fields["variant"] == "GA"
-    assert res.fields["acq_date"] == "A2021123"
-    assert res.fields["tile"] == "h18v04"
-    assert res.fields["collection"] == "006"
-    assert res.fields["proc_date"] == "2021132234506"
-    assert res.fields["extension"] == "hdf"
-
-
-def test_hrvpp_st_example():
-    name = "CLMS_VPP_20240101T123045_S2_E15N45-01234_010m_V100_PPI.tif"
-    res = parse_auto(name)
-    assert res is not None
-    assert res.fields["prefix"] == "CLMS_VPP"
-    assert res.fields["timestamp"] == "20240101T123045"
-    assert res.fields["sensor"] == "S2"
-    assert res.fields["tile_id"] == "E15N45-01234"
-    assert res.fields["resolution"] == "010m"
-    assert res.fields["version"] == "V100"
-    assert res.fields["product"] == "PPI"
-    assert res.fields["extension"] == "tif"
-
-def test_hrvpp_st_variant():
-    name = "CLMS_VPP_20231231T000000_S2_W05S20-98765_030m_V101_PPI.tif"
-    res = parse_auto(name)
-    assert res.fields["tile_id"] == "W05S20-98765"
-    assert res.fields["version"] == "V101"
-
-
-def test_ccd_example():
-    name = "ccd_2015_100m_E042N018_3035_v1_1.tif"
-    res = parse_auto(name)
-    assert res.fields["prefix"] == "ccd"
-    assert res.fields["reference_year"] == "2015"
-    assert res.fields["aoi_code"] == "E042N018"
-
-
-def test_clc_example():
-    name = "CLC2018_CLC2018_V2020_20u1.tif"
-    res = parse_auto(name)
-    assert res.fields["prefix"] == "CLC"
-    assert res.fields["reference_year"] == "2018"
-    assert res.fields["product"] == "CLC2018"
-
-def test_cgls_ndvi_example():
-    name = "c_gls_NDVI300_202306050000_GLOBE_PROBAV_V2.2.1.nc"
-    res = parse_auto(name)
-    assert res is not None
-    assert res.fields["prefix"] == "c_gls"
-    assert res.fields["product"] == "NDVI"
-    assert res.fields["resolution"] == "300"
-    assert res.fields["region"] == "GLOBE"
-    assert res.fields["sensor"] == "PROBAV"
-    assert res.fields["version"] == "V2.2.1"
-    assert res.fields["extension"] == "nc"

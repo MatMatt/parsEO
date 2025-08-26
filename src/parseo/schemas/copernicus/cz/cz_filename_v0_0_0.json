@@ -7,7 +7,7 @@
   "fields": {
     "prefix": {"type": "string", "enum": ["CZ"], "description": "Constant prefix"},
     "year": {"type": "string", "enum": ["2012", "2018"], "description": "Reference date (YYYY)"},
-    "delivery_unit": {"type": "string", "pattern": "^DU\\d{4}$", "description": "UTM tile identifier"},
+    "delivery_unit": {"type": "string", "pattern": "^DU\\d{3}$", "description": "UTM tile identifier"},
     "projection": {"type": "string", "enum": ["3035"], "description": "Spatial projection"},
     "version": {"type": "string", "pattern": "^V\\d{3}$", "description": "Product version"},
     "format": {"type": "string", "enum": ["fgdb", "geoPackage"], "description": "Product format"},
