@@ -1,5 +1,5 @@
 {
-  "schema_id": "nasa:modis:modis",
+  "schema_id": "nasa:modis",
   "schema_version": "1.0.0",
   "stac_version": "1.1.0",
   "description": "MODIS product filename.",
