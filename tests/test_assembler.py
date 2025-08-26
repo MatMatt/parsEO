@@ -8,7 +8,7 @@ from parseo import assemble, assemble_auto, clear_schema_cache
 def test_assemble_missing_field_template_schema():
     schema = (
         Path(__file__).resolve().parents[1]
-        / "src/parseo/schemas/copernicus/clms/hr-wsi/fsc_filename_v0_0_0.json"
+        / "src/parseo/schemas/copernicus/clms/hr-wsi/fsc/fsc_filename_v0_0_0.json"
     )
     fields = {
         "prefix": "CLMS_WSI",
