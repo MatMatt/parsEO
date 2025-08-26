@@ -1,0 +1,11 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "family": "CGLS-NDVI",
+    "versions": [
+        {
+            "file": "ndvi_filename_v0_0_0.json",
+            "version": "0.0.0",
+            "status": "current"
+        }
+    ]
+}

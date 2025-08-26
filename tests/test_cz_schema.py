@@ -6,7 +6,6 @@ from parseo import assemble, assemble_auto, parse_auto
 def _schema_path() -> Path:
     return Path(__file__).resolve().parents[1] / "src/parseo/schemas/copernicus/cz/cz_filename_v0_0_0.json"
 
-
 def test_assemble_cz_schema():
     schema = _schema_path()
     fields = {
@@ -31,7 +30,6 @@ def test_cz_roundtrip_auto():
     assert res.fields["version"] == "V010"
     assert res.fields["format"] == "fgdb"
     assert assemble_auto(res.fields) == name
-
 
 def test_cz_vector_roundtrip_auto():
     name = "CZ_2018_DU0005_3035_V011_geoPackage.gpkg"
