@@ -1,10 +1,9 @@
 """STAC helpers backed by ``pystac-client``.
 
-This module mirrors the utilities in :mod:`parseo.stac_dataspace` but relies on
+This module mirrors the utilities in :mod:`parseo.stac_http` but relies on
 ``pystac-client`` for STAC catalog traversal.  Use these helpers when the extra
 features of ``pystac-client`` are required.  For a lightweight alternative that
-only depends on the Python standard library see
-:mod:`parseo.stac_dataspace`.
+only depends on the Python standard library see :mod:`parseo.stac_http`.
 """
 from __future__ import annotations
 
@@ -14,7 +13,7 @@ from urllib.parse import urlparse
 def list_collections_client(base_url: str, *, deep: bool = False) -> list[str]:
     """Return collection IDs from a STAC API using ``pystac-client``.
 
-    Parameters mirror :func:`parseo.stac_dataspace.list_collections_http` but
+    Parameters mirror :func:`parseo.stac_http.list_collections_http` but
     this variant requires the optional ``pystac-client`` dependency.  It is
     suitable when more advanced STAC handling is needed, at the cost of pulling
     in the external library.
@@ -52,7 +51,7 @@ def list_collections_client(base_url: str, *, deep: bool = False) -> list[str]:
     return sorted(collections)
 
 
-# Backwards compatible alias mirroring :mod:`parseo.stac_dataspace`
+# Backwards compatible alias mirroring :mod:`parseo.stac_http`
 list_collections = list_collections_client
 
 

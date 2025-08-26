@@ -1,19 +1,23 @@
 import pytest
 import urllib.error
-import parseo.stac_dataspace as sd
+import parseo.stac_http as sd
 
 
 @pytest.mark.parametrize(
     "alias, expected",
     [
         ("SENTINEL2_L2A", "sentinel-2-l2a"),
-        ("S2_L2A", "sentinel-2-l2a"),
         ("SENTINEL2_L1C", "sentinel-2-l1c"),
         ("SENTINEL-2-L1C", "sentinel-2-l1c"),
     ],
 )
-def test_norm_collection_id_aliases(alias, expected):
-    assert sd._norm_collection_id(alias) == expected
+def test_norm_collection_id_aliases(monkeypatch, alias, expected):
+    monkeypatch.setattr(
+        sd,
+        "_list_collections_cached",
+        lambda base_url: ("sentinel-2-l2a", "sentinel-2-l1c"),
+    )
+    assert sd._norm_collection_id(alias, base_url="http://x") == expected
 
 
 def test_list_collections_custom_base_url(monkeypatch):
@@ -83,6 +87,7 @@ def test_iter_asset_filenames_custom_base_url(monkeypatch):
         raise AssertionError(f"Unexpected URL {url}")
 
     monkeypatch.setattr(sd, "_read_json", fake_read_json)
+    monkeypatch.setattr(sd, "_list_collections_cached", lambda base_url: ("C1",))
     out = list(sd.iter_asset_filenames("C1", base_url="http://y", limit=2))
     assert urls == [
         "http://y/collections/C1/items?limit=2",
@@ -256,14 +261,22 @@ def test_sample_collection_filenames_custom_base_url(monkeypatch):
 
 
 def test_sample_collection_filenames_alias(monkeypatch):
-    calls = []
+    monkeypatch.setattr(
+        sd,
+        "_list_collections_cached",
+        lambda base_url: ("sentinel-2-l2a",),
+    )
 
-    def fake_iter_tree(collection_id, *, base_url, limit, asset_role=None):
-        calls.append((collection_id, asset_role))
-        yield (collection_id, "a")
-        yield (collection_id, "b")
+    def fake_read_json(url):
+        return {"links": []}
 
-    monkeypatch.setattr(sd, "iter_collection_tree", fake_iter_tree)
+    monkeypatch.setattr(sd, "_read_json", fake_read_json)
+
+    def fake_iter_asset(collection_id, *, base_url, limit, asset_role=None):
+        yield from ["a", "b"]
+
+    monkeypatch.setattr(sd, "iter_asset_filenames", fake_iter_asset)
+
     alias_res = sd.sample_collection_filenames(
         "SENTINEL2_L2A", base_url="http://z"
     )
@@ -271,7 +284,6 @@ def test_sample_collection_filenames_alias(monkeypatch):
         "sentinel-2-l2a", base_url="http://z"
     )
     assert alias_res == official_res == {"sentinel-2-l2a": ["a", "b"]}
-    assert calls == [("sentinel-2-l2a", None), ("sentinel-2-l2a", None)]
 
 
 def test_sample_collection_filenames_nested(monkeypatch):
@@ -289,6 +301,7 @@ def test_sample_collection_filenames_nested(monkeypatch):
         return {"links": collections[cid]}
 
     monkeypatch.setattr(sd, "_read_json", fake_read_json)
+    monkeypatch.setattr(sd, "_list_collections_cached", lambda base_url: ("ROOT", "C1", "C2", "C3"))
 
     def fake_iter_asset(collection_id, *, base_url, limit=100):
         return iter({
@@ -346,6 +359,7 @@ def test_iter_asset_filenames_bad_collection(monkeypatch):
         raise urllib.error.HTTPError(url, 404, "Not Found", None, None)
 
     monkeypatch.setattr(sd, "_read_json", fake_read_json)
+    monkeypatch.setattr(sd, "_list_collections_cached", lambda base_url: ())
     with pytest.raises(SystemExit) as exc:
         list(sd.iter_asset_filenames("BAD", base_url="http://u"))
     assert (
@@ -364,6 +378,6 @@ def test_sample_collection_filenames_url_error(monkeypatch):
     with pytest.raises(SystemExit) as exc:
         sd.sample_collection_filenames("C1", base_url="http://bad")
     assert str(exc.value).startswith(
-        "Could not connect to http://bad/collections/C1"
+        "Could not connect to http://bad/collections"
     )
 
