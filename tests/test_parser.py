@@ -1,11 +1,22 @@
-from parseo.parser import parse_auto
+from parseo.parser import parse_auto, schema_examples_list
 import parseo.parser as parser
 import pytest
 from functools import lru_cache
 
+
+def _sentinel_example(mission: str, substring: str | None = None) -> str:
+    """Return an example filename for a Sentinel mission."""
+    mission = mission.lower()
+    for path, ex in schema_examples_list():
+        parts = {p.lower() for p in path.parts}
+        if "sentinel" in parts and mission in parts:
+            if substring is None or substring in ex:
+                return ex
+    pytest.skip(f"No Sentinel-{mission.upper()} schema example available")
+
+
 def test_s2_example():
-    name = "S2B_MSIL2A_20241123T224759_N0511_R101_T03VUL_20241123T230829.SAFE"
-    res = parse_auto(name)
+    res = parse_auto(_sentinel_example("s2", "MSIL2A"))
     assert res is not None
     assert res.fields["platform"] == "S2B"
     assert res.fields["sensor"] == "MSI"
@@ -14,9 +25,9 @@ def test_s2_example():
     assert res.fields["processing_baseline"] == "N0511"
     assert res.fields["relative_orbit"] == "R101"
 
+
 def test_s1_example():
-    name = "S1A_IW_SLC__1SDV_20250105T053021_20250105T053048_A054321_D068F2E_ABC123.SAFE"
-    res = parse_auto(name)
+    res = parse_auto(_sentinel_example("s1", "IW_SLC__1SDV"))
     assert res is not None
     assert res.fields["platform"] == "S1A"
     assert res.fields["instrument_mode"] == "IW"

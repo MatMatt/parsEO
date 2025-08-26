@@ -314,6 +314,27 @@ def describe_schema(family: str, pkg: str = __package__) -> dict[str, Any]:
     return out
 
 
+def schema_examples_list(pkg: str = __package__) -> Iterator[tuple[Path, str]]:
+    """Yield ``(schema_path, example)`` pairs for all schemas.
+
+    Each JSON schema may include an ``examples`` array of sample filenames.
+    This helper iterates through every available schema and yields each
+    example string together with the path to the originating schema. It
+    silently skips schemas that are unreadable or lack examples.
+    """
+
+    for path in _get_schema_paths(pkg):
+        try:
+            schema = _load_json_from_path(path)
+        except Exception:  # pragma: no cover - defensive
+            continue
+        examples = schema.get("examples")
+        if isinstance(examples, list):
+            for ex in examples:
+                if isinstance(ex, str):
+                    yield path, ex
+
+
 def parse_auto(name: str) -> ParseResult:
     """
     Try to parse `name` by matching it against any schema under schemas/**.json.
