@@ -3,7 +3,7 @@
   "schema_version": "0.0.0",
   "stac_version": "1.1.0",
   "stac_extensions": ["raster", "eo"],
-  "description": "CLMS HR-WSI Snow Products Sentinel-2 source filename.",
+  "description": "CLMS HR-WSI Snow Products Sentinel-2 source filename (extension optional).",
   "fields": {
     "prefix": {"type": "string", "enum": ["CLMS_WSI"], "description": "Constant prefix"},
     "product": {"type": "string", "enum": ["SP"], "description": "Product code"},

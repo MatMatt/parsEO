@@ -3,7 +3,7 @@
   "schema_version": "0.0.0",
   "stac_version": "1.1.0",
   "stac_extensions": ["raster", "eo"],
-  "description": "CLMS HR-WSI Cloud Cover product filename.",
+  "description": "CLMS HR-WSI Cloud Cover product filename (extension optional).",
   "fields": {
     "prefix": {"type": "string", "enum": ["CLMS_WSI"], "description": "Constant prefix"},
     "product": {"type": "string", "enum": ["CC"], "description": "Product code"},

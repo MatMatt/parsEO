@@ -1,6 +1,7 @@
 {
   "schema_id": "eumetsat:mtg",
   "schema_version": "1.0.0",
+  "description": "EUMETSAT MTG product filename (extension optional).",
   "fields": {
     "platform": {
       "type": "string",

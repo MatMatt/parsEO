@@ -1,6 +1,7 @@
 {
   "schema_id": "eumetsat:metop",
   "schema_version": "1.0.0",
+  "description": "EUMETSAT Metop product filename (extension optional).",
   "fields": {
     "platform": {
       "type": "string",
