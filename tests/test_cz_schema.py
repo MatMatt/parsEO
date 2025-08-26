@@ -26,7 +26,7 @@ def test_cz_roundtrip_auto():
     assert res.fields["year"] == "2018"
     assert res.fields["delivery_unit"] == "DU002"
     assert res.fields["projection"] == "3035"
-    assert res.fields["version"] == "V020"
+    assert res.fields["version"] == "V010"
     assert res.fields["format"] == "fgdb"
     assert assemble_auto(res.fields) == name
 
