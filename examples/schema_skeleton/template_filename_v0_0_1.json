@@ -32,7 +32,6 @@
       "description": "File extension without leading dot"
     }
   },
-  "required": ["prefix", "product", "sensing_datetime", "version"],
   "template": "{prefix}_{product}_{sensing_datetime}_{version}[.{extension}]",
   "examples": [
     "PRD_XYZ_20240101T000000_V100.tif"
