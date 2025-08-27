@@ -84,7 +84,8 @@ print(res.fields["variant"])   # GA
 ### Assemble a filename
 
 ```python
-from parseo import assemble
+from pathlib import Path
+from parseo import assemble, assemble_auto
 
 fields = {
     "platform": "S2B",
@@ -97,30 +98,33 @@ fields = {
     "generation_datetime": "20241123T230829",
     "extension": "SAFE",
 }
+```
 
-filename = assemble(fields)
+#### `assemble_auto(fields)`
+
+```python
+filename = assemble_auto(fields)
 print(filename)
 # -> S2B_MSIL2A_20241123T224759_N0511_R101_T03VUL_20241123T230829.SAFE
 ```
 
-Automatic schema selection:
+#### `assemble(fields, family="S2")`
 
 ```python
-from pathlib import Path
-from parseo import assemble
+filename = assemble(fields, family="S2")
+print(filename)
+```
 
-fields = {
-    "platform": "S2B",
-    "sensor": "MSI",
-    "processing_level": "L2A",
-    "sensing_datetime": "20241123T224759",
-    "processing_baseline": "N0511",
-    "relative_orbit": "R101",
-    "mgrs_tile": "T03VUL",
-    "generation_datetime": "20241123T230829",
-    "extension": "SAFE",
-}
+#### `assemble(fields, family="S2", version="1.0.0")`
 
+```python
+filename = assemble(fields, family="S2", version="1.0.0")
+print(filename)
+```
+
+#### Explicit schema path
+
+```python
 schema_path = Path("src/parseo/schemas/copernicus/sentinel/s2/s2_filename_v1_0_0.json")
 filename = assemble(fields, schema_path=schema_path)
 print(filename)
@@ -375,7 +379,7 @@ from parseo.parser import _load_json_from_path, _extract_fields, _try_validate
 schema_v100 = Path("src/parseo/schemas/copernicus/sentinel/s2/s2_filename_v1_0_0.json")
 
 # assemble with that exact schema version
-filename = assemble(schema_v100, fields)
+filename = assemble(fields, schema_path=schema_v100)
 
 # parse with that schema version
 schema = _load_json_from_path(schema_v100)
