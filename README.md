@@ -133,12 +133,18 @@ print(filename)
 ### Validate schema examples
 
 When adding a new schema, use `validate_schema` to ensure that the filenames
-listed under its `examples` section still parse and reassemble correctly.
+listed under its `examples` section still parse and reassemble correctly. Pass
+`verbose=True` to get feedback as each example is checked.
 
 ```python
 from parseo import validate_schema
 
 validate_schema("src/parseo/schemas/copernicus/sentinel/s2/s2_filename_v1_0_0.json")
+# Enable verbose output to see progress
+validate_schema(
+    "src/parseo/schemas/copernicus/sentinel/s2/s2_filename_v1_0_0.json",
+    verbose=True,
+)
 ```
 
 The project's tests call this helper so that schema examples stay in sync with

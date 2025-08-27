@@ -330,6 +330,7 @@ def parse_auto(name: str) -> ParseResult:
 def validate_schema(
     paths: str | Path | Iterable[str | Path] | None = None,
     pkg: str = __package__,
+    verbose: bool = False,
 ) -> None:
     """Validate example filenames declared in schema files.
 
@@ -341,6 +342,9 @@ def validate_schema(
         are checked.
     pkg: str, optional
         Package name from which to discover schemas when *paths* is ``None``.
+    verbose: bool, optional
+        When ``True``, print each schema path and example as they are validated,
+        along with a summary count of successful validations.
 
     Raises
     ------
@@ -359,7 +363,10 @@ def validate_schema(
 
     from .assembler import assemble  # local import to avoid cycle
 
+    validated = 0
     for schema_path in schema_paths:
+        if verbose:
+            print(schema_path)
         schema = _load_json_from_path(schema_path)
         examples = schema.get("examples")
         if not isinstance(examples, list):
@@ -374,4 +381,9 @@ def validate_schema(
             assembled = assemble(fields, schema_path=schema_path)
             if assembled != example:
                 raise ValueError(f"Round trip failed for {example}")
+            validated += 1
+            if verbose:
+                print(f"  {example}")
+    if verbose:
+        print(f"Validated {validated} examples")
 

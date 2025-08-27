@@ -104,7 +104,7 @@ def test_current_schema_default_and_explicit_version(tmp_path, monkeypatch):
     schema_registry.clear_cache()
 
 
-def test_validate_schema_accepts_single_path(tmp_path, monkeypatch):
+def test_validate_schema_accepts_single_path(tmp_path, monkeypatch, capsys):
     import json
 
     schema = {
@@ -121,7 +121,17 @@ def test_validate_schema_accepts_single_path(tmp_path, monkeypatch):
     monkeypatch.setattr(schema_registry, "_iter_schema_paths", fake_iter)
     schema_registry.clear_cache()
 
+    # Silent mode should produce no output
     parser.validate_schema(paths=str(schema_path))
+    captured = capsys.readouterr()
+    assert captured.out == ""
+
+    # Verbose mode should emit progress and summary
+    parser.validate_schema(paths=str(schema_path), verbose=True)
+    captured = capsys.readouterr()
+    assert str(schema_path) in captured.out
+    assert "ABC.SAFE" in captured.out
+    assert "Validated 1 examples" in captured.out
 
 
 def test_parsing_fails_without_current(tmp_path, monkeypatch):
