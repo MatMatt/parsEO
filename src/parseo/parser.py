@@ -328,16 +328,17 @@ def parse_auto(name: str) -> ParseResult:
 
 
 def validate_schema(
-    paths: Iterable[str | Path] | None = None,
+    paths: str | Path | Iterable[str | Path] | None = None,
     pkg: str = __package__,
 ) -> None:
     """Validate example filenames declared in schema files.
 
     Parameters
     ----------
-    paths: Iterable[str | Path], optional
-        Specific schema JSON files to validate. When omitted, all bundled
-        schemas for *pkg* are checked.
+    paths: str | Path | Iterable[str | Path], optional
+        Specific schema JSON file(s) to validate. Accepts either a single path
+        or an iterable of paths. When omitted, all bundled schemas for *pkg*
+        are checked.
     pkg: str, optional
         Package name from which to discover schemas when *paths* is ``None``.
 
@@ -349,7 +350,12 @@ def validate_schema(
     """
 
     _get_schema_paths.cache_clear()
-    schema_paths = [Path(p) for p in paths] if paths else _get_schema_paths(pkg)
+    if paths is None:
+        schema_paths = _get_schema_paths(pkg)
+    elif isinstance(paths, (str, Path)):
+        schema_paths = [Path(paths)]
+    else:
+        schema_paths = [Path(p) for p in paths]
 
     from .assembler import assemble  # local import to avoid cycle
 

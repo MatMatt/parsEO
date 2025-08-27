@@ -105,6 +105,27 @@ def test_current_schema_default_and_explicit_version(tmp_path, monkeypatch):
     parser._discover_family_info.cache_clear()
 
 
+def test_validate_schema_accepts_single_path(tmp_path, monkeypatch):
+    import json
+
+    schema = {
+        "template": "{id}.SAFE",
+        "fields": {"id": {"pattern": "[A-Z]+"}},
+        "examples": ["ABC.SAFE"],
+    }
+    schema_path = tmp_path / "abc.json"
+    schema_path.write_text(json.dumps(schema))
+
+    def fake_iter(pkg: str):
+        yield schema_path
+
+    monkeypatch.setattr(schema_registry, "_iter_schema_paths", fake_iter)
+    schema_registry._get_schema_paths.cache_clear()
+    parser._discover_family_info.cache_clear()
+
+    parser.validate_schema(paths=str(schema_path))
+
+
 def test_parsing_fails_without_current(tmp_path, monkeypatch):
     import json
 
