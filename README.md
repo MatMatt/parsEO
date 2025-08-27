@@ -95,7 +95,7 @@ fields = {
     "extension": "SAFE",
 }
 
-filename = assemble(fields, family="S2", version="1.0.0")
+filename = assemble(fields)
 print(filename)
 # -> S2B_MSIL2A_20241123T224759_N0511_R101_T03VUL_20241123T230829.SAFE
 ```
@@ -103,6 +103,7 @@ print(filename)
 Automatic schema selection:
 
 ```python
+from pathlib import Path
 from parseo import assemble
 
 fields = {
@@ -117,9 +118,9 @@ fields = {
     "extension": "SAFE",
 }
 
-filename = assemble(fields)
+schema_path = Path("src/parseo/schemas/copernicus/sentinel/s2/s2_filename_v1_0_0.json")
+filename = assemble(fields, schema_path=schema_path)
 print(filename)
-# -> S2B_MSIL2A_20241123T224759_N0511_R101_T03VUL_20241123T230829.SAFE
 ```
 
 ### Validate schema examples
