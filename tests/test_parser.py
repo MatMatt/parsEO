@@ -59,3 +59,70 @@ def test_malformed_schema_surfaces_error(tmp_path, monkeypatch):
     with pytest.raises(RuntimeError) as exc:
         parse_auto("whatever.SAFE")
     assert "Expecting value" in str(exc.value)
+
+
+def test_current_schema_default_and_explicit_version(tmp_path, monkeypatch):
+    import json
+
+    schema_v1 = {
+        "schema_id": "x:y:abc",
+        "schema_version": "1.0.0",
+        "status": "deprecated",
+        "template": "ABC_{id}_v1.txt",
+        "fields": {"id": {"pattern": "[A-Z]+"}},
+    }
+    schema_v2 = {
+        "schema_id": "x:y:abc",
+        "schema_version": "2.0.0",
+        "status": "current",
+        "filename_pattern": r"ABC_(?P<id>[A-Z]+)_v2\.txt",
+    }
+    p1 = tmp_path / "abc_filename_v1_0_0.json"
+    p2 = tmp_path / "abc_filename_v2_0_0.json"
+    p1.write_text(json.dumps(schema_v1))
+    p2.write_text(json.dumps(schema_v2))
+
+    def fake_iter(pkg: str):
+        yield from [p1, p2]
+
+    monkeypatch.setattr(parser, "_iter_schema_paths", fake_iter)
+    parser._get_schema_paths.cache_clear()
+    parser._discover_family_info.cache_clear()
+
+    res = parse_auto("ABC_X_v2.txt")
+    assert res.valid
+    assert res.version == "2.0.0"
+
+    res_old = parse_auto("ABC_X_v1.txt")
+    assert res_old.valid
+    assert res_old.version == "1.0.0"
+
+    parser._get_schema_paths.cache_clear()
+    parser._discover_family_info.cache_clear()
+
+
+def test_parsing_fails_without_current(tmp_path, monkeypatch):
+    import json
+
+    schema = {
+        "schema_id": "x:y:abc",
+        "schema_version": "1.0.0",
+        "status": "deprecated",
+        "template": "ABC_{id}.txt",
+        "fields": {"id": {"pattern": "[A-Z]+"}},
+    }
+    p = tmp_path / "abc_filename_v1_0_0.json"
+    p.write_text(json.dumps(schema))
+
+    def fake_iter(pkg: str):
+        yield p
+
+    monkeypatch.setattr(parser, "_iter_schema_paths", fake_iter)
+    parser._get_schema_paths.cache_clear()
+    parser._discover_family_info.cache_clear()
+
+    with pytest.raises(RuntimeError) as exc:
+        parse_auto("ABC_X.txt")
+    assert "current" in str(exc.value)
+    parser._get_schema_paths.cache_clear()
+    parser._discover_family_info.cache_clear()
