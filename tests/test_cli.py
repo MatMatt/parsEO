@@ -6,6 +6,15 @@ import json
 
 from parseo import cli
 from parseo.schema_registry import list_schema_families
+from parseo.parser import parse_auto, describe_schema
+
+
+def _schema_example_args(family: str) -> tuple[str, list[str]]:
+    info = describe_schema(family)
+    example = info["examples"][0]
+    fields = parse_auto(example).fields
+    args = [f"{k}={v}" for k, v in fields.items()]
+    return example, args
 
 
 def test_cli_reports_version(capsys):
@@ -23,47 +32,17 @@ def test_cli_reports_version(capsys):
 
 
 def test_cli_assemble_success(capsys):
-    sys.argv = [
-        "parseo",
-        "assemble",
-        "prefix=CLMS_WSI",
-        "product=WIC",
-        "pixel_spacing=020m",
-        "mgrs_tile=T33WXP",
-        "sensing_datetime=20201024T103021",
-        "platform=S2B",
-        "version=V100",
-        "file_id=WIC",
-        "extension=tif",
-    ]
-    assert cli.main() == 0
+    example, args = _schema_example_args("WIC-S2")
+    assert cli.main(["assemble", *args]) == 0
     captured = capsys.readouterr()
-    assert (
-        captured.out.strip()
-        == "CLMS_WSI_WIC_020m_T33WXP_20201024T103021_S2B_V100_WIC.tif"
-    )
+    assert captured.out.strip() == example
 
 
 def test_cli_assemble_fapar_success(capsys):
-    sys.argv = [
-        'parseo',
-        'assemble',
-        'prefix=CLMS_VPP',
-        'product=FAPAR',
-        'resolution=100m',
-        'mgrs_tile=T32TNS',
-        'start_date=20210101',
-        'end_date=20210110',
-        'version=V100',
-        'file_id=FAPAR',
-        'extension=tif',
-    ]
-    assert cli.main() == 0
+    example, args = _schema_example_args("VEGETATION-INDEX")
+    assert cli.main(["assemble", *args]) == 0
     captured = capsys.readouterr()
-    assert (
-        captured.out.strip()
-        == 'CLMS_VPP_FAPAR_100m_T32TNS_20210101_20210110_V100_FAPAR.tif'
-    )
+    assert captured.out.strip() == example
 
 def test_cli_assemble_missing_assembler(monkeypatch):
     real_import = builtins.__import__
@@ -74,21 +53,9 @@ def test_cli_assemble_missing_assembler(monkeypatch):
         return real_import(name, globals, locals, fromlist, level)
 
     monkeypatch.setattr(builtins, "__import__", fake_import)
-    sys.argv = [
-        "parseo",
-        "assemble",
-        "prefix=CLMS_WSI",
-        "product=WIC",
-        "pixel_spacing=020m",
-        "mgrs_tile=T33WXP",
-        "sensing_datetime=20201024T103021",
-        "platform=S2B",
-        "version=V100",
-        "file_id=WIC",
-        "extension=tif",
-    ]
+    example, args = _schema_example_args("WIC-S2")
     with pytest.raises(SystemExit) as exc:
-        cli.main()
+        cli.main(["assemble", *args])
     msg = str(exc.value)
     assert "requires parseo.assembler" in msg
     assert "standard parseo installation" in msg
