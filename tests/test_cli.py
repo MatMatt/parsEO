@@ -5,7 +5,7 @@ import pytest
 import json
 
 from parseo import cli
-from parseo.parser import list_schemas
+from parseo.schema_registry import list_schema_families
 
 
 def test_cli_assemble_success(capsys):
@@ -96,16 +96,20 @@ def test_fields_json_invalid_stdin(monkeypatch):
 
 
 def test_list_schemas_exposes_known_families():
-    fams = list_schemas()
+    fams = list_schema_families()
     assert "S2" in fams
     assert "S1" in fams
 
 
-def test_cli_list_schemas_outputs_families(capsys):
+def test_cli_list_schemas_outputs_versions(capsys):
     assert cli.main(["list-schemas"]) == 0
-    out = capsys.readouterr().out.splitlines()
-    assert "S1" in out
-    assert "S2" in out
+    lines = capsys.readouterr().out.splitlines()
+    tokens = [line.split() for line in lines]
+    entries = {t[0]: t for t in tokens}
+    assert entries["S1"][1] == "1.0.0"
+    assert entries["S2"][1] == "1.0.0"
+    assert entries["S1"][2] == "current"
+    assert entries["S2"][2] == "current"
 
 
 def test_cli_schema_info(capsys):

@@ -9,6 +9,7 @@ from functools import lru_cache
 
 from ._json import load_json
 from .template import compile_template, _field_regex
+from .schema_registry import get_schema_path
 
 
 SCHEMAS_ROOT = "schemas"
@@ -66,7 +67,7 @@ def _assemble_from_template(template: str, fields: Dict[str, Any]) -> str:
     return render(template)
 
 
-def assemble(schema_path: str | Path, fields: Dict[str, Any]) -> str:
+def _assemble_schema(schema_path: str | Path, fields: Dict[str, Any]) -> str:
     """Assemble a filename using a JSON schema.
 
     Schemas must define a ``template`` string following parseo's mini-template
@@ -105,6 +106,27 @@ def assemble(schema_path: str | Path, fields: Dict[str, Any]) -> str:
         raise ValueError(
             f"Missing field '{name}' for schema {schema_path}"
         ) from exc
+
+
+def assemble(
+    fields: Dict[str, Any],
+    family: str | None = None,
+    version: str | None = None,
+    schema_path: str | Path | None = None,
+) -> str:
+    """Assemble a filename from *fields*.
+
+    Provide either a *schema_path* or a schema *family* (with optional
+    *version*) to select the schema. If neither is given the schema is
+    auto-selected based on the supplied *fields*.
+    """
+
+    if schema_path is not None:
+        return _assemble_schema(schema_path, fields)
+    if family is not None:
+        resolved = get_schema_path(family, version=version)
+        return _assemble_schema(resolved, fields)
+    return assemble_auto(fields)
 
 
 def _iter_schema_paths() -> list[Path]:
@@ -187,4 +209,4 @@ def _select_schema_by_first_compulsory(fields: Dict[str, Any]) -> Path:
 def assemble_auto(fields: Dict[str, Any]) -> str:
     """Assemble a filename by auto-selecting the appropriate schema."""
     schema_path = _select_schema_by_first_compulsory(fields)
-    return assemble(str(schema_path), fields)
+    return _assemble_schema(str(schema_path), fields)

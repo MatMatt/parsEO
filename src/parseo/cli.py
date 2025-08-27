@@ -6,7 +6,8 @@ import json
 import sys
 from typing import Any, Dict, List
 
-from parseo.parser import parse_auto, describe_schema, list_schemas  # parser helpers
+from parseo.parser import parse_auto, describe_schema  # parser helpers
+from parseo.schema_registry import list_schema_families, list_schema_versions
 from parseo.stac_http import list_collections_http, sample_collection_filenames
 
 
@@ -180,8 +181,11 @@ def main(argv: List[str] | None = None) -> int:
         return 0
 
     if args.cmd == "list-schemas":
-        for fam in list_schemas():
-            print(fam)
+        for fam in list_schema_families():
+            for info in list_schema_versions(fam):
+                status = info.get("status") or ""
+                line = f"{fam} {info['version']} {status} {info['file']}".strip()
+                print(line)
         return 0
 
     if args.cmd == "schema-info":

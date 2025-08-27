@@ -2,7 +2,12 @@ from pathlib import Path
 
 import pytest
 
-from parseo import assemble, assemble_auto, clear_schema_cache
+from parseo import (
+    assemble,
+    assemble_auto,
+    clear_schema_cache,
+    list_schema_versions,
+)
 
 
 def test_assemble_missing_field_template_schema():
@@ -23,7 +28,7 @@ def test_assemble_missing_field_template_schema():
     }
     msg = r"Missing field 'platform' for schema .*fsc_filename_v0_0_0\.json"
     with pytest.raises(ValueError, match=msg):
-        assemble(schema, fields)
+        assemble(fields, schema_path=schema)
 
 
 def test_assemble_auto_missing_field_template_schema():
@@ -49,13 +54,38 @@ def test_clear_schema_cache(tmp_path):
     schema.write_text('{"template": "{a}_{b}"}')
     fields = {"a": "x", "b": "y"}
 
-    assert assemble(schema, fields) == "x_y"
+    assert assemble(fields, schema_path=schema) == "x_y"
 
     schema.write_text('{"template": "{a}-{b}"}')
 
     # Cached schema remains in effect
-    assert assemble(schema, fields) == "x_y"
+    assert assemble(fields, schema_path=schema) == "x_y"
 
     clear_schema_cache()
-    assert assemble(schema, fields) == "x-y"
+    assert assemble(fields, schema_path=schema) == "x-y"
+
+
+def test_list_schema_versions():
+    versions = list_schema_versions("S2")
+    assert any(v["version"] == "1.0.0" for v in versions)
+    assert any(v["status"] == "current" for v in versions)
+
+
+def test_assemble_with_family_s2():
+    fields = {
+        "platform": "S2B",
+        "sensor": "MSI",
+        "processing_level": "L2A",
+        "sensing_datetime": "20241123T224759",
+        "processing_baseline": "N0511",
+        "relative_orbit": "R101",
+        "mgrs_tile": "T03VUL",
+        "generation_datetime": "20241123T230829",
+        "extension": "SAFE",
+    }
+    name = assemble(fields, family="S2")
+    assert (
+        name
+        == "S2B_MSIL2A_20241123T224759_N0511_R101_T03VUL_20241123T230829.SAFE"
+    )
 
