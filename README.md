@@ -10,16 +10,18 @@ It also serves as an **authoritative definition of filename structures** through
 - **Bidirectional support**:  
   Parse existing product filenames into structured fields, and assemble new filenames from fields.
 
-- **Schema-driven**:  
-  Filename rules are defined in JSON schema files under `src/parseo/schemas/`.  
-  Adding support for a new product = adding a schema, no Python code changes required.
+- **Schema-driven**:
+  Filename rules are defined in JSON schema files under `src/parseo/schemas/`.
+  Dropping a new schema file into this tree is enough—parsEO discovers it
+  automatically with no central index to maintain.
 
 - **Flexible folder structure**:  
   parsEO does not assume a fixed folder depth. Products can live in arbitrary directory structures,  
   and the schema only describes the filename itself.
 
-- **Extensible**:  
-  New Copernicus or Landsat product families can be added by dropping schema definitions into the repo.
+- **Extensible**:
+  New Copernicus or Landsat product families can be added by dropping schema definitions into the repo;
+  no index file needs updating.
 
 ---
 

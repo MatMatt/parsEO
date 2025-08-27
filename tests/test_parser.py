@@ -8,6 +8,7 @@ from functools import lru_cache
 def test_schema_paths_cached(monkeypatch):
     calls = {"n": 0}
 
+    schema_registry.clear_cache()
     original_discover = parser._discover_family_info
     original_discover.cache_clear()
 
@@ -40,7 +41,7 @@ def test_parse_bom_schema(tmp_path, monkeypatch):
         yield bom_path
 
     monkeypatch.setattr(schema_registry, "_iter_schema_paths", fake_iter)
-    schema_registry._get_schema_paths.cache_clear()
+    schema_registry.clear_cache()
 
     res = parse_auto("ABC.SAFE")
     assert res.valid
@@ -55,7 +56,7 @@ def test_malformed_schema_surfaces_error(tmp_path, monkeypatch):
         yield bad_path
 
     monkeypatch.setattr(schema_registry, "_iter_schema_paths", fake_iter)
-    schema_registry._get_schema_paths.cache_clear()
+    schema_registry.clear_cache()
 
     with pytest.raises(RuntimeError) as exc:
         parse_auto("whatever.SAFE")
@@ -88,8 +89,7 @@ def test_current_schema_default_and_explicit_version(tmp_path, monkeypatch):
         yield from [p1, p2]
 
     monkeypatch.setattr(schema_registry, "_iter_schema_paths", fake_iter)
-    schema_registry._get_schema_paths.cache_clear()
-    parser._discover_family_info.cache_clear()
+    schema_registry.clear_cache()
 
     res = parse_auto("ABC_X_v2.txt")
     assert res.valid
@@ -101,8 +101,7 @@ def test_current_schema_default_and_explicit_version(tmp_path, monkeypatch):
     assert res_old.version == "1.0.0"
     assert res_old.fields["id"] == "X"
 
-    schema_registry._get_schema_paths.cache_clear()
-    parser._discover_family_info.cache_clear()
+    schema_registry.clear_cache()
 
 
 def test_validate_schema_accepts_single_path(tmp_path, monkeypatch):
@@ -120,8 +119,7 @@ def test_validate_schema_accepts_single_path(tmp_path, monkeypatch):
         yield schema_path
 
     monkeypatch.setattr(schema_registry, "_iter_schema_paths", fake_iter)
-    schema_registry._get_schema_paths.cache_clear()
-    parser._discover_family_info.cache_clear()
+    schema_registry.clear_cache()
 
     parser.validate_schema(paths=str(schema_path))
 
@@ -143,11 +141,9 @@ def test_parsing_fails_without_current(tmp_path, monkeypatch):
         yield p
 
     monkeypatch.setattr(schema_registry, "_iter_schema_paths", fake_iter)
-    schema_registry._get_schema_paths.cache_clear()
-    parser._discover_family_info.cache_clear()
+    schema_registry.clear_cache()
 
     with pytest.raises(RuntimeError) as exc:
         parse_auto("ABC_X.txt")
     assert "current" in str(exc.value)
-    schema_registry._get_schema_paths.cache_clear()
-    parser._discover_family_info.cache_clear()
+    schema_registry.clear_cache()

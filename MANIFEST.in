@@ -1,1 +1,1 @@
-recursive-include src/parseo/schemas *.json
+recursive-include src/parseo/schemas *filename_v*.json

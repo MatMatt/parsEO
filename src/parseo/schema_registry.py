@@ -5,7 +5,6 @@ from functools import lru_cache
 from importlib.resources import as_file, files
 from pathlib import Path
 from typing import Dict, Iterator, Optional
-import json
 import re
 
 from ._json import load_json
@@ -143,49 +142,42 @@ def list_schema_versions(family: str, pkg: str = __package__) -> list[dict]:
     return versions
 
 
-@lru_cache(maxsize=1)
-def _load_index(pkg: str) -> Dict[str, list[dict]]:
-    res = files(pkg).joinpath(SCHEMAS_ROOT, "index.json")
-    with as_file(res) as p:
-        path = Path(p)
-        if not path.exists():
-            raise FileNotFoundError(f"Schema index not found for package {pkg}")
-        return json.loads(path.read_text())
-
-
-def get_schema_path(family: str, version: str | None = None, pkg: str = __package__) -> Path:
+@lru_cache(maxsize=256)
+def get_schema_path(
+    family: str, version: str | None = None, pkg: str = __package__
+) -> Path:
     """Return filesystem path to schema for *family* and *version*.
 
-    If *version* is ``None``, the entry marked as ``status == 'current'`` is used.
+    If *version* is ``None`` the schema version marked as ``current`` is used.
     """
 
     fam = family.upper()
-    index = _load_index(pkg)
-    entries = index.get(fam)
-    if entries is None:
+    info = _discover_family_info(pkg)
+    meta = info.get(fam)
+    if meta is None:
         raise KeyError(f"Unknown family: {family}")
 
-    chosen = None
     if version is None:
-        for ent in entries:
-            if ent.get("status") == "current":
-                chosen = ent
-                break
-    else:
-        for ent in entries:
-            if ent.get("version") == version:
-                chosen = ent
-                break
-    if chosen is None:
-        avail = ", ".join(e.get("version") for e in entries)
-        if version is None:
-            raise RuntimeError(
-                f"No version marked as 'current' for family {family}. Available: {avail}"
-            )
+        return meta.schema_path
+
+    path_status = meta.versions.get(version)
+    if path_status is None:
+        avail = ", ".join(sorted(meta.versions))
         raise KeyError(
             f"Version {version!r} not found for family {family}. Available: {avail}"
         )
+    path, _status = path_status
+    return path
 
-    res = files(pkg).joinpath(SCHEMAS_ROOT, chosen["file"])
-    with as_file(res) as p:
-        return Path(p)
+
+def clear_cache() -> None:
+    """Clear internal caches used by the schema registry.
+
+    This helper is primarily intended for tests that need to add or modify
+    schema files at runtime.
+    """
+
+    _load_json_from_path.cache_clear()
+    _get_schema_paths.cache_clear()
+    _discover_family_info.cache_clear()
+    get_schema_path.cache_clear()
