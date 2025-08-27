@@ -1,4 +1,4 @@
-from .parser import parse_auto, validate_schema_examples
+from .parser import parse_auto, validate_schema
 from .assembler import assemble, assemble_auto, clear_schema_cache
 from .schema_registry import (
     list_schema_families,
@@ -11,7 +11,7 @@ __all__ = [
     "assemble",
     "assemble_auto",
     "clear_schema_cache",
-    "validate_schema_examples",
+    "validate_schema",
     "list_schema_families",
     "list_schema_versions",
     "get_schema_path",
