@@ -232,33 +232,6 @@ A different STAC service can be targeted by supplying its URL:
 parseo stac-sample my-collection --samples 2 --stac-url https://stac.example.com
 ```
 
-### Search STAC and download assets
-
-The ``parseo.stac_scraper`` module provides helpers for programmatic
-interaction with a STAC API.  The snippet below lists available collections
-and downloads the first asset matching a simple search:
-
-```python
-from parseo import stac_scraper
-
-stac_url = "https://catalogue.dataspace.copernicus.eu/stac"
-
-# List available collections and download the first matching asset for each
-for cid in stac_scraper.list_collections(stac_url):
-    print(cid)
-    stac_scraper.search_stac_and_download(
-        stac_url=stac_url,
-        collections=[cid],
-        bbox=[13.0, 52.0, 13.5, 52.5],
-        datetime="2024-01-01/2024-01-02",
-        dest_dir="downloads",
-    )
-```
-
-This functionality depends on the ``pystac-client`` and ``requests``
-packages being available at runtime.  If either is missing an
-``ImportError`` is raised.
-
 ---
 
 ## Command Line Interface

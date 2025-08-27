@@ -7,7 +7,7 @@ import sys
 from typing import Any, Dict, List
 
 from parseo.parser import parse_auto, describe_schema, list_schemas  # parser helpers
-from parseo.stac_http import list_collections_http, sample_collection_filenames
+from parseo.stac_http import list_collections, sample_collection_filenames
 
 
 # ---------- small utilities ----------
@@ -202,7 +202,7 @@ def main(argv: List[str] | None = None) -> int:
         return 0
 
     if args.cmd == "list-stac-collections":
-        for cid in list_collections_http(base_url=args.stac_url, deep=args.deep):
+        for cid in list_collections(base_url=args.stac_url, deep=args.deep):
             print(cid)
         return 0
 

@@ -1,9 +1,10 @@
 """Helpers for querying STAC APIs via the standard library.
 
 The routines in this module intentionally rely only on :mod:`urllib` from the
-Python standard library to avoid pulling in heavier dependencies.  For a
-``pystac-client`` based alternative see :mod:`parseo.stac_scraper`.  All helper
-functions require explicitly passing the ``base_url`` of the STAC service.
+Python standard library to avoid pulling in heavier dependencies. All helper
+functions require explicitly passing the ``base_url`` of the STAC service. When
+more advanced STAC handling is needed consider using a dedicated library such as
+``pystac-client`` directly.
 """
 from __future__ import annotations
 
@@ -47,8 +48,7 @@ def list_collections_http(base_url: str, *, deep: bool = False) -> list[str]:
     This lightweight helper performs raw HTTP requests without requiring
     third-party libraries.  If ``deep`` is ``True`` the function follows
     ``rel='child'`` links and gathers collection IDs from nested catalogs as
-    well.  For a variant powered by ``pystac-client`` see
-    :func:`parseo.stac_scraper.list_collections_client`.
+    well.
     """
     base = _norm_base(base_url)
 

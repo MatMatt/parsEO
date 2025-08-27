@@ -162,12 +162,12 @@ def test_cli_stac_sample_requires_url(capsys):
 def test_cli_list_stac_collections(monkeypatch, capsys):
     called = {}
 
-    def fake_list_collections_http(*, base_url, deep=False):
+    def fake_list_collections(*, base_url, deep=False):
         called["base_url"] = base_url
         called["deep"] = deep
         return ["A", "B"]
 
-    monkeypatch.setattr(cli, "list_collections_http", fake_list_collections_http)
+    monkeypatch.setattr(cli, "list_collections", fake_list_collections)
     sys.argv = [
         "parseo",
         "list-stac-collections",
@@ -183,12 +183,12 @@ def test_cli_list_stac_collections(monkeypatch, capsys):
 def test_cli_list_stac_collections_deep(monkeypatch, capsys):
     called = {}
 
-    def fake_list_collections_http(*, base_url, deep=False):
+    def fake_list_collections(*, base_url, deep=False):
         called["base_url"] = base_url
         called["deep"] = deep
         return ["X"]
 
-    monkeypatch.setattr(cli, "list_collections_http", fake_list_collections_http)
+    monkeypatch.setattr(cli, "list_collections", fake_list_collections)
     sys.argv = [
         "parseo",
         "list-stac-collections",
