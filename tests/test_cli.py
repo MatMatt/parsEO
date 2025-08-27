@@ -13,7 +13,7 @@ def _schema_example_args(family: str) -> tuple[str, list[str]]:
     info = describe_schema(family)
     example = info["examples"][0]
     fields = parse_auto(example).fields
-    args = [f"{k}={v}" for k, v in fields.items()]
+    args = [f"{k}={v}" for k, v in fields.items() if v is not None]
     return example, args
 
 
@@ -32,7 +32,7 @@ def test_cli_reports_version(capsys):
 
 
 def test_cli_assemble_success(capsys):
-    example, args = _schema_example_args("WIC-S2")
+    example, args = _schema_example_args("WIC")
     assert cli.main(["assemble", *args]) == 0
     captured = capsys.readouterr()
     assert captured.out.strip() == example
@@ -53,7 +53,7 @@ def test_cli_assemble_missing_assembler(monkeypatch):
         return real_import(name, globals, locals, fromlist, level)
 
     monkeypatch.setattr(builtins, "__import__", fake_import)
-    example, args = _schema_example_args("WIC-S2")
+    example, args = _schema_example_args("WIC")
     with pytest.raises(SystemExit) as exc:
         cli.main(["assemble", *args])
     msg = str(exc.value)

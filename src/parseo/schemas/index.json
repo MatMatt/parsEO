@@ -48,6 +48,13 @@
       "file": "copernicus/clms/hr-vpp/st/st_filename_v0_0_0.json"
     }
   ],
+  "WIC": [
+    {
+      "version": "0.0.0",
+      "status": "current",
+      "file": "copernicus/clms/hr-wsi/wic/wic_filename_v0_0_0.json"
+    }
+  ],
   "WIC-COMB": [
     {
       "version": "0.0.0",
@@ -95,20 +102,6 @@
       "version": "0.0.0",
       "status": "current",
       "file": "copernicus/clms/hr-wsi/cc/cc_filename_v0_0_0.json"
-    }
-  ],
-  "WIC-S1": [
-    {
-      "version": "0.0.0",
-      "status": "current",
-      "file": "copernicus/clms/hr-wsi/wic_s1/wic_s1_filename_v0_0_0.json"
-    }
-  ],
-  "WIC-S2": [
-    {
-      "version": "0.0.0",
-      "status": "current",
-      "file": "copernicus/clms/hr-wsi/wic_s2/wic_s2_filename_v0_0_0.json"
     }
   ],
   "SP-COMB": [
