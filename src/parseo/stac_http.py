@@ -101,10 +101,6 @@ def list_collections_http(base_url: str, *, deep: bool = False) -> list[str]:
     return sorted(collections)
 
 
-# Backwards compatible alias until old name is fully deprecated
-list_collections = list_collections_http
-
-
 @lru_cache(maxsize=32)
 def _list_collections_cached(base_url: str) -> tuple[str, ...]:
     """Cached helper returning collection IDs for ``base_url``."""

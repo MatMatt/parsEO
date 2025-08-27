@@ -53,10 +53,10 @@ class FakeClientSearch(FakeClient):
 
 
 
-def test_list_collections_alias(monkeypatch):
+def test_list_collections_client(monkeypatch):
     fake_pc = types.SimpleNamespace(Client=FakeClient)
     monkeypatch.setitem(sys.modules, "pystac_client", fake_pc)
-    out = ss.list_collections("http://base")
+    out = ss.list_collections_client("http://base")
     assert out == ["A", "B"]
 
 

@@ -244,7 +244,7 @@ from parseo import stac_scraper
 stac_url = "https://catalogue.dataspace.copernicus.eu/stac"
 
 # List available collections and download the first matching asset for each
-for cid in stac_scraper.list_collections(stac_url):
+for cid in stac_scraper.list_collections_client(stac_url):
     print(cid)
     stac_scraper.search_stac_and_download(
         stac_url=stac_url,
