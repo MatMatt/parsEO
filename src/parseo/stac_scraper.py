@@ -51,10 +51,6 @@ def list_collections_client(base_url: str, *, deep: bool = False) -> list[str]:
     return sorted(collections)
 
 
-# Backwards compatible alias mirroring :mod:`parseo.stac_http`
-list_collections = list_collections_client
-
-
 def search_stac_and_download(
     *,
     stac_url: str,
