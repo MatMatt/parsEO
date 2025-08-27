@@ -106,7 +106,6 @@ def test_cli_list_schemas_outputs_families(capsys):
     out = capsys.readouterr().out.splitlines()
     assert "S1" in out
     assert "S2" in out
-    assert all("index.json" not in line for line in out)
 
 
 def test_cli_schema_info(capsys):

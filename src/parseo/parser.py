@@ -112,10 +112,6 @@ def _discover_family_info(pkg: str) -> Dict[str, _FamilyInfo]:
 
     info: Dict[str, _FamilyInfo] = {}
 
-    def _version_key(v: str) -> tuple[int, int, int]:
-        parts = [int(p) for p in v.split(".") if p.isdigit()]
-        return tuple(parts + [0] * (3 - len(parts)))
-
     for family, versions in families.items():
         current_version = None
         current_path = None
@@ -127,8 +123,11 @@ def _discover_family_info(pkg: str) -> Dict[str, _FamilyInfo]:
                 current_status = st
                 break
         if current_path is None:
-            current_version = max(versions, key=_version_key)
-            current_path, current_status = versions[current_version]
+            available = ", ".join(sorted(versions))
+            raise RuntimeError(
+                f"No schema version marked as 'current' for family {family}. "
+                f"Available versions: {available}"
+            )
         info[family] = _FamilyInfo(
             tokens=_family_tokens_from_name(family),
             schema_path=current_path,
@@ -392,6 +391,14 @@ def parse_auto(name: str) -> ParseResult:
                     matched_family = fam_name
                     version = meta.version
                     status = meta.status
+                    break
+                for ver, (path, st) in meta.versions.items():
+                    if path == p:
+                        matched_family = fam_name
+                        version = ver
+                        status = st
+                        break
+                if matched_family:
                     break
             return ParseResult(
                 valid=True,
