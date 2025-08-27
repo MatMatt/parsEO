@@ -1,9 +1,10 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "schema_id": "usgs:landsat:landsat",
   "schema_version": "1.0.0",
   "stac_version": "1.1.0",
   "stac_extensions": ["processing", "sat", "eo"],
-  "description": "Landsat Collection 2 scene identifier.",
+  "description": "Landsat Collection 2 scene identifier (extension optional).",
   "fields": {
     "mission_code": {"type": "string", "enum": ["LT04", "LT05", "LE07", "LC08", "LC09"], "description": "Platform and sensor code"},
     "processing_level": {"type": "string", "enum": ["L1TP", "L1GT", "L1GS", "L2SP", "L2SR"], "description": "Processing level"},

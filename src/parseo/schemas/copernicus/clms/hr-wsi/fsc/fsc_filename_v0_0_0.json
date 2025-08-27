@@ -1,9 +1,10 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "schema_id": "copernicus:clms:hr-wsi:fsc",
   "schema_version": "0.0.0",
   "stac_version": "1.1.0",
   "stac_extensions": ["raster", "eo"],
-  "description": "CLMS HR-WSI Fractional Snow Cover product filename.",
+  "description": "CLMS HR-WSI Fractional Snow Cover product filename (extension optional).",
   "fields": {
     "prefix": {"type": "string", "enum": ["CLMS_WSI"], "description": "Constant prefix"},
     "product": {"type": "string", "enum": ["FSC"], "description": "Product code"},

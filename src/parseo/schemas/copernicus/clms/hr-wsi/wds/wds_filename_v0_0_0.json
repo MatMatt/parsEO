@@ -1,9 +1,10 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "schema_id": "copernicus:clms:hr-wsi:wds",
   "schema_version": "0.0.0",
   "stac_version": "1.1.0",
   "stac_extensions": ["raster", "eo"],
-  "description": "CLMS HR-WSI Water Detection and Surface Displacement product filename.",
+  "description": "CLMS HR-WSI Water Detection and Surface Displacement product filename (extension optional).",
   "fields": {
     "prefix": {"type": "string", "enum": ["CLMS_WSI"], "description": "Constant prefix"},
     "product": {"type": "string", "enum": ["WDS"], "description": "Product code"},

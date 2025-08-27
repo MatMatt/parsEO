@@ -1,9 +1,10 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "schema_id": "copernicus:clms:hrl:forest-type",
   "schema_version": "0.0.0",
   "stac_version": "1.1.0",
   "stac_extensions": ["raster", "eo"],
-  "description": "CLMS High Resolution Layer Forest Type product filename.",
+  "description": "CLMS High Resolution Layer Forest Type product filename (extension optional).",
   "fields": {
     "product": {"type": "string", "enum": ["FTY"], "description": "Product code"},
     "reference_year": {"type": "string", "pattern": "^\\d{4}$", "description": "Reference year"},
