@@ -104,8 +104,10 @@ def list_collections_http(base_url: str, *, deep: bool = False) -> list[str]:
 @lru_cache(maxsize=32)
 def _list_collections_cached(base_url: str) -> tuple[str, ...]:
     """Cached helper returning collection IDs for ``base_url``."""
-
-    return tuple(list_collections_http(base_url))
+    # Use a deep listing to include collections nested in child catalogs.
+    # This ensures that `_norm_collection_id` can resolve aliases for
+    # collections not present at the top-level of the STAC service.
+    return tuple(list_collections_http(base_url, deep=True))
 
 
 def iter_asset_filenames(

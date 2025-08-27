@@ -381,3 +381,18 @@ def test_sample_collection_filenames_url_error(monkeypatch):
         "Could not connect to http://bad/collections"
     )
 
+
+def test_list_collections_cached_deep(monkeypatch):
+    """Cached collection listing should include nested catalogs."""
+
+    called = {}
+
+    def fake_list_collections_http(base_url, *, deep=False):
+        called["deep"] = deep
+        return ["A"]
+
+    sd._list_collections_cached.cache_clear()
+    monkeypatch.setattr(sd, "list_collections_http", fake_list_collections_http)
+    sd._list_collections_cached("http://x")
+    assert called["deep"] is True
+
