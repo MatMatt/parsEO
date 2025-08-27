@@ -4,7 +4,7 @@
   "schema_version": "0.0.0",
   "stac_version": "1.1.0",
   "stac_extensions": ["raster", "eo"],
-  "description": "CLMS HR-VPP Vegetation Indices (FAPAR, LAI, NDVI, PPI, FCOVER, DMP) product filename.",
+  "description": "CLMS HR-VPP Vegetation Indices (FAPAR, LAI, NDVI, PPI, FCOVER, DMP) product filename (extension optional).",
   "fields": {
     "prefix": {"type": "string", "enum": ["CLMS_VPP"], "description": "Constant prefix"},
     "product": {"type": "string", "enum": ["FAPAR", "LAI", "NDVI", "PPI", "FCOVER", "DMP"], "description": "Product code"},

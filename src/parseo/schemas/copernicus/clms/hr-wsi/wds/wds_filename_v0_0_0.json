@@ -4,7 +4,7 @@
   "schema_version": "0.0.0",
   "stac_version": "1.1.0",
   "stac_extensions": ["raster", "eo"],
-  "description": "CLMS HR-WSI Water Detection and Surface Displacement product filename.",
+  "description": "CLMS HR-WSI Water Detection and Surface Displacement product filename (extension optional).",
   "fields": {
     "prefix": {"type": "string", "enum": ["CLMS_WSI"], "description": "Constant prefix"},
     "product": {"type": "string", "enum": ["WDS"], "description": "Product code"},

@@ -4,7 +4,7 @@
   "schema_version": "1.0.0",
   "stac_version": "1.1.0",
   "stac_extensions": ["raster", "eo"],
-  "description": "Corine Land Cover product filename.",
+  "description": "Corine Land Cover product filename (extension optional).",
   "fields": {
     "project": {
       "type": "string",
@@ -33,7 +33,7 @@
     },
     "extension": {
       "type": "string",
-      "pattern": "^[A-Za-z0-9]+$",
+      "enum": ["tif"],
       "description": "File extension without leading dot"
     }
   },
