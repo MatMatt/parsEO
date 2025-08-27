@@ -75,7 +75,8 @@ def test_current_schema_default_and_explicit_version(tmp_path, monkeypatch):
         "schema_id": "x:y:abc",
         "schema_version": "2.0.0",
         "status": "current",
-        "filename_pattern": r"ABC_(?P<id>[A-Z]+)_v2\.txt",
+        "template": "ABC_{id}_v2.txt",
+        "fields": {"id": {"pattern": "[A-Z]+"}},
     }
     p1 = tmp_path / "abc_filename_v1_0_0.json"
     p2 = tmp_path / "abc_filename_v2_0_0.json"
@@ -92,10 +93,12 @@ def test_current_schema_default_and_explicit_version(tmp_path, monkeypatch):
     res = parse_auto("ABC_X_v2.txt")
     assert res.valid
     assert res.version == "2.0.0"
+    assert res.fields["id"] == "X"
 
     res_old = parse_auto("ABC_X_v1.txt")
     assert res_old.valid
     assert res_old.version == "1.0.0"
+    assert res_old.fields["id"] == "X"
 
     parser._get_schema_paths.cache_clear()
     parser._discover_family_info.cache_clear()
