@@ -56,11 +56,10 @@ def _compile_pattern(pattern: str) -> re.Pattern:
 
 
 def _pattern_from_schema(schema: Dict) -> Optional[str]:
-    """Return a compiled regex pattern derived from schema's template.
+    """Return a compiled regex pattern derived from a schema's template.
 
     The result is cached inside the schema object. If a ``template`` key is
-    present it is compiled via :func:`compile_template`. Otherwise a legacy
-    ``filename_pattern`` is used as-is.
+    present it is compiled via :func:`compile_template`.
     """
 
     cached = schema.get("_compiled_pattern")
@@ -75,11 +74,6 @@ def _pattern_from_schema(schema: Dict) -> Optional[str]:
         if "fields_order" not in schema and order:
             schema["fields_order"] = order
         return pattern
-
-    patt = schema.get("filename_pattern")
-    if isinstance(patt, str):
-        schema["_compiled_pattern"] = patt
-        return patt
 
     return None
 
@@ -163,14 +157,16 @@ def _explain_match_failure(name: str, schema: Dict) -> Optional[tuple[str, str, 
             field_rx = re.compile(_field_regex(spec))
             m_field = field_rx.match(name[start_pos:])
             if m_field:
-                value = m_field.group(0)
-            else:
-                end_pos = len(name)
-                for sep in ["_", ".", "-"]:
-                    idx = name.find(sep, start_pos)
-                    if idx != -1:
-                        end_pos = min(end_pos, idx)
-                value = name[start_pos:end_pos]
+                # Field value itself satisfies the specification; mismatch must
+                # stem from a later constant segment, so we cannot attribute
+                # it to this field.
+                return None
+            end_pos = len(name)
+            for sep in ["_", ".", "-"]:
+                idx = name.find(sep, start_pos)
+                if idx != -1:
+                    end_pos = min(end_pos, idx)
+            value = name[start_pos:end_pos]
             if "enum" in spec:
                 expected = f"one of {spec['enum']}"
             elif "pattern" in spec:

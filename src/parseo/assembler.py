@@ -70,9 +70,9 @@ def _assemble_from_template(template: str, fields: Dict[str, Any]) -> str:
 def _assemble_schema(schema_path: str | Path, fields: Dict[str, Any]) -> str:
     """Assemble a filename using a JSON schema.
 
-    Schemas may define a ``template`` string following parseo's mini-template
-    syntax. If present, the template is used for rendering the final filename.
-    Otherwise the legacy ``fields_order`` + ``joiner`` approach is used.
+    Schemas must define a ``template`` string following parseo's mini-template
+    syntax. The template is rendered using the provided *fields* and optional
+    segments are dropped if any enclosed field is missing.
     """
 
     sch = _load_schema(schema_path)
@@ -95,36 +95,17 @@ def _assemble_schema(schema_path: str | Path, fields: Dict[str, Any]) -> str:
                     f"Field '{name}' with value {value!r} does not match pattern {spec['pattern']}."
                 )
 
-    if isinstance(sch.get("template"), str):
-        template = sch["template"]
-        if not sch.get("fields_order"):
-            _, order = compile_template(template, sch.get("fields", {}))
-            sch["fields_order"] = order
-        try:
-            return _assemble_from_template(template, fields)
-        except KeyError as exc:
-            name = exc.args[0]
-            raise ValueError(
-                f"Missing field '{name}' for schema {schema_path}"
-            ) from exc
+    template = sch.get("template")
+    if not isinstance(template, str):
+        raise ValueError(f"Schema {schema_path} missing 'template' string.")
 
-    order = sch.get("fields_order")
-    if not order or not isinstance(order, list):
-        raise ValueError(f"Schema {schema_path} missing 'fields_order' list.")
-
-    joiner = sch.get("joiner", "_")
-
-    parts: list[str] = []
-    for key in order:
-        if key not in fields:
-            raise ValueError(f"Missing field '{key}' required by schema {schema_path}.")
-        val = fields[key]
-        if not isinstance(val, (str, int, float)):
-            raise ValueError(f"Field '{key}' must be string/number, got {type(val).__name__}.")
-        parts.append(str(val))
-
-    filename = joiner.join(parts)
-    return filename
+    try:
+        return _assemble_from_template(template, fields)
+    except KeyError as exc:
+        name = exc.args[0]
+        raise ValueError(
+            f"Missing field '{name}' for schema {schema_path}"
+        ) from exc
 
 
 def assemble(
@@ -159,10 +140,10 @@ def _iter_schema_paths() -> list[Path]:
 def _select_schema_by_first_compulsory(fields: Dict[str, Any]) -> Path:
     """Select the most appropriate schema based on provided fields.
 
-    Eligibility requires that the user provided the first compulsory field
-    listed in ``fields_order``. Among eligible schemas the one with the
-    largest overlap of provided keys is chosen. A longer ``fields_order``
-    acts as a tie breaker.
+    Eligibility requires the user to provide the first compulsory field as
+    derived from the schema's template. Among eligible schemas the one with the
+    largest overlap of provided keys is chosen. A longer field order acts as a
+    tie breaker.
     """
     best: tuple[int, int, str] | None = None
     best_path: Path | None = None
@@ -174,10 +155,11 @@ def _select_schema_by_first_compulsory(fields: Dict[str, Any]) -> Path:
         except Exception:
             continue
 
-        order = sch.get("fields_order") or []
-        if not order and isinstance(sch.get("template"), str):
-            _, order = compile_template(sch["template"], sch.get("fields", {}))
-            sch["fields_order"] = order
+        template = sch.get("template")
+        if not isinstance(template, str):
+            continue
+        _, order = compile_template(template, sch.get("fields", {}))
+        sch["fields_order"] = order
         if not order:
             continue
 

@@ -127,7 +127,7 @@ filenames listed under its `examples` section still parse and reassemble
 correctly.
 
 ```python
-from parseo.parser import validate_schema_examples
+from parseo import validate_schema_examples
 
 validate_schema_examples("src/parseo/schemas/copernicus/sentinel/s2/s2_filename_v1_0_0.json")
 ```
@@ -221,7 +221,8 @@ Known collection aliases are automatically mapped to their official STAC IDs:
 
 | Alias | STAC ID |
 |-------|---------|
-| `SENTINEL2_L2A` | `sentinel-2` |
+| `SENTINEL2_L2A` | `sentinel-2-l2a` |
+| `SENTINEL2_L1C` | `sentinel-2-l1c` |
 
 A different STAC service can be targeted by supplying its URL:
 
@@ -241,7 +242,7 @@ from parseo import stac_scraper
 stac_url = "https://catalogue.dataspace.copernicus.eu/stac"
 
 # List available collections and download the first matching asset for each
-for cid in stac_scraper.list_collections(stac_url):
+for cid in stac_scraper.list_collections_client(stac_url):
     print(cid)
     stac_scraper.search_stac_and_download(
         stac_url=stac_url,
@@ -327,13 +328,13 @@ parseo assemble \
 
 # Example: CLMS HR-WSI product (first field: prefix)
 parseo assemble \
-  prefix=CLMS_WSI product=WIC pixel_spacing=020m tile_id=T33WXP \
+  prefix=CLMS_WSI product=WIC pixel_spacing=020m mgrs_tile=T33WXP \
   sensing_datetime=20201024T103021 platform=S2B processing_baseline=V100 file_id=WIC extension=tif
 # -> CLMS_WSI_WIC_020m_T33WXP_20201024T103021_S2B_V100_WIC.tif
 
 # Example: CLMS HR-VPP product (first field: prefix)
 parseo assemble \
-  prefix=CLMS_VPP product=FAPAR resolution=100m tile_id=T32TNS \
+  prefix=CLMS_VPP product=FAPAR resolution=100m mgrs_tile=T32TNS \
   start_date=20210101 end_date=20210110 version=V100 file_id=FAPAR extension=tif
 # -> CLMS_VPP_FAPAR_100m_T32TNS_20210101_20210110_V100_FAPAR.tif
 ```

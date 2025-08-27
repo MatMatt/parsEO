@@ -19,7 +19,7 @@ def test_assemble_missing_field_template_schema():
         "prefix": "CLMS_WSI",
         "product": "FSC",
         "pixel_spacing": "020m",
-        "tile_id": "T32TNS",
+        "mgrs_tile": "T32TNS",
         "sensing_datetime": "20211018T103021",
         # "platform" is intentionally omitted
         "version": "V100",
@@ -36,7 +36,7 @@ def test_assemble_auto_missing_field_template_schema():
         "prefix": "CLMS_WSI",
         "product": "WIC",
         "pixel_spacing": "020m",
-        "tile_id": "T33WXP",
+        "mgrs_tile": "T33WXP",
         "sensing_datetime": "20201024T103021",
         # missing "platform"
         "version": "V100",
@@ -51,12 +51,12 @@ def test_assemble_auto_missing_field_template_schema():
 def test_clear_schema_cache(tmp_path):
     clear_schema_cache()
     schema = tmp_path / "schema.json"
-    schema.write_text('{"fields_order": ["a", "b"], "joiner": "_"}')
+    schema.write_text('{"template": "{a}_{b}"}')
     fields = {"a": "x", "b": "y"}
 
     assert assemble(fields, schema_path=schema) == "x_y"
 
-    schema.write_text('{"fields_order": ["a", "b"], "joiner": "-"}')
+    schema.write_text('{"template": "{a}-{b}"}')
 
     # Cached schema remains in effect
     assert assemble(fields, schema_path=schema) == "x_y"
