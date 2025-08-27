@@ -2,6 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "schema_id": "copernicus:sentinel:s2",
   "schema_version": "1.0.0",
+  "status": "current",
   "stac_version": "1.1.0",
   "stac_extensions": ["processing", "sat", "raster", "eo", "mgrs"],
   "description": "Sentinel-2 product filename (MSI sensor, processing levels L1C/L2A; extension optional).",
