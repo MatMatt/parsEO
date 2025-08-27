@@ -1,7 +1,6 @@
 """Top level package for parseo."""
 
 from importlib import metadata
-
 from .parser import parse_auto, validate_schema_examples
 from .assembler import assemble, assemble_auto, clear_schema_cache
 from .schema_registry import (
@@ -39,7 +38,7 @@ __all__ = [
     "assemble",
     "assemble_auto",
     "clear_schema_cache",
-    "validate_schema_examples",
+    "validate_schema",
     "list_schema_families",
     "list_schema_versions",
     "get_schema_path",

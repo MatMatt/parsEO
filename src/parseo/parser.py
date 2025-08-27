@@ -327,7 +327,7 @@ def parse_auto(name: str) -> ParseResult:
     raise RuntimeError(msg)
 
 
-def validate_schema_examples(
+def validate_schema(
     paths: Iterable[str | Path] | None = None,
     pkg: str = __package__,
 ) -> None:
