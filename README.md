@@ -122,14 +122,13 @@ print(filename)
 
 ### Validate schema examples
 
-When adding a new schema, use `validate_schema_examples` to ensure that the
-filenames listed under its `examples` section still parse and reassemble
-correctly.
+When adding a new schema, use `validate_schema` to ensure that the filenames
+listed under its `examples` section still parse and reassemble correctly.
 
 ```python
-from parseo import validate_schema_examples
+from parseo import validate_schema
 
-validate_schema_examples("src/parseo/schemas/copernicus/sentinel/s2/s2_filename_v1_0_0.json")
+validate_schema("src/parseo/schemas/copernicus/sentinel/s2/s2_filename_v1_0_0.json")
 ```
 
 The project's tests call this helper so that schema examples stay in sync with
