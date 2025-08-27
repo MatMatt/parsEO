@@ -79,10 +79,7 @@ print(res.fields["variant"])   # GA
 ### Assemble a filename
 
 ```python
-from pathlib import Path
 from parseo import assemble
-
-schema_path = Path("src/parseo/schemas/copernicus/sentinel/s2/s2_filename_v1_0_0.json")
 
 fields = {
     "platform": "S2B",
@@ -96,7 +93,7 @@ fields = {
     "extension": "SAFE",
 }
 
-filename = assemble(schema_path, fields)
+filename = assemble(fields, family="S2", version="1.0.0")
 print(filename)
 # -> S2B_MSIL2A_20241123T224759_N0511_R101_T03VUL_20241123T230829.SAFE
 ```
@@ -104,7 +101,7 @@ print(filename)
 Automatic schema selection:
 
 ```python
-from parseo import assemble_auto
+from parseo import assemble
 
 fields = {
     "platform": "S2B",
@@ -118,7 +115,7 @@ fields = {
     "extension": "SAFE",
 }
 
-filename = assemble_auto(fields)
+filename = assemble(fields)
 print(filename)
 # -> S2B_MSIL2A_20241123T224759_N0511_R101_T03VUL_20241123T230829.SAFE
 ```

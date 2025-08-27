@@ -1,14 +1,21 @@
 # src/parseo/parser.py
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from importlib.resources import files, as_file
 from pathlib import Path
-from typing import Any, Dict, Iterator, Optional, Iterable
+from typing import Any, Dict, Optional, Iterable
 import re
 from functools import lru_cache
-from ._json import load_json
+
 from .template import compile_template, _field_regex
+from .schema_registry import (
+    _discover_family_info,
+    _get_schema_paths,
+    _load_json_from_path,
+    list_schema_families,
+    get_schema_path,
+)
 
 # Root folder inside the package where JSON schemas live
 SCHEMAS_ROOT = "schemas"
@@ -38,113 +45,9 @@ class ParseError(Exception):
         )
 
 
-@dataclass(frozen=True)
-class _FamilyInfo:
-    """Metadata about a mission family discovered from schema files."""
-
-    tokens: tuple[str, ...]
-    schema_path: Path
-    version: Optional[str] = None
-    status: Optional[str] = None
-    versions: Dict[str, tuple[Path, Optional[str]]] = field(default_factory=dict)
-
-
-# ---------------------------
-# Schema discovery (recursive)
-# ---------------------------
-
-def _iter_schema_paths(pkg: str) -> Iterator[Path]:
-    """
-    Yield all *.json schema files recursively under `schemas/`.
-    Zip-safe via importlib.resources so it works from wheels and editable installs.
-    """
-    root = files(pkg).joinpath(SCHEMAS_ROOT)
-    # as_file gives us a real filesystem path even if resources are zipped
-    with as_file(root) as root_path:
-        base = Path(root_path)
-        if not base.exists():
-            return
-        yield from (p for p in base.rglob("*filename_v*.json") if p.is_file())
-
-
-@lru_cache(maxsize=32)
-def _get_schema_paths(pkg: str) -> list[Path]:
-    """Return all schema JSON paths for ``pkg``.
-
-    The result is cached to avoid repeated filesystem scans when parsing
-    multiple filenames.
-    """
-    return list(_iter_schema_paths(pkg))
-
-
-def _family_tokens_from_name(family: str) -> tuple[str, ...]:
-    """Return tokens used to hint the family from a filename prefix."""
-
-    fam = family.upper()
-    tokens = {fam}
-    m = re.fullmatch(r"S(\d+)([A-Z]*)", fam)
-    if m:
-        num, suffix = m.groups()
-        tokens.add(f"SENTINEL-{num}{suffix}")
-    return tuple(tokens)
-
-
-@lru_cache(maxsize=1)
-def _discover_family_info(pkg: str) -> Dict[str, _FamilyInfo]:
-    """Scan schema JSON files to discover mission families and versions."""
-
-    families: Dict[str, Dict[str, tuple[Path, Optional[str]]]] = {}
-    for path in _get_schema_paths(pkg):
-        if "filename_v" not in path.name:
-            continue
-        try:
-            data = _load_json_from_path(path)
-        except Exception:
-            continue
-        schema_id = data.get("schema_id")
-        version = data.get("schema_version")
-        status = data.get("status", "current")
-        if not isinstance(schema_id, str) or not isinstance(version, str):
-            continue
-        family = schema_id.split(":")[-1].upper()
-        fam_versions = families.setdefault(family, {})
-        fam_versions[version] = (path, status)
-
-    info: Dict[str, _FamilyInfo] = {}
-
-    for family, versions in families.items():
-        current_version = None
-        current_path = None
-        current_status = None
-        for ver, (p, st) in versions.items():
-            if st == "current":
-                current_version = ver
-                current_path = p
-                current_status = st
-                break
-        if current_path is None:
-            available = ", ".join(sorted(versions))
-            raise RuntimeError(
-                f"No schema version marked as 'current' for family {family}. "
-                f"Available versions: {available}"
-            )
-        info[family] = _FamilyInfo(
-            tokens=_family_tokens_from_name(family),
-            schema_path=current_path,
-            version=current_version,
-            status=current_status,
-            versions=versions,
-        )
-    return info
-
-
 # ---------------------------
 # Core helpers
 # ---------------------------
-
-@lru_cache(maxsize=256)
-def _load_json_from_path(path: Path) -> Dict:
-    return load_json(path)
 
 
 @lru_cache(maxsize=512)
@@ -285,20 +188,18 @@ def _explain_match_failure(name: str, schema: Dict) -> Optional[tuple[str, str, 
 
 def list_schemas(pkg: str = __package__) -> list[str]:
     """Return a list of available mission family names."""
-
-    info = _discover_family_info(pkg)
-    return sorted(info.keys())
+    return list_schema_families(pkg)
 
 
 def describe_schema(family: str, pkg: str = __package__) -> dict[str, Any]:
     """Return schema metadata and field descriptions for ``family``."""
 
-    info = _discover_family_info(pkg)
-    meta = info.get(family.upper())
-    if meta is None:
-        raise KeyError(f"Unknown family: {family}")
+    try:
+        schema_path = get_schema_path(family, pkg=pkg)
+    except KeyError as e:
+        raise KeyError(str(e))
 
-    schema = _load_json_from_path(meta.schema_path)
+    schema = _load_json_from_path(schema_path)
     fields: Dict[str, Dict[str, Any]] = {}
     for name, spec in schema.get("fields", {}).items():
         if isinstance(spec, dict):
@@ -468,7 +369,7 @@ def validate_schema_examples(
             if not res.valid:
                 raise ValueError(f"Parsing failed for {example}")
             fields = {k: v for k, v in res.fields.items() if v is not None}
-            assembled = assemble(schema_path, fields)
+            assembled = assemble(fields, schema_path=schema_path)
             if assembled != example:
                 raise ValueError(f"Round trip failed for {example}")
 
