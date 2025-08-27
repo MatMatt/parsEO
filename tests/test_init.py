@@ -5,3 +5,16 @@ def test_star_import_exposes_parser():
     exec("from parseo import *", ns)
 
     assert ns["parser"] is parseo.parser
+
+
+def test_info_reports_version():
+    """The info function should return the installed package version."""
+    import parseo
+    from importlib.metadata import PackageNotFoundError, version
+
+    try:
+        expected = version("parseo")
+    except PackageNotFoundError:
+        expected = "unknown"
+
+    assert parseo.info()["version"] == expected

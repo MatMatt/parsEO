@@ -8,6 +8,20 @@ from parseo import cli
 from parseo.schema_registry import list_schema_families
 
 
+def test_cli_reports_version(capsys):
+    with pytest.raises(SystemExit) as exc:
+        cli.main(["--version"])
+    assert exc.value.code == 0
+    out = capsys.readouterr().out.strip()
+    from importlib.metadata import PackageNotFoundError, version
+
+    try:
+        expected = version("parseo")
+    except PackageNotFoundError:
+        expected = "unknown"
+    assert out == f"parseo version {expected}"
+
+
 def test_cli_assemble_success(capsys):
     sys.argv = [
         "parseo",

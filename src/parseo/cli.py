@@ -6,6 +6,7 @@ import json
 import sys
 from typing import Any, Dict, List
 
+from parseo import __version__
 from parseo.parser import parse_auto, describe_schema  # parser helpers
 from parseo.schema_registry import list_schema_families, list_schema_versions
 from parseo.stac_http import list_collections_http, sample_collection_filenames
@@ -15,6 +16,12 @@ from parseo.stac_http import list_collections_http, sample_collection_filenames
 
 def _build_arg_parser() -> argparse.ArgumentParser:
     ap = argparse.ArgumentParser(prog="parseo", description="parsEO CLI")
+    ap.add_argument(
+        "--version",
+        action="version",
+        version=f"parseo version {__version__}",
+        help="Show the installed parseo version and exit",
+    )
     sp = ap.add_subparsers(dest="cmd", required=True)
 
     # parse
