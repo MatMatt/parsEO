@@ -35,7 +35,7 @@ Currently included schemas cover:
   - Corine Land Cover (CLC)
   - High Resolution Vegetation Phenology & Productivity (HR-VPP)
   - High Resolution Water & Snow / Ice (HR-WSI)
-  - High Resolution Layers (HRL): Imperviousness, Tree Cover Density, Forest Type, Grassland, Water & Wetness, Small Woody Features
+  - High Resolution Layers (HRL)
 ---
 
 ## Installation
