@@ -14,7 +14,7 @@ def test_assemble_missing_field_template_schema():
         "prefix": "CLMS_WSI",
         "product": "FSC",
         "pixel_spacing": "020m",
-        "tile_id": "T32TNS",
+        "mgrs_tile": "T32TNS",
         "sensing_datetime": "20211018T103021",
         # "platform" is intentionally omitted
         "version": "V100",
@@ -31,7 +31,7 @@ def test_assemble_auto_missing_field_template_schema():
         "prefix": "CLMS_WSI",
         "product": "WIC",
         "pixel_spacing": "020m",
-        "tile_id": "T33WXP",
+        "mgrs_tile": "T33WXP",
         "sensing_datetime": "20201024T103021",
         # missing "platform"
         "version": "V100",
