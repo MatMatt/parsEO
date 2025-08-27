@@ -140,19 +140,18 @@ validate_schema("src/parseo/schemas/copernicus/sentinel/s2/s2_filename_v1_0_0.js
 The project's tests call this helper so that schema examples stay in sync with
 the parser over time.
 
-### Run as a web API
+### Run as API
 
 parsEO functions can be exposed through a web service. The example below uses
 [FastAPI](https://fastapi.tiangolo.com), which provides an automatic Swagger UI
 for trying out the endpoints.
 
 ```python
-# file: main.py
+# Safe to file: main.py
 from fastapi import FastAPI
 from parseo import assemble, parse_auto
 
 app = FastAPI()
-
 
 @app.get("/parse")
 def parse_endpoint(name: str):
@@ -165,18 +164,17 @@ def assemble_endpoint(schema: str, fields: dict):
     filename = assemble(schema, fields)
     return {"filename": filename}
 ```
-
-Start the server and open [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
-to access Swagger UI:
-
+from the console inside the same directiory start the app:
 ```bash
 uvicorn main:app --reload
 ```
+Open [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs) to access Swagger UI:
 
 The interactive page lets you call `/parse` and `/assemble` directly from the
-browser to verify your API.
+browser to verify the API.
 
-### List STAC collections
+---
+### List STAC collections (not functional yet!)
 
 Use the ``list-stac-collections`` subcommand to list collection IDs exposed by a
 STAC API. The STAC root URL must be supplied via ``--stac-url``:
