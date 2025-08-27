@@ -2,6 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "schema_id": "copernicus:sentinel:s6",
   "schema_version": "1.0.0",
+  "status": "current",
   "stac_version": "1.1.0",
   "stac_extensions": ["processing", "sat"],
   "description": "Sentinel-6 product filename (P4 altimetry; extension optional).",
