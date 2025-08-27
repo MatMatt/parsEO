@@ -357,7 +357,8 @@ For a starting point, see the skeleton schema under
    - Filename: `<product>_filename_vX_Y_Z.json`
    - Include top-level metadata such as `schema_id`, `schema_version`,
      `status` (`current`, `deprecated`, etc.), `stac_version`, optional
-     `stac_extensions`, and a short `description`.
+     `stac_extensions`, and a short `description`. ParsEO will use the 
+     version flagged as current as a default when assembling a filename. 
 
 3. **Define fields inline**
    - Add a top-level `"fields"` object. Each field uses JSON Schema
@@ -394,7 +395,7 @@ For a starting point, see the skeleton schema under
 - Add new schemas under `src/parseo/schemas/<product_family>/`
 - Include at least one positive example in the schema file
 - Run tests with `pytest`
-
+- submit a pull request
 ---
 
 ## License
