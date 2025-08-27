@@ -51,6 +51,9 @@ git clone https://github.com/MatMatt/parsEO.git
 cd parsEO
 pip install -e .
 ```
+```bash
+parseo --version
+```
 
 ---
 
