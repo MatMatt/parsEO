@@ -18,7 +18,7 @@ def test_schema_paths_cached(monkeypatch):
     monkeypatch.setattr(parser, "_discover_family_info", wrapped)
     parser._discover_family_info.cache_clear()
 
-    # Two parses should trigger only a single scan of index.json files
+    # Two parses should trigger only a single discovery of schema files
     parser.parse_auto("S2B_MSIL2A_20241123T224759_N0511_R101_T03VUL_20241123T230829.SAFE")
     parser.parse_auto("S1A_IW_SLC__1SDV_20250105T053021_20250105T053048_A054321_D068F2E_ABC123.SAFE")
 

@@ -2,6 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "schema_id": "template:example:product",
   "schema_version": "0.0.1",
+  "status": "current",
   "stac_version": "1.1.0",
   "stac_extensions": [],
   "description": "Skeleton filename schema. Replace placeholders with product-specific details.",
