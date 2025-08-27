@@ -388,11 +388,12 @@ if _try_validate(name, schema):
 
 Adding support for a new product requires only a JSON schema placed under
 `src/parseo/schemas/`. All field definitions live inside the schema file.
-For a starting point, see the skeleton schema under
-`examples/schema_skeleton/`.
+For a starting you can either use one of the used ones or you can use the 
+one in `examples/schema_skeleton/`.
 
 1. **Create the product directory**
-   - Path: `src/parseo/schemas/<family>/<mission>/<product>/`
+   - Path: `src/parseo/schemas/<family>/<mission>/<product>/`. `family` 
+   folder is required, the rest is up to you.  
 
 2. **Write the versioned schema file**
    - Filename: `<product>_filename_vX_Y_Z.json`
