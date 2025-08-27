@@ -416,8 +416,6 @@ one in `examples/schema_skeleton/`.
      `[.{extension}]`.
    - At runtime the template is compiled into a regex by replacing each
      placeholder with the field's pattern or enum values.
-   - Placeholder order in the template defines `fields_order` for
-     filename assembly.
 
 5. **Provide examples**
    - Include an `"examples"` array showing valid filenames with and without
