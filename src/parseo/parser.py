@@ -1,7 +1,7 @@
 # src/parseo/parser.py
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from importlib.resources import files, as_file
 from pathlib import Path
 from typing import Any, Dict, Iterator, Optional, Iterable
@@ -40,12 +40,13 @@ class ParseError(Exception):
 
 @dataclass(frozen=True)
 class _FamilyInfo:
-    """Metadata about a mission family discovered from ``index.json`` files."""
+    """Metadata about a mission family discovered from schema files."""
 
     tokens: tuple[str, ...]
     schema_path: Path
     version: Optional[str] = None
     status: Optional[str] = None
+    versions: Dict[str, tuple[Path, Optional[str]]] = field(default_factory=dict)
 
 
 # ---------------------------
@@ -63,7 +64,7 @@ def _iter_schema_paths(pkg: str) -> Iterator[Path]:
         base = Path(root_path)
         if not base.exists():
             return
-        yield from (p for p in base.rglob("*.json") if p.is_file())
+        yield from (p for p in base.rglob("*filename_v*.json") if p.is_file())
 
 
 @lru_cache(maxsize=32)
@@ -90,40 +91,51 @@ def _family_tokens_from_name(family: str) -> tuple[str, ...]:
 
 @lru_cache(maxsize=1)
 def _discover_family_info(pkg: str) -> Dict[str, _FamilyInfo]:
-    """Scan ``schemas`` for ``index.json`` files to discover mission families."""
+    """Scan schema JSON files to discover mission families and versions."""
 
-    root = files(pkg).joinpath(SCHEMAS_ROOT)
+    families: Dict[str, Dict[str, tuple[Path, Optional[str]]]] = {}
+    for path in _get_schema_paths(pkg):
+        if "filename_v" not in path.name:
+            continue
+        try:
+            data = _load_json_from_path(path)
+        except Exception:
+            continue
+        schema_id = data.get("schema_id")
+        version = data.get("schema_version")
+        status = data.get("status", "current")
+        if not isinstance(schema_id, str) or not isinstance(version, str):
+            continue
+        family = schema_id.split(":")[-1].upper()
+        fam_versions = families.setdefault(family, {})
+        fam_versions[version] = (path, status)
+
     info: Dict[str, _FamilyInfo] = {}
-    with as_file(root) as root_path:
-        base = Path(root_path)
-        if not base.exists():
-            return info
-        for index_path in base.rglob("index.json"):
-            try:
-                data = load_json(index_path)
-            except Exception:
-                continue
-            family = data.get("family")
-            if not isinstance(family, str):
-                continue
-            versions = data.get("versions") or []
-            schema_file = None
-            current = None
-            if isinstance(versions, list):
-                current = next(
-                    (v for v in versions if v.get("status") == "current"),
-                    versions[0] if versions else None,
-                )
-                if current and isinstance(current.get("file"), str):
-                    schema_file = index_path.parent / current["file"]
-            if schema_file is None:
-                continue
-            info[family.upper()] = _FamilyInfo(
-                tokens=_family_tokens_from_name(family),
-                schema_path=schema_file,
-                version=current.get("version") if isinstance(current, dict) else None,
-                status=current.get("status") if isinstance(current, dict) else None,
-            )
+
+    def _version_key(v: str) -> tuple[int, int, int]:
+        parts = [int(p) for p in v.split(".") if p.isdigit()]
+        return tuple(parts + [0] * (3 - len(parts)))
+
+    for family, versions in families.items():
+        current_version = None
+        current_path = None
+        current_status = None
+        for ver, (p, st) in versions.items():
+            if st == "current":
+                current_version = ver
+                current_path = p
+                current_status = st
+                break
+        if current_path is None:
+            current_version = max(versions, key=_version_key)
+            current_path, current_status = versions[current_version]
+        info[family] = _FamilyInfo(
+            tokens=_family_tokens_from_name(family),
+            schema_path=current_path,
+            version=current_version,
+            status=current_status,
+            versions=versions,
+        )
     return info
 
 
@@ -318,7 +330,7 @@ def parse_auto(name: str) -> ParseResult:
     """
     Try to parse `name` by matching it against any schema under schemas/**.json.
     A quick 'family' hint is derived from the filename prefix by dynamically
-    inspecting available ``index.json`` files. Returns a ParseResult on success;
+    inspecting available schema files. Returns a ParseResult on success;
     raises RuntimeError if nothing matches.
     """
     pkg = __package__  # e.g., "parseo"
@@ -397,7 +409,7 @@ def parse_auto(name: str) -> ParseResult:
     # Nothing matched — provide a helpful error listing what we saw
     with as_file(files(pkg).joinpath(SCHEMAS_ROOT)) as rp:
         base = Path(rp)
-        seen = [str(q.relative_to(base)) for q in base.rglob("*.json")] if base.exists() else []
+        seen = [str(q.relative_to(base)) for q in base.rglob("*filename_v*.json")] if base.exists() else []
     msg = (
         "No schema matched the provided name. "
         f"Looked recursively under {pkg}/{SCHEMAS_ROOT}/ and found "

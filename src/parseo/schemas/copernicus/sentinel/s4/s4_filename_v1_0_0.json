@@ -2,6 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "schema_id": "copernicus:sentinel:s4",
   "schema_version": "1.0.0",
+  "status": "current",
   "stac_version": "1.1.0",
   "stac_extensions": ["processing", "sat", "raster", "eo"],
   "description": "Sentinel-4 product filename (UVN; optional tile, extension).",
