@@ -341,6 +341,47 @@ parseo assemble \
 # -> CLMS_VPP_FAPAR_100m_T32TNS_20210101_20210110_V100_FAPAR.tif
 ```
 
+## Schema discovery and versioning
+
+Each JSON schema is self contained. For `parseo` to discover it, the file must
+include `"schema_id"` and `"schema_version"` at the top level. Multiple
+versions of the same product can live side by side; add a `"status"` field to
+each file to mark its lifecycle (`current`, `deprecated`, ...).
+
+When several versions are present, `parseo` selects the one whose `status` is
+`"current"`. If none are marked current, the highest `schema_version`
+is used automatically.
+
+### Default behaviour
+
+```python
+from parseo import parse_auto
+
+res = parse_auto("S2B_MSIL2A_20241123T224759_N0511_R101_T03VUL_20241123T230829.SAFE")
+print(res.version)  # -> '1.0.0'
+print(res.status)   # -> 'current'
+```
+
+### Requesting a specific version
+
+Pass an explicit schema file to work with a particular version.
+
+```python
+from pathlib import Path
+from parseo import assemble
+from parseo.parser import _load_json_from_path, _extract_fields, _try_validate
+
+schema_v100 = Path("src/parseo/schemas/copernicus/sentinel/s2/s2_filename_v1_0_0.json")
+
+# assemble with that exact schema version
+filename = assemble(schema_v100, fields)
+
+# parse with that schema version
+schema = _load_json_from_path(schema_v100)
+if _try_validate(name, schema):
+    fields = _extract_fields(name, schema)
+```
+
 ---
 
 ## Creating a New Filename Schema
@@ -355,10 +396,11 @@ For a starting point, see the skeleton schema under
 
 2. **Write the versioned schema file**
    - Filename: `<product>_filename_vX_Y_Z.json`
-   - Include top-level metadata such as `schema_id`, `schema_version`,
-     `status` (`current`, `deprecated`, etc.), `stac_version`, optional
-     `stac_extensions`, and a short `description`. ParsEO will use the 
-     version flagged as current as a default when assembling a filename. 
+   - Include top-level metadata such as **required** `schema_id` and
+     `schema_version` (needed for discovery), `status` (`current`,
+     `deprecated`, etc.), `stac_version`, optional `stac_extensions`, and a
+     short `description`. ParsEO will use the version flagged as current
+     as a default when assembling a filename.
 
 3. **Define fields inline**
    - Add a top-level `"fields"` object. Each field uses JSON Schema
@@ -381,8 +423,10 @@ For a starting point, see the skeleton schema under
      optional components.
 
 6. **Maintain versions**
-   - When the schema evolves, create a new file with an incremented version
-     and mark the latest one with `"status": "current"`.
+   - Add a `"status"` field to every schema file. Mark the active schema as
+     `"current"` and older ones as `"deprecated"` (or similar).
+   - `parseo` selects the schema marked `"current"`; if none is marked,
+     the highest `schema_version` is chosen automatically.
 
 7. **Test the schema**
    - Use `parseo parse <filename>` to check parsing and `parseo assemble`
