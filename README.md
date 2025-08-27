@@ -349,6 +349,8 @@ parseo assemble \
 
 Adding support for a new product requires only a JSON schema placed under
 `src/parseo/schemas/`. All field definitions live inside the schema file.
+For a starting point, see the skeleton schema and index under
+`examples/schema_skeleton/`.
 
 1. **Create the product directory**
    - Path: `src/parseo/schemas/<family>/<mission>/<product>/`
