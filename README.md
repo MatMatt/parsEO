@@ -224,7 +224,8 @@ Known collection aliases are automatically mapped to their official STAC IDs:
 
 | Alias | STAC ID |
 |-------|---------|
-| `SENTINEL2_L2A` | `sentinel-2` |
+| `SENTINEL2_L2A` | `sentinel-2-l2a` |
+| `SENTINEL2_L1C` | `sentinel-2-l1c` |
 
 A different STAC service can be targeted by supplying its URL:
 
