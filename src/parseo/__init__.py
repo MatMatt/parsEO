@@ -1,6 +1,5 @@
-from .parser import parse_auto
+from .parser import parse_auto, validate_schema_examples
 from .assembler import assemble, assemble_auto, clear_schema_cache
-from .validator import validate_schema_examples
 
 __all__ = [
     "parse_auto",

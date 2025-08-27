@@ -130,7 +130,7 @@ filenames listed under its `examples` section still parse and reassemble
 correctly.
 
 ```python
-from parseo.parser import validate_schema_examples
+from parseo import validate_schema_examples
 
 validate_schema_examples("src/parseo/schemas/copernicus/sentinel/s2/s2_filename_v1_0_0.json")
 ```
