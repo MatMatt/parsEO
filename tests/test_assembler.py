@@ -46,12 +46,12 @@ def test_assemble_auto_missing_field_template_schema():
 def test_clear_schema_cache(tmp_path):
     clear_schema_cache()
     schema = tmp_path / "schema.json"
-    schema.write_text('{"fields_order": ["a", "b"], "joiner": "_"}')
+    schema.write_text('{"template": "{a}_{b}"}')
     fields = {"a": "x", "b": "y"}
 
     assert assemble(schema, fields) == "x_y"
 
-    schema.write_text('{"fields_order": ["a", "b"], "joiner": "-"}')
+    schema.write_text('{"template": "{a}-{b}"}')
 
     # Cached schema remains in effect
     assert assemble(schema, fields) == "x_y"

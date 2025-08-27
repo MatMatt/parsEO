@@ -74,7 +74,7 @@ def _build_arg_parser() -> argparse.ArgumentParser:
         help=(
             "Assemble a filename from fields. "
             "Provide key=value pairs OR pipe a JSON object to stdin. "
-            "Schema is auto-selected using the schema's first compulsory field (fields_order[0])."
+            "Schema is auto-selected using the schema's first compulsory field as defined by the template."
         ),
     )
     p_asm.add_argument(
