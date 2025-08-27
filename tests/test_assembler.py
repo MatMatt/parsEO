@@ -31,21 +31,19 @@ def test_assemble_missing_field_template_schema():
         assemble(fields, schema_path=schema)
 
 
-def test_assemble_auto_missing_field_template_schema():
+def test_assemble_auto_missing_optional_fields():
     fields = {
         "prefix": "CLMS_WSI",
         "product": "WIC",
         "pixel_spacing": "020m",
         "mgrs_tile": "T33WXP",
         "sensing_datetime": "20201024T103021",
-        # missing "platform"
+        "platform": "S2B",
         "version": "V100",
         "file_id": "WIC",
-        "extension": "tif",
     }
-    msg = r"Missing field 'platform' for schema .*wic_s2_filename_v0_0_0\.json"
-    with pytest.raises(ValueError, match=msg):
-        assemble_auto(fields)
+    name = assemble_auto(fields)
+    assert name == "CLMS_WSI_WIC_020m_T33WXP_20201024T103021_S2B_V100_WIC"
 
 
 def test_clear_schema_cache(tmp_path):
