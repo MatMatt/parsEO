@@ -305,12 +305,6 @@ parseo list-schemas
 #    S5P
 #    S6
 
-# List CLMS products from the dataset catalog
-parseo list-clms-products
-# -> Corine Land Cover (CLC)
-#    High Resolution Water & Snow / Ice (HR-WSI)
-#    High Resolution Vegetation Phenology & Productivity (HR-VPP)
-#    ...
 
 # Inspect a specific schema
 parseo schema-info S2
