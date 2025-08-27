@@ -23,9 +23,7 @@ It also serves as an **authoritative definition of filename structures** through
 
 ---
 
-## Supported Products
-
-Currently included schemas cover:
+## Currently Supported Products
 
 - **Sentinel missions**: S1, S2, S3, S4, S5P, S6  
 - **Landsat**: LT04, LT05, LE07, LC08, LC09  
