@@ -40,6 +40,7 @@ It also serves as an **authoritative definition of filename structures** through
   - High Resolution Vegetation Phenology & Productivity (HR-VPP)
   - High Resolution Water & Snow / Ice (HR-WSI)
   - High Resolution Layers (HRL)
+
 ---
 
 ## Installation
@@ -188,6 +189,7 @@ The interactive page lets you call `/parse` and `/assemble` directly from the
 browser to verify the API.
 
 ---
+
 ### List STAC collections (not functional yet!)
 
 Use the ``list-stac-collections`` subcommand to list collection IDs exposed by a
@@ -448,6 +450,7 @@ one in `examples/schema_skeleton/`.
 - Include at least one positive example in the schema file
 - Run tests with `pytest`
 - submit a pull request
+
 ---
 
 ## License
