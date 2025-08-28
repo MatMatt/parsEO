@@ -6,14 +6,22 @@ import json
 import sys
 from typing import Any, Dict, List
 
-from parseo.parser import parse_auto, describe_schema, list_schemas  # parser helpers
-from parseo.stac_dataspace import list_collections_http, sample_collection_filenames
+from parseo import __version__
+from parseo.parser import parse_auto, describe_schema  # parser helpers
+from parseo.schema_registry import list_schema_families, list_schema_versions
+from parseo.stac_http import list_collections_http, sample_collection_filenames
 
 
 # ---------- small utilities ----------
 
 def _build_arg_parser() -> argparse.ArgumentParser:
     ap = argparse.ArgumentParser(prog="parseo", description="parsEO CLI")
+    ap.add_argument(
+        "--version",
+        action="version",
+        version=f"parseo version {__version__}",
+        help="Show the installed parseo version and exit",
+    )
     sp = ap.add_subparsers(dest="cmd", required=True)
 
     # parse
@@ -74,7 +82,7 @@ def _build_arg_parser() -> argparse.ArgumentParser:
         help=(
             "Assemble a filename from fields. "
             "Provide key=value pairs OR pipe a JSON object to stdin. "
-            "Schema is auto-selected using the schema's first compulsory field (fields_order[0])."
+            "Schema is auto-selected using the schema's first compulsory field as defined by the template."
         ),
     )
     p_asm.add_argument(
@@ -180,8 +188,11 @@ def main(argv: List[str] | None = None) -> int:
         return 0
 
     if args.cmd == "list-schemas":
-        for fam in list_schemas():
-            print(fam)
+        for fam in list_schema_families():
+            for info in list_schema_versions(fam):
+                status = info.get("status") or ""
+                line = f"{fam} {info['version']} {status} {info['file']}".strip()
+                print(line)
         return 0
 
     if args.cmd == "schema-info":

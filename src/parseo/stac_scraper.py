@@ -1,10 +1,9 @@
 """STAC helpers backed by ``pystac-client``.
 
-This module mirrors the utilities in :mod:`parseo.stac_dataspace` but relies on
+This module mirrors the utilities in :mod:`parseo.stac_http` but relies on
 ``pystac-client`` for STAC catalog traversal.  Use these helpers when the extra
 features of ``pystac-client`` are required.  For a lightweight alternative that
-only depends on the Python standard library see
-:mod:`parseo.stac_dataspace`.
+only depends on the Python standard library see :mod:`parseo.stac_http`.
 """
 from __future__ import annotations
 
@@ -14,15 +13,20 @@ from urllib.parse import urlparse
 def list_collections_client(base_url: str, *, deep: bool = False) -> list[str]:
     """Return collection IDs from a STAC API using ``pystac-client``.
 
-    Parameters mirror :func:`parseo.stac_dataspace.list_collections_http` but
+    Parameters mirror :func:`parseo.stac_http.list_collections_http` but
     this variant requires the optional ``pystac-client`` dependency.  It is
     suitable when more advanced STAC handling is needed, at the cost of pulling
     in the external library.
+
+    Raises
+    ------
+    ImportError
+        If ``pystac-client`` is not installed.
     """
     try:
         from pystac_client import Client
     except Exception as exc:  # pragma: no cover - exercised when dependency missing
-        raise SystemExit(
+        raise ImportError(
             "pystac-client is required for list_collections_client"
         ) from exc
 
@@ -47,10 +51,6 @@ def list_collections_client(base_url: str, *, deep: bool = False) -> list[str]:
     return sorted(collections)
 
 
-# Backwards compatible alias mirroring :mod:`parseo.stac_dataspace`
-list_collections = list_collections_client
-
-
 def search_stac_and_download(
     *,
     stac_url: str,
@@ -67,6 +67,8 @@ def search_stac_and_download(
 
     Raises
     ------
+    ImportError
+        If ``pystac-client`` or ``requests`` is not installed.
     FileNotFoundError
         If the STAC search yields no downloadable assets or all downloads
         fail.
@@ -75,14 +77,16 @@ def search_stac_and_download(
     try:
         from pystac_client import Client
     except Exception as exc:  # pragma: no cover - exercised when dependency missing
-        raise SystemExit(
+        raise ImportError(
             "pystac-client is required for search_stac_and_download"
         ) from exc
 
     try:
         import requests
     except Exception as exc:  # pragma: no cover - exercised when dependency missing
-        raise SystemExit("requests is required for search_stac_and_download") from exc
+        raise ImportError(
+            "requests is required for search_stac_and_download"
+        ) from exc
 
     client = Client.open(stac_url)
     search = client.search(collections=collections, bbox=bbox, datetime=datetime)

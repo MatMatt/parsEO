@@ -17,8 +17,7 @@ from __future__ import annotations
 from html.parser import HTMLParser
 from typing import Iterable, List
 from urllib.request import urlopen
-
-DATASET_CATALOG_URL = "https://land.copernicus.eu/en/dataset-catalog"
+import os
 
 
 class _DatasetTitleParser(HTMLParser):
@@ -61,15 +60,19 @@ def parse_html(html: str) -> List[str]:
     return out
 
 
-def fetch_clms_products(url: str = DATASET_CATALOG_URL) -> List[str]:
+def fetch_clms_products(url: str | None = None) -> List[str]:
     """Fetch the CLMS dataset catalog and return all product titles.
 
-    Parameters
-    ----------
-    url:
-        Optional catalog URL. The default points to the official CLMS
-        dataset catalog.
+    If ``url`` is not provided, the environment variable
+    ``CLMS_DATASET_CATALOG_URL`` is consulted.  A :class:`ValueError` is raised
+    when no URL is available.
     """
+    if url is None:
+        url = os.getenv("CLMS_DATASET_CATALOG_URL")
+        if url is None:
+            raise ValueError(
+                "Catalog URL not provided. Set CLMS_DATASET_CATALOG_URL or pass the 'url' parameter."
+            )
     with urlopen(url) as resp:  # noqa: S310 - controlled URL
         charset = resp.headers.get_content_charset() or "utf-8"
         html = resp.read().decode(charset, "replace")

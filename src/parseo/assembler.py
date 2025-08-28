@@ -9,6 +9,7 @@ from functools import lru_cache
 
 from ._json import load_json
 from .template import compile_template, _field_regex
+from .schema_registry import get_schema_path
 
 
 SCHEMAS_ROOT = "schemas"
@@ -66,12 +67,12 @@ def _assemble_from_template(template: str, fields: Dict[str, Any]) -> str:
     return render(template)
 
 
-def assemble(schema_path: str | Path, fields: Dict[str, Any]) -> str:
+def _assemble_schema(schema_path: str | Path, fields: Dict[str, Any]) -> str:
     """Assemble a filename using a JSON schema.
 
-    Schemas may define a ``template`` string following parseo's mini-template
-    syntax. If present, the template is used for rendering the final filename.
-    Otherwise the legacy ``fields_order`` + ``joiner`` approach is used.
+    Schemas must define a ``template`` string following parseo's mini-template
+    syntax. The template is rendered using the provided *fields* and optional
+    segments are dropped if any enclosed field is missing.
     """
 
     sch = _load_schema(schema_path)
@@ -94,36 +95,38 @@ def assemble(schema_path: str | Path, fields: Dict[str, Any]) -> str:
                     f"Field '{name}' with value {value!r} does not match pattern {spec['pattern']}."
                 )
 
-    if isinstance(sch.get("template"), str):
-        template = sch["template"]
-        if not sch.get("fields_order"):
-            _, order = compile_template(template, sch.get("fields", {}))
-            sch["fields_order"] = order
-        try:
-            return _assemble_from_template(template, fields)
-        except KeyError as exc:
-            name = exc.args[0]
-            raise ValueError(
-                f"Missing field '{name}' for schema {schema_path}"
-            ) from exc
+    template = sch.get("template")
+    if not isinstance(template, str):
+        raise ValueError(f"Schema {schema_path} missing 'template' string.")
 
-    order = sch.get("fields_order")
-    if not order or not isinstance(order, list):
-        raise ValueError(f"Schema {schema_path} missing 'fields_order' list.")
+    try:
+        return _assemble_from_template(template, fields)
+    except KeyError as exc:
+        name = exc.args[0]
+        raise ValueError(
+            f"Missing field '{name}' for schema {schema_path}"
+        ) from exc
 
-    joiner = sch.get("joiner", "_")
 
-    parts: list[str] = []
-    for key in order:
-        if key not in fields:
-            raise ValueError(f"Missing field '{key}' required by schema {schema_path}.")
-        val = fields[key]
-        if not isinstance(val, (str, int, float)):
-            raise ValueError(f"Field '{key}' must be string/number, got {type(val).__name__}.")
-        parts.append(str(val))
+def assemble(
+    fields: Dict[str, Any],
+    family: str | None = None,
+    version: str | None = None,
+    schema_path: str | Path | None = None,
+) -> str:
+    """Assemble a filename from *fields*.
 
-    filename = joiner.join(parts)
-    return filename
+    Provide either a *schema_path* or a schema *family* (with optional
+    *version*) to select the schema. If neither is given the schema is
+    auto-selected based on the supplied *fields*.
+    """
+
+    if schema_path is not None:
+        return _assemble_schema(schema_path, fields)
+    if family is not None:
+        resolved = get_schema_path(family, version=version)
+        return _assemble_schema(resolved, fields)
+    return assemble_auto(fields)
 
 
 def _iter_schema_paths() -> list[Path]:
@@ -137,10 +140,10 @@ def _iter_schema_paths() -> list[Path]:
 def _select_schema_by_first_compulsory(fields: Dict[str, Any]) -> Path:
     """Select the most appropriate schema based on provided fields.
 
-    Eligibility requires that the user provided the first compulsory field
-    listed in ``fields_order``. Among eligible schemas the one with the
-    largest overlap of provided keys is chosen. A longer ``fields_order``
-    acts as a tie breaker.
+    Eligibility requires the user to provide the first compulsory field as
+    derived from the schema's template. Among eligible schemas the one with the
+    largest overlap of provided keys is chosen. A longer field order acts as a
+    tie breaker.
     """
     best: tuple[int, int, str] | None = None
     best_path: Path | None = None
@@ -152,14 +155,35 @@ def _select_schema_by_first_compulsory(fields: Dict[str, Any]) -> Path:
         except Exception:
             continue
 
-        order = sch.get("fields_order") or []
-        if not order and isinstance(sch.get("template"), str):
-            _, order = compile_template(sch["template"], sch.get("fields", {}))
-            sch["fields_order"] = order
+        template = sch.get("template")
+        if not isinstance(template, str):
+            continue
+        _, order = compile_template(template, sch.get("fields", {}))
+        sch["fields_order"] = order
         if not order:
             continue
 
-        first_key = order[0]
+        specs = sch.get("fields", {})
+        first_key = None
+        for name in order:
+            spec = specs.get(name, {})
+            enums = spec.get("enum")
+            field_val = fields.get(name)
+            if enums is not None:
+                enums = [str(e) for e in enums]
+                if len(enums) == 1 and field_val == enums[0]:
+                    continue
+                if field_val is not None and field_val not in enums:
+                    first_key = None
+                    break
+                first_key = name
+                break
+            else:
+                first_key = name
+                break
+        if not first_key:
+            continue
+
         seen_first_keys.add(first_key)
 
         if first_key not in fields:
@@ -185,4 +209,4 @@ def _select_schema_by_first_compulsory(fields: Dict[str, Any]) -> Path:
 def assemble_auto(fields: Dict[str, Any]) -> str:
     """Assemble a filename by auto-selecting the appropriate schema."""
     schema_path = _select_schema_by_first_compulsory(fields)
-    return assemble(str(schema_path), fields)
+    return _assemble_schema(str(schema_path), fields)
