@@ -8,6 +8,7 @@ only depends on the Python standard library see :mod:`parseo.stac_http`.
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Union
 from urllib.parse import urlparse
 
 def list_collections_client(base_url: str, *, deep: bool = False) -> list[str]:
@@ -55,9 +56,9 @@ def search_stac_and_download(
     *,
     stac_url: str,
     collections: list[str],
-    bbox: list[float] | tuple[float, float, float, float],
+    bbox: Union[list[float], tuple[float, float, float, float]],
     datetime: str,
-    dest_dir: str | Path,
+    dest_dir: Union[str, Path],
 ) -> Path:
     """Download the first asset matching a STAC search.
 

@@ -1,9 +1,12 @@
 from __future__ import annotations
 
 import re
-from typing import Dict, Tuple, List
+from typing import Dict
+from typing import List
+from typing import Tuple
+from typing import Union
 
-def _field_regex(spec: Dict | None) -> str:
+def _field_regex(spec: Union[Dict, None]) -> str:
     """Return a regex for a field spec.
 
     If *spec* is missing or empty, a permissive pattern ``.+`` is used.

@@ -1,11 +1,16 @@
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
+from dataclasses import field
 from functools import lru_cache
-from importlib.resources import as_file, files
+from importlib.resources import as_file
+from importlib.resources import files
 from pathlib import Path
-from typing import Dict, Iterator, Optional
 import re
+from typing import Dict
+from typing import Iterator
+from typing import Optional
+from typing import Union
 
 from ._json import load_json
 
@@ -80,7 +85,7 @@ def _discover_family_info(pkg: str) -> Dict[str, _FamilyInfo]:
         current_version = None
         current_path = None
         current_status = None
-        for ver, (p, st) in versions.items():
+        for ver, (p, st) in sorted(versions.items(), reverse=True):
             if st == "current":
                 current_version = ver
                 current_path = p
@@ -144,7 +149,7 @@ def list_schema_versions(family: str, pkg: str = __package__) -> list[dict]:
 
 @lru_cache(maxsize=256)
 def get_schema_path(
-    family: str, version: str | None = None, pkg: str = __package__
+    family: str, version: Union[str, None] = None, pkg: str = __package__
 ) -> Path:
     """Return filesystem path to schema for *family* and *version*.
 

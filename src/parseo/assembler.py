@@ -1,11 +1,14 @@
 # src/parseo/assembler.py
 from __future__ import annotations
 
-from importlib.resources import as_file, files
+from functools import lru_cache
+from importlib.resources import as_file
+from importlib.resources import files
 from pathlib import Path
 import re
-from typing import Any, Dict
-from functools import lru_cache
+from typing import Any
+from typing import Dict
+from typing import Union
 
 from ._json import load_json
 from .template import compile_template, _field_regex
@@ -16,7 +19,7 @@ SCHEMAS_ROOT = "schemas"
 
 
 @lru_cache(maxsize=None)
-def _load_schema(schema_path: str | Path) -> Dict[str, Any]:
+def _load_schema(schema_path: Union[str, Path]) -> Dict[str, Any]:
     return load_json(str(schema_path))
 
 
@@ -67,7 +70,7 @@ def _assemble_from_template(template: str, fields: Dict[str, Any]) -> str:
     return render(template)
 
 
-def _assemble_schema(schema_path: str | Path, fields: Dict[str, Any]) -> str:
+def _assemble_schema(schema_path: Union[str, Path], fields: Dict[str, Any]) -> str:
     """Assemble a filename using a JSON schema.
 
     Schemas must define a ``template`` string following parseo's mini-template
@@ -110,9 +113,9 @@ def _assemble_schema(schema_path: str | Path, fields: Dict[str, Any]) -> str:
 
 def assemble(
     fields: Dict[str, Any],
-    family: str | None = None,
-    version: str | None = None,
-    schema_path: str | Path | None = None,
+    family: Union[str, None] = None,
+    version: Union[str, None] = None,
+    schema_path: Union[str, Path, None] = None,
 ) -> str:
     """Assemble a filename from *fields*.
 
@@ -145,8 +148,8 @@ def _select_schema_by_first_compulsory(fields: Dict[str, Any]) -> Path:
     largest overlap of provided keys is chosen. A longer field order acts as a
     tie breaker.
     """
-    best: tuple[int, int, str] | None = None
-    best_path: Path | None = None
+    best: Union[tuple[int, int, str], None] = None
+    best_path: Union[Path, None] = None
     seen_first_keys: set[str] = set()
 
     for p in _iter_schema_paths():

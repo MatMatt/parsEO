@@ -10,6 +10,7 @@ from __future__ import annotations
 from collections.abc import Iterable
 from functools import lru_cache
 from pathlib import Path
+from typing import Union
 from urllib.parse import urljoin, urlparse
 import urllib.error
 import urllib.request
@@ -115,7 +116,7 @@ def iter_asset_filenames(
     *,
     base_url: str,
     limit: int = 100,
-    asset_role: str | None = None,
+    asset_role: Union[str, None] = None,
 ) -> Iterable[str]:
     """Yield asset filenames from items of a collection.
 
@@ -192,7 +193,7 @@ def iter_collection_tree(
     *,
     base_url: str,
     limit: int = 100,
-    asset_role: str | None = None,
+    asset_role: Union[str, None] = None,
 ) -> Iterable[tuple[str, str]]:
     """Yield ``(collection_id, filename)`` pairs for all leaf collections.
 
@@ -240,7 +241,7 @@ def sample_collection_filenames(
     samples: int = 5,
     *,
     base_url: str,
-    asset_role: str | None = None,
+    asset_role: Union[str, None] = None,
 ) -> dict[str, list[str]]:
     """Return ``samples`` filenames for each leaf collection.
 
