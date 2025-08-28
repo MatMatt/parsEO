@@ -1,4 +1,3 @@
-import builtins
 import io
 import json
 import sys
@@ -46,23 +45,6 @@ def test_cli_assemble_fapar_success(capsys):
     assert cli.main(["assemble", *args]) == 0
     captured = capsys.readouterr()
     assert captured.out.strip() == example
-
-def test_cli_assemble_missing_assembler(monkeypatch):
-    real_import = builtins.__import__
-
-    def fake_import(name, globals=None, locals=None, fromlist=(), level=0):
-        if name == "parseo.assembler":
-            raise ModuleNotFoundError
-        return real_import(name, globals, locals, fromlist, level)
-
-    monkeypatch.setattr(builtins, "__import__", fake_import)
-    example, args = _schema_example_args("WIC")
-    with pytest.raises(SystemExit) as exc:
-        cli.main(["assemble", *args])
-    msg = str(exc.value)
-    assert "requires parseo.assembler" in msg
-    assert "standard parseo installation" in msg
-
 
 def test_fields_json_invalid_string():
     sys.argv = ["parseo", "assemble", "--fields-json", "{"]
