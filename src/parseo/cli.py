@@ -42,12 +42,6 @@ def _build_arg_parser() -> argparse.ArgumentParser:
     p_info = sp.add_parser("schema-info", help="Show details for a mission family")
     p_info.add_argument("family", help="Mission family name, e.g. 'S2'")
 
-    # list-clms-products
-    sp.add_parser(
-        "list-clms-products",
-        help="List product names available in the CLMS dataset catalog",
-    )
-
     # stac-sample
     p_stac = sp.add_parser(
         "stac-sample",
@@ -208,15 +202,6 @@ def main(argv: Union[List[str], None] = None) -> int:
         except KeyError as e:
             raise SystemExit(str(e))
         print(json.dumps(info, indent=2, ensure_ascii=False))
-        return 0
-
-    if args.cmd == "list-clms-products":
-        try:
-            from parseo.clms_catalog import fetch_clms_products
-        except Exception as exc:  # pragma: no cover - import-time failures
-            raise SystemExit(f"Failed to load CLMS catalog scraper: {exc}")
-        for name in fetch_clms_products():
-            print(name)
         return 0
 
     if args.cmd == "list-stac-collections":
