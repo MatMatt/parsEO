@@ -15,9 +15,11 @@ access is only required when calling :func:`fetch_clms_products`.
 from __future__ import annotations
 
 from html.parser import HTMLParser
-from typing import Iterable, List
-from urllib.request import urlopen
 import os
+from typing import Iterable
+from typing import List
+from typing import Union
+from urllib.request import urlopen
 
 
 class _DatasetTitleParser(HTMLParser):
@@ -28,7 +30,7 @@ class _DatasetTitleParser(HTMLParser):
         self._capture = False
         self.titles: List[str] = []
 
-    def handle_starttag(self, tag: str, attrs: Iterable[tuple[str, str | None]]) -> None:
+    def handle_starttag(self, tag: str, attrs: Iterable[tuple[str, Union[str, None]]]) -> None:
         if tag == "h2":
             attrs_dict = dict(attrs)
             css = attrs_dict.get("class", "") or ""
@@ -60,7 +62,7 @@ def parse_html(html: str) -> List[str]:
     return out
 
 
-def fetch_clms_products(url: str | None = None) -> List[str]:
+def fetch_clms_products(url: Union[str, None] = None) -> List[str]:
     """Fetch the CLMS dataset catalog and return all product titles.
 
     If ``url`` is not provided, the environment variable

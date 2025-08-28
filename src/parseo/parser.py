@@ -2,11 +2,16 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from importlib.resources import files, as_file
-from pathlib import Path
-from typing import Any, Dict, Optional, Iterable
-import re
 from functools import lru_cache
+from importlib.resources import as_file
+from importlib.resources import files
+from pathlib import Path
+import re
+from typing import Any
+from typing import Dict
+from typing import Iterable
+from typing import Optional
+from typing import Union
 
 from .template import compile_template, _field_regex
 from .schema_registry import (
@@ -328,7 +333,7 @@ def parse_auto(name: str) -> ParseResult:
 
 
 def validate_schema(
-    paths: str | Path | Iterable[str | Path] | None = None,
+    paths: Union[str, Path, Iterable[Union[str, Path]], None] = None,
     pkg: str = __package__,
     verbose: bool = False,
 ) -> None:
@@ -336,7 +341,7 @@ def validate_schema(
 
     Parameters
     ----------
-    paths: str | Path | Iterable[str | Path], optional
+    paths: Union[str, Path, Iterable[Union[str, Path]]], optional
         Specific schema JSON file(s) to validate. Accepts either a single path
         or an iterable of paths. When omitted, all bundled schemas for *pkg*
         are checked.

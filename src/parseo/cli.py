@@ -4,7 +4,10 @@ from __future__ import annotations
 import argparse
 import json
 import sys
-from typing import Any, Dict, List
+from typing import Any
+from typing import Dict
+from typing import List
+from typing import Union
 
 from parseo import __version__
 from parseo.parser import parse_auto, describe_schema  # parser helpers
@@ -164,7 +167,7 @@ def _resolve_fields(args) -> Dict[str, Any]:
 
 # ---------- main ----------
 
-def main(argv: List[str] | None = None) -> int:
+def main(argv: Union[List[str], None] = None) -> int:
     argv = argv if argv is not None else sys.argv[1:]
     ap = _build_arg_parser()
     args = ap.parse_args(argv)
