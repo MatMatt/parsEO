@@ -49,6 +49,16 @@ where = ["src"]
 include = ["parseo*"]
 exclude = ["tests*", "docs*", "examples*"]
 
+[tool.ruff]
+line-length = 88
+target-version = "py39"
+src = ["src", "tests"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "lf"
+
 # If you ship package data (e.g., *.json inside parseo/):
 # [tool.setuptools.package-data]
 # "parseo" = ["data/*.json"]
