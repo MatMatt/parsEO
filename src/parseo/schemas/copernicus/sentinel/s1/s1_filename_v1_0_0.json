@@ -29,7 +29,7 @@
     },
     "polarization": {
       "type": "string",
-      "enum": ["VV", "HH", "VH", "HV", "DV", "DH", "SV", "SH", "V", "H"],
+      "enum": ["VV", "HH", "VH", "HV", "DV", "DH", "SV", "SH"],
       "description": "Polarisation (sar:polarizations)"
     },
     "start_datetime": {

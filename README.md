@@ -150,7 +150,7 @@ validate_schema("src/parseo/schemas/copernicus/sentinel/s2/s2_filename_v1_0_0.js
 # Enable verbose output to see progress
 validate_schema(
     "src/parseo/schemas/copernicus/sentinel/s2/s2_filename_v1_0_0.json",
-    verbose=True,
+    verbose=True
 )
 ```
 
@@ -171,7 +171,6 @@ app = FastAPI()
 def parse_endpoint(name: str):
     res = parse_auto(name)
     return res.model_dump()
-
 
 @app.post("/assemble")
 def assemble_endpoint(schema: str, fields: dict):
@@ -285,22 +284,15 @@ Use the CLI to assemble filenames.
 # The CLI auto-selects a schema based on the first compulsory field.
 
 # Example: Sentinel-2 SAFE (first field: platform)
-parseo assemble \
-  platform=S2B sensor=MSI processing_level=L2A sensing_datetime=20241123T224759 \
-  processing_baseline=N0511 relative_orbit=R101 mgrs_tile=T03VUL \
-  generation_datetime=20241123T230829 extension=SAFE
+parseo assemble platform=S2B sensor=MSI processing_level=L2A sensing_datetime=20241123T224759 processing_baseline=N0511 relative_orbit=R101 mgrs_tile=T03VUL generation_datetime=20241123T230829 extension=SAFE
 # -> S2B_MSIL2A_20241123T224759_N0511_R101_T03VUL_20241123T230829.SAFE
 
 # Example: CLMS HR-WSI product (first field: prefix)
-parseo assemble \
-  prefix=CLMS_WSI product=WIC pixel_spacing=020m mgrs_tile=T33WXP \
-  sensing_datetime=20201024T103021 platform=S2B processing_baseline=V100 file_id=WIC extension=tif
+parseo assemble prefix=CLMS_WSI product=WIC pixel_spacing=020m mgrs_tile=T33WXP sensing_datetime=20201024T103021 platform=S2B processing_baseline=V100 file_id=WIC extension=tif
 # -> CLMS_WSI_WIC_020m_T33WXP_20201024T103021_S2B_V100_WIC.tif
 
 # Example: CLMS HR-VPP product (first field: prefix)
-parseo assemble \
-  prefix=CLMS_VPP product=FAPAR resolution=100m mgrs_tile=T32TNS \
-  start_date=20210101 end_date=20210110 version=V100 file_id=FAPAR extension=tif
+parseo assemble prefix=CLMS_VPP product=FAPAR resolution=100m mgrs_tile=T32TNS start_date=20210101 end_date=20210110 version=V100 file_id=FAPAR extension=tif
 # -> CLMS_VPP_FAPAR_100m_T32TNS_20210101_20210110_V100_FAPAR.tif
 ```
 
