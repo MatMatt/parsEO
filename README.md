@@ -254,12 +254,12 @@ parseo parse S1A_IW_SLC__1SDV_20250105T053021_20250105T053048_A054321_D068F2E_AB
 
 # List available schemas
 parseo list-schemas
-# name, version, location.
-# CC 0.0.0 current C:\Users\Mattiuzzi\Documents\parsEO\src\parseo\schemas\copernicus\clms\hr-wsi\cc\cc_filename_v0_0_0.json
-# CLC 1.0.0 current C:\Users\Mattiuzzi\Documents\parsEO\src\parseo\schemas\copernicus\clms\clc\clc_filename_v1_0_0.json
-# FOREST-TYPE 0.0.0 current C:\Users\Mattiuzzi\Documents\parsEO\src\parseo\schemas\copernicus\clms\hrl\forest-type\forest-type_filename_v0_0_0.json
-# FSC 0.0.0 current C:\Users\Mattiuzzi\Documents\parsEO\src\parseo\schemas\copernicus\clms\hr-wsi\fsc\fsc_filename_v0_0_0.json
-
+FAMILY               VERSION STATUS  FILE
+CC                   0.0.0   current ...\src\parseo\schemas\copernicus\clms\hr-wsi\cc\cc_filename_v0_0_0.json
+CLC                  1.0.0   current ...\src\parseo\schemas\copernicus\clms\clc\clc_filename_v1_0_0.json
+FOREST-TYPE          0.0.0   current ...\src\parseo\schemas\copernicus\clms\hrl\forest-type\forest-type_filename_v0_0_0.json
+FSC                  0.0.0   current ...\src\parseo\schemas\copernicus\clms\hr-wsi\fsc\fsc_filename_v0_0_0.json
+GFSC                 0.0.0   current ...\src\parseo\schemas\copernicus\clms\hr-wsi\gfsc\gfsc_filename_v0_0_0.json
 
 # Inspect a specific schema
 parseo schema-info S2
