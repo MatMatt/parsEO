@@ -221,7 +221,6 @@ collection. The STAC API root must always be provided via ``--stac-url``
 
 ```bash
 parseo stac-sample SENTINEL-2 --samples 3 --stac-url https://catalogue.dataspace.copernicus.eu/stac
-
 ```
 Which might output:
 
@@ -282,10 +281,6 @@ packages being available at runtime.  If either is missing an
 
 Use the CLI to parse filenames, list available schemas, and assemble filenames from fields.
 
-The `list-clms-products` subcommand queries the public Copernicus Land Monitoring Service (CLMS)
-dataset catalog and prints the available product names. Use this to discover valid identifiers
-when working with CLMS filename schemas.
-
 ```bash
 # Parse a filename
 parseo parse S1A_IW_SLC__1SDV_20250105T053021_20250105T053048_A054321_D068F2E_ABC123.SAFE
@@ -318,8 +313,10 @@ parseo schema-info S2
 #        ...
 #      }
 #    }
+```
 
-# Assemble a filename from fields.
+Use the CLI to assemble filenames.
+```bash
 # The CLI auto-selects a schema based on the first compulsory field.
 
 # Example: Sentinel-2 SAFE (first field: platform)
