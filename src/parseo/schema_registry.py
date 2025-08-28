@@ -1,11 +1,15 @@
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-from functools import lru_cache
-from importlib.resources import as_file, files
-from pathlib import Path
-from typing import Dict, Iterator, Optional
 import re
+from dataclasses import dataclass
+from dataclasses import field
+from functools import lru_cache
+from importlib.resources import as_file
+from importlib.resources import files
+from pathlib import Path
+from typing import Dict
+from typing import Iterator
+from typing import Optional
 
 from ._json import load_json
 

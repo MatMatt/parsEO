@@ -1,5 +1,7 @@
-import pytest
 import urllib.error
+
+import pytest
+
 import parseo.stac_http as sd
 
 

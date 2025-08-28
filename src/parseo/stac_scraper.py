@@ -10,6 +10,7 @@ from __future__ import annotations
 from pathlib import Path
 from urllib.parse import urlparse
 
+
 def list_collections_client(base_url: str, *, deep: bool = False) -> list[str]:
     """Return collection IDs from a STAC API using ``pystac-client``.
 

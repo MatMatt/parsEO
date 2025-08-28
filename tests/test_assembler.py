@@ -2,12 +2,10 @@ from pathlib import Path
 
 import pytest
 
-from parseo import (
-    assemble,
-    assemble_auto,
-    clear_schema_cache,
-    list_schema_versions,
-)
+from parseo import assemble
+from parseo import assemble_auto
+from parseo import clear_schema_cache
+from parseo import list_schema_versions
 
 
 def test_assemble_missing_field_template_schema():

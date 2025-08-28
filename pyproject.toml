@@ -65,3 +65,9 @@ exclude = ["tests*", "docs*", "examples*"]
 # [tool.setuptools_scm]
 # version_scheme = "release-branch-semver"
 # local_scheme = "no-local-version"
+
+[tool.ruff]
+target-version = "py39"
+
+[tool.ruff.lint.isort]
+force-single-line = true

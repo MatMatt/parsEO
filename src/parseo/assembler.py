@@ -1,16 +1,18 @@
 # src/parseo/assembler.py
 from __future__ import annotations
 
-from importlib.resources import as_file, files
-from pathlib import Path
 import re
-from typing import Any, Dict
 from functools import lru_cache
+from importlib.resources import as_file
+from importlib.resources import files
+from pathlib import Path
+from typing import Any
+from typing import Dict
 
 from ._json import load_json
-from .template import compile_template, _field_regex
 from .schema_registry import get_schema_path
-
+from .template import _field_regex
+from .template import compile_template
 
 SCHEMAS_ROOT = "schemas"
 

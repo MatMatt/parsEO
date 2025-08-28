@@ -9,8 +9,10 @@ def test_star_import_exposes_parser():
 
 def test_info_reports_version():
     """The info function should return the installed package version."""
+    from importlib.metadata import PackageNotFoundError
+    from importlib.metadata import version
+
     import parseo
-    from importlib.metadata import PackageNotFoundError, version
 
     try:
         expected = version("parseo")

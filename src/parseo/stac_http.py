@@ -7,16 +7,18 @@ functions require explicitly passing the ``base_url`` of the STAC service.
 """
 from __future__ import annotations
 
+import itertools
+import json
+import re
+import urllib.error
+import urllib.request
 from collections.abc import Iterable
 from functools import lru_cache
 from pathlib import Path
-from urllib.parse import urljoin, urlparse
-import urllib.error
-import urllib.request
-import json
-import itertools
-import re
 from string import Template
+from urllib.parse import urljoin
+from urllib.parse import urlparse
+
 
 def _norm_collection_id(collection_id: str, *, base_url: str) -> str:
     """Resolve ``collection_id`` to the official ID from the STAC API."""

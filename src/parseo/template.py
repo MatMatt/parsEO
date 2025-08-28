@@ -1,7 +1,10 @@
 from __future__ import annotations
 
 import re
-from typing import Dict, Tuple, List
+from typing import Dict
+from typing import List
+from typing import Tuple
+
 
 def _field_regex(spec: Dict | None) -> str:
     """Return a regex for a field spec.

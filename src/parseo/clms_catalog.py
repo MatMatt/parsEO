@@ -14,10 +14,11 @@ access is only required when calling :func:`fetch_clms_products`.
 """
 from __future__ import annotations
 
-from html.parser import HTMLParser
-from typing import Iterable, List
-from urllib.request import urlopen
 import os
+from html.parser import HTMLParser
+from typing import Iterable
+from typing import List
+from urllib.request import urlopen
 
 
 class _DatasetTitleParser(HTMLParser):

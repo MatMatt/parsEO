@@ -4,13 +4,17 @@ from __future__ import annotations
 import argparse
 import json
 import sys
-from typing import Any, Dict, List
+from typing import Any
+from typing import Dict
+from typing import List
 
 from parseo import __version__
-from parseo.parser import parse_auto, describe_schema  # parser helpers
-from parseo.schema_registry import list_schema_families, list_schema_versions
-from parseo.stac_http import list_collections_http, sample_collection_filenames
-
+from parseo.parser import describe_schema  # parser helpers
+from parseo.parser import parse_auto
+from parseo.schema_registry import list_schema_families
+from parseo.schema_registry import list_schema_versions
+from parseo.stac_http import list_collections_http
+from parseo.stac_http import sample_collection_filenames
 
 # ---------- small utilities ----------
 

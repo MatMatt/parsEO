@@ -1,8 +1,10 @@
-from parseo.parser import parse_auto
+from functools import lru_cache
+
+import pytest
+
 import parseo.parser as parser
 import parseo.schema_registry as schema_registry
-import pytest
-from functools import lru_cache
+from parseo.parser import parse_auto
 
 
 def test_schema_paths_cached(monkeypatch):
