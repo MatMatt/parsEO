@@ -1,12 +1,14 @@
-import sys
 import builtins
 import io
-import pytest
 import json
+import sys
+
+import pytest
 
 from parseo import cli
+from parseo.parser import describe_schema
+from parseo.parser import parse_auto
 from parseo.schema_registry import list_schema_families
-from parseo.parser import parse_auto, describe_schema
 
 
 def _schema_example_args(family: str) -> tuple[str, list[str]]:
@@ -22,7 +24,8 @@ def test_cli_reports_version(capsys):
         cli.main(["--version"])
     assert exc.value.code == 0
     out = capsys.readouterr().out.strip()
-    from importlib.metadata import PackageNotFoundError, version
+    from importlib.metadata import PackageNotFoundError
+    from importlib.metadata import version
 
     try:
         expected = version("parseo")

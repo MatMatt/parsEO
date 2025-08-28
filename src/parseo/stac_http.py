@@ -9,15 +9,16 @@ from __future__ import annotations
 
 from collections.abc import Iterable
 from functools import lru_cache
-from pathlib import Path
-from typing import Union
-from urllib.parse import urljoin, urlparse
-import urllib.error
-import urllib.request
-import json
 import itertools
+import json
+from pathlib import Path
 import re
 from string import Template
+from typing import Union
+import urllib.error
+from urllib.parse import urljoin
+from urllib.parse import urlparse
+import urllib.request
 
 def _norm_collection_id(collection_id: str, *, base_url: str) -> str:
     """Resolve ``collection_id`` to the official ID from the STAC API."""
