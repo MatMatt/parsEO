@@ -32,6 +32,7 @@ def test_new_schema_discovery(tmp_path, monkeypatch):
     schema_v2 = schema_v1 | {"schema_version": "2.0.0"}
     schema_v2["status"] = "current"
     schema_v1["status"] = "deprecated"
+    (pkg_dir / "schemas" / "abc_filename_v1_0_0.json").write_text(json.dumps(schema_v1))
     (pkg_dir / "schemas" / "abc_filename_v2_0_0.json").write_text(json.dumps(schema_v2))
 
     schema_registry.clear_cache()
