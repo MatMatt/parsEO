@@ -10,6 +10,7 @@ from typing import List
 from typing import Union
 
 from parseo import __version__
+from parseo.assembler import assemble_auto
 from parseo.parser import describe_schema  # parser helpers
 from parseo.parser import parse_auto
 from parseo.schema_registry import list_schema_families
@@ -237,18 +238,6 @@ def main(argv: Union[List[str], None] = None) -> int:
         return 0
 
     if args.cmd == "assemble":
-        # Lazy import so 'parse' doesn’t require assembler module
-        try:
-            from parseo.assembler import assemble_auto
-        except ModuleNotFoundError:
-            raise SystemExit(
-                "The 'assemble' command requires parseo.assembler, which is part of the "
-                "standard parseo installation.\n"
-                "If it is missing, reinstall parseo with assembler support or provide a "
-                "'parseo/assembler.py' implementing 'assemble_auto(fields)'. "
-                "You can still use 'parse' or 'list-schemas'."
-            )
-
         fields = _resolve_fields(args)
         out = assemble_auto(fields)
         print(out)
