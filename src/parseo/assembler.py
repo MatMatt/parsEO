@@ -11,8 +11,9 @@ from typing import Dict
 from typing import Union
 
 from ._json import load_json
-from .template import compile_template, _field_regex
 from .schema_registry import get_schema_path
+from .template import _field_regex
+from .template import compile_template
 
 
 SCHEMAS_ROOT = "schemas"

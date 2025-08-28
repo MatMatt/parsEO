@@ -13,14 +13,13 @@ from typing import Iterable
 from typing import Optional
 from typing import Union
 
-from .template import compile_template, _field_regex
-from .schema_registry import (
-    _discover_family_info,
-    _get_schema_paths,
-    _load_json_from_path,
-    list_schema_families,
-    get_schema_path,
-)
+from .schema_registry import _discover_family_info
+from .schema_registry import _get_schema_paths
+from .schema_registry import _load_json_from_path
+from .schema_registry import get_schema_path
+from .schema_registry import list_schema_families
+from .template import _field_regex
+from .template import compile_template
 
 # Root folder inside the package where JSON schemas live
 SCHEMAS_ROOT = "schemas"
