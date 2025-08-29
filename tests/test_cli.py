@@ -69,8 +69,9 @@ def test_list_schemas_exposes_known_families():
 
 def test_cli_list_schemas_outputs_versions(capsys):
     assert cli.main(["list-schemas"]) == 0
-    lines = capsys.readouterr().out.splitlines()
-    tokens = [line.split() for line in lines]
+    lines = capsys.readouterr().out.strip().splitlines()
+    assert lines[0].split() == ["FAMILY", "VERSION", "STATUS", "FILE"]
+    tokens = [line.split(maxsplit=3) for line in lines[1:]]
     entries = {t[0]: t for t in tokens}
     assert entries["S1"][1] == "1.0.0"
     assert entries["S2"][1] == "1.0.0"

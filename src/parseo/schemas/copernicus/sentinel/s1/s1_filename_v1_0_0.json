@@ -24,12 +24,17 @@
     },
     "processing_level": {
       "type": "string",
-      "pattern": "^\\d[A-Z]{2}$",
-      "description": "Processing level (e.g., 1SD)"
+      "enum": ["0","1","2","A"],
+      "description": "Processing level (e.g., 0)"
+    },
+    "product_class":{
+      "type": "string",
+      "enum": ["S","A","N","C","X"],
+      "description": "Product class (e.g., S=SAR Standard)"
     },
     "polarization": {
       "type": "string",
-      "enum": ["VV", "HH", "VH", "HV", "DV", "DH", "SV", "SH", "V", "H"],
+      "enum": ["VV", "HH", "VH", "HV", "DV", "DH", "SV", "SH"],
       "description": "Polarisation (sar:polarizations)"
     },
     "start_datetime": {
@@ -63,7 +68,7 @@
       "description": "File extension without leading dot"
     }
   },
-  "template": "{platform}_{instrument_mode}_{product_type}_{processing_level}{polarization}_{start_datetime}_{end_datetime}_{abs_orbit}_{datatake}_{product_id}[.{extension}]",
+  "template": "{platform}_{instrument_mode}_{product_type}_{processing_level}{product_class}{polarization}_{start_datetime}_{end_datetime}_{abs_orbit}_{datatake}_{product_id}[.{extension}]",
   "examples": [
     "S1A_IW_SLC__1SDV_20250105T053021_20250105T053048_A054321_D068F2E_ABC123.SAFE",
     "S1B_EW_GRDH_1SDH_20190101T000000_20190101T000030_A012345_D0ABCDE_ABCDEF",

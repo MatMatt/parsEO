@@ -189,11 +189,27 @@ def main(argv: Union[List[str], None] = None) -> int:
         return 0
 
     if args.cmd == "list-schemas":
+        rows: list[tuple[str, str, str, str]] = []
         for fam in list_schema_families():
             for info in list_schema_versions(fam):
-                status = info.get("status") or ""
-                line = f"{fam} {info['version']} {status} {info['file']}".strip()
-                print(line)
+                rows.append(
+                    (
+                        fam,
+                        info["version"],
+                        info.get("status") or "",
+                        info["file"],
+                    )
+                )
+        if rows:
+            headers = ("FAMILY", "VERSION", "STATUS", "FILE")
+            widths = [len(h) for h in headers]
+            for row in rows:
+                for i in range(3):
+                    widths[i] = max(widths[i], len(row[i]))
+            line_fmt = f"{{:{widths[0]}}} {{:{widths[1]}}} {{:{widths[2]}}} {{}}"
+            print(line_fmt.format(*headers))
+            for row in rows:
+                print(line_fmt.format(*row))
         return 0
 
     if args.cmd == "schema-info":

@@ -1,72 +1,53 @@
----
-title: "parsEO"
----
-
 # parsEO
 
-**parsEO** is a Python package for **parsing and assembling filenames** of satellite data and derived products.
-It also serves as an **authoritative definition of filename structures** through machine-readable JSON schemas.
-
----
+**parsEO** is a Python package for **parsing and assembling filenames** of satellite data and derived products. It also serves as an **authoritative definition of filename structures** through machine-readable JSON schemas.
 
 ## Features
 
-- **Bidirectional support**:  
-  Parse existing product filenames into structured fields, and assemble new filenames from fields.
+-   **Bidirectional support**:\
+    Parse existing product filenames into structured fields, and assemble new filenames from fields.
 
-- **Schema-driven**:
-  Filename rules are defined in JSON schema files under `src/parseo/schemas/`.
-  Dropping a new schema file into this tree is enough—parsEO discovers it
-  automatically with no central index to maintain.
+-   **Schema-driven**: Filename rules are defined in JSON schema files under `src/parseo/schemas/`. Dropping a new schema file into this tree is enough — parsEO discovers it automatically.
 
-- **Flexible folder structure**:  
-  parsEO does not assume a fixed folder depth. Products can live in arbitrary directory structures,  
-  and the schema only describes the filename itself.
+-   **Extensible**: New product families can be added by dropping schema definitions into the repo (see below).
 
-- **Extensible**:
-  New Copernicus or Landsat product families can be added by dropping schema definitions into the repo;
-  no index file needs updating.
-
----
 
 ## Currently Supported Products
 
-- **Sentinel missions**: S1, S2, S3, S4, S5P, S6  
-- **Landsat**: LT04, LT05, LE07, LC08, LC09  
-- **NASA MODIS**: Terra/Aqua MODIS products
-- **EUMETSAT missions**: MTG, Metop
-- **Copernicus Land Monitoring Service (CLMS)**:
-  - Corine Land Cover (CLC)
-  - High Resolution Vegetation Phenology & Productivity (HR-VPP)
-  - High Resolution Water & Snow / Ice (HR-WSI)
-  - High Resolution Layers (HRL)
-
----
+-   **Sentinel missions**: S1, S2, S3, S4, S5P, S6\
+-   **Landsat**: LT04, LT05, LE07, LC08, LC09\
+-   **NASA MODIS**: Terra/Aqua MODIS products
+-   **EUMETSAT missions**: MTG, Metop
+-   **Copernicus Land Monitoring Service (CLMS)**:
+    -   Corine Land Cover (CLC)
+    -   High Resolution Vegetation Phenology & Productivity (HR-VPP)
+    -   High Resolution Water & Snow / Ice (HR-WSI)
+    -   High Resolution Layers (HRL)
 
 ## Installation
 
-```bash
+``` bash
 pip install parseo
 ```
 
 For development:
 
-```bash
+``` bash
 git clone https://github.com/MatMatt/parsEO.git
 cd parsEO
 pip install -e .
 ```
-```bash
+
+``` bash
 parseo --version
 ```
 
----
 
 ## Usage
 
 ### Parse a filename
 
-```python
+``` python
 from parseo import parse_auto
 
 name = "S2B_MSIL2A_20241123T224759_N0511_R101_T03VUL_20241123T230829.SAFE"
@@ -78,7 +59,7 @@ print(res.fields)  # structured dict of extracted fields
 
 Example for a MODIS product:
 
-```python
+``` python
 name = "MOD09GA.A2021123.h18v04.006.2021132234506.hdf"
 res = parse_auto(name)
 print(res.fields["platform"])  # MOD
@@ -86,9 +67,9 @@ print(res.fields["product"])   # 09
 print(res.fields["variant"])   # GA
 ```
 
-### Assemble a filename
+### Assembling a filename
 
-```python
+``` python
 from pathlib import Path
 from parseo import assemble, assemble_auto
 
@@ -105,63 +86,67 @@ fields = {
 }
 ```
 
-#### `assemble_auto(fields)`
+#### Asseble Auto (autodetection of schema)
 
-```python
+``` python
 filename = assemble_auto(fields)
 print(filename)
 # -> S2B_MSIL2A_20241123T224759_N0511_R101_T03VUL_20241123T230829.SAFE
 ```
 
-#### `assemble(fields, family="S2")`
+#### Assemble using default (current) family schema. This should speed up the conversion, if family is known and stable.
 
-```python
+``` python
 filename = assemble(fields, family="S2")
 print(filename)
 ```
 
-#### `assemble(fields, family="S2", version="1.0.0")`
+#### Assemble specifying product family and and filneme version. This should speed up the conversion, if family is known and stable.
 
-```python
+``` python
 filename = assemble(fields, family="S2", version="1.0.0")
 print(filename)
 ```
 
-#### Explicit schema path
+#### Assembing with an explicit schema file
 
-```python
+``` python
 schema_path = Path("src/parseo/schemas/copernicus/sentinel/s2/s2_filename_v1_0_0.json")
 filename = assemble(fields, schema_path=schema_path)
 print(filename)
 ```
 
+#### Perfomeance tests:
+
+| Function | Conversion time (seconds per file) |
+|----|----|
+| assemble_auto(fields) | 0.0074 |
+| assemble(fields, family='S2') | 0.000017 |
+| assemble(fields, family='S2', version='1.0.0') | 0.0000178 |
+
 ### Validate schema examples
 
-When adding a new schema, use `validate_schema` to ensure that the filenames
-listed under its `examples` section still parse and reassemble correctly. Pass
-`verbose=True` to get feedback as each example is checked.
+When adding a new schema, use `validate_schema` to ensure that the filenames listed under its `examples` section still parse and reassemble correctly. Pass `verbose=True` to get feedback as each example is checked.
 
-```python
+``` python
 from parseo import validate_schema
 
 validate_schema("src/parseo/schemas/copernicus/sentinel/s2/s2_filename_v1_0_0.json")
+
 # Enable verbose output to see progress
 validate_schema(
     "src/parseo/schemas/copernicus/sentinel/s2/s2_filename_v1_0_0.json",
-    verbose=True,
+    verbose=True
 )
 ```
 
-The project's tests call this helper so that schema examples stay in sync with
-the parser over time.
+The paresos internal tests call this `validate_schema` so that schema examples stay in sync with the parser over time.
 
 ### Run as API
 
-parsEO functions can be exposed through a web service. The example below uses
-[FastAPI](https://fastapi.tiangolo.com), which provides an automatic Swagger UI
-for trying out the endpoints.
+parsEO functions can be exposed through a web service. The example below uses [FastAPI](https://fastapi.tiangolo.com), which provides an automatic Swagger UI for trying out the endpoints.
 
-```python
+``` python
 # Safe to file: main.py
 from fastapi import FastAPI
 from parseo import assemble, parse_auto
@@ -173,32 +158,28 @@ def parse_endpoint(name: str):
     res = parse_auto(name)
     return res.model_dump()
 
-
 @app.post("/assemble")
 def assemble_endpoint(schema: str, fields: dict):
     filename = assemble(schema, fields)
     return {"filename": filename}
 ```
+
 from the console inside the same directiory start the app:
-```bash
+
+``` bash
 uvicorn main:app --reload
 ```
-Open [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs) to access Swagger UI:
 
-The interactive page lets you call `/parse` and `/assemble` directly from the
-browser to verify the API.
+Open <http://127.0.0.1:8000/docs> to access Swagger UI:
 
----
+The interactive page lets you call `/parse` and `/assemble` directly from the browser to verify the API.
 
 ### List STAC collections (not functional yet!)
 
-Use the ``list-stac-collections`` subcommand to list collection IDs exposed by a
-STAC API. The STAC root URL must be supplied via ``--stac-url``:
+Use the `list-stac-collections` subcommand to list collection IDs exposed by a STAC API. The STAC root URL must be supplied via `--stac-url`:
 
-```bash
+``` bash
 parseo list-stac-collections --stac-url https://catalogue.dataspace.copernicus.eu/stac
-```
-```
 AQUA
 CCM
 CLMS
@@ -208,53 +189,24 @@ GLOBAL-MOSAICS
 LANDSAT-5
 LANDSAT-7
 ...
-
 ```
 
 Each collection ID is printed on its own line.
 
 ### Sample filenames from a STAC collection
 
-The ``stac-sample`` subcommand prints a few asset filenames from a STAC
-collection. The STAC API root must always be provided via ``--stac-url``
-(with or without a trailing slash):
+The `stac-sample` subcommand prints a few asset filenames from a STAC collection. The STAC API root must always be provided via `--stac-url` (with or without a trailing slash):
 
-```bash
+``` bash
+# not working yet!
 parseo stac-sample SENTINEL-2 --samples 3 --stac-url https://catalogue.dataspace.copernicus.eu/stac
 ```
-Which might output:
 
-```
-SENTINEL-2:
-  S2A_MSIL1C_20210101T101031_N0209_R122_T33UUU_20210101T121023.SAFE
-  S2B_MSIL1C_20210101T101031_N0209_R122_T33UUU_20210101T121023.SAFE
-  S2A_MSIL1C_20210102T101031_N0209_R122_T33UUU_20210102T121023.SAFE
-```
+### Search STAC and download assets (does not work yet)
 
-Asset filenames are taken from each asset's ``title`` when available; if not,
-the filename is parsed from the ``href``.  OData-style links such as
-``Products('NAME')/$value`` are handled automatically.
+The `parseo.stac_scraper` module provides helpers for programmatic interaction with a STAC API. The snippet below lists available collections and downloads the first asset matching a simple search:
 
-Known collection aliases are automatically mapped to their official STAC IDs:
-
-| Alias | STAC ID |
-|-------|---------|
-| `SENTINEL2_L2A` | `sentinel-2-l2a` |
-| `SENTINEL2_L1C` | `sentinel-2-l1c` |
-
-A different STAC service can be targeted by supplying its URL:
-
-```bash
-parseo stac-sample my-collection --samples 2 --stac-url https://stac.example.com
-```
-
-### Search STAC and download assets
-
-The ``parseo.stac_scraper`` module provides helpers for programmatic
-interaction with a STAC API.  The snippet below lists available collections
-and downloads the first asset matching a simple search:
-
-```python
+``` python
 from parseo import stac_scraper
 
 stac_url = "https://catalogue.dataspace.copernicus.eu/stac"
@@ -271,31 +223,24 @@ for cid in stac_scraper.list_collections_client(stac_url):
     )
 ```
 
-This functionality depends on the ``pystac-client`` and ``requests``
-packages being available at runtime.  If either is missing an
-``ImportError`` is raised.
-
----
+This functionality depends on the `pystac-client` and `requests` packages being available at runtime. If either is missing an `ImportError` is raised.
 
 ## Command Line Interface
 
 Use the CLI to parse filenames, list available schemas, and assemble filenames from fields.
 
-```bash
+``` bash
 # Parse a filename
 parseo parse S1A_IW_SLC__1SDV_20250105T053021_20250105T053048_A054321_D068F2E_ABC123.SAFE
 
 # List available schemas
 parseo list-schemas
-# -> CLC
-#    LANDSAT
-#    S1
-#    S2
-#    S3
-#    S4
-#    S5P
-#    S6
-
+FAMILY               VERSION STATUS  FILE
+CC                   0.0.0   current ...\src\parseo\schemas\copernicus\clms\hr-wsi\cc\cc_filename_v0_0_0.json
+CLC                  1.0.0   current ...\src\parseo\schemas\copernicus\clms\clc\clc_filename_v1_0_0.json
+FOREST-TYPE          0.0.0   current ...\src\parseo\schemas\copernicus\clms\hrl\forest-type\forest-type_filename_v0_0_0.json
+FSC                  0.0.0   current ...\src\parseo\schemas\copernicus\clms\hr-wsi\fsc\fsc_filename_v0_0_0.json
+GFSC                 0.0.0   current ...\src\parseo\schemas\copernicus\clms\hr-wsi\gfsc\gfsc_filename_v0_0_0.json
 
 # Inspect a specific schema
 parseo schema-info S2
@@ -316,43 +261,31 @@ parseo schema-info S2
 ```
 
 Use the CLI to assemble filenames.
-```bash
+
+``` bash
 # The CLI auto-selects a schema based on the first compulsory field.
 
 # Example: Sentinel-2 SAFE (first field: platform)
-parseo assemble \
-  platform=S2B sensor=MSI processing_level=L2A sensing_datetime=20241123T224759 \
-  processing_baseline=N0511 relative_orbit=R101 mgrs_tile=T03VUL \
-  generation_datetime=20241123T230829 extension=SAFE
+parseo assemble platform=S2B sensor=MSI processing_level=L2A sensing_datetime=20241123T224759 processing_baseline=N0511 relative_orbit=R101 mgrs_tile=T03VUL generation_datetime=20241123T230829 extension=SAFE
 # -> S2B_MSIL2A_20241123T224759_N0511_R101_T03VUL_20241123T230829.SAFE
 
 # Example: CLMS HR-WSI product (first field: prefix)
-parseo assemble \
-  prefix=CLMS_WSI product=WIC pixel_spacing=020m mgrs_tile=T33WXP \
-  sensing_datetime=20201024T103021 platform=S2B processing_baseline=V100 file_id=WIC extension=tif
+parseo assemble prefix=CLMS_WSI product=WIC pixel_spacing=020m mgrs_tile=T33WXP sensing_datetime=20201024T103021 platform=S2B processing_baseline=V100 file_id=WIC extension=tif
 # -> CLMS_WSI_WIC_020m_T33WXP_20201024T103021_S2B_V100_WIC.tif
 
 # Example: CLMS HR-VPP product (first field: prefix)
-parseo assemble \
-  prefix=CLMS_VPP product=FAPAR resolution=100m mgrs_tile=T32TNS \
-  start_date=20210101 end_date=20210110 version=V100 file_id=FAPAR extension=tif
+parseo assemble prefix=CLMS_VPP product=FAPAR resolution=100m mgrs_tile=T32TNS start_date=20210101 end_date=20210110 version=V100 file_id=FAPAR extension=tif
 # -> CLMS_VPP_FAPAR_100m_T32TNS_20210101_20210110_V100_FAPAR.tif
 ```
 
 ## Schema discovery and versioning
+Each JSON schema is self contained. For `parseo` to discover it, the file must include `"schema_id"` and `"schema_version"` at the top level. Multiple versions of the same product can live side by side; add a `"status"` field to each file to mark its lifecycle (`current`, `deprecated`, ...).
 
-Each JSON schema is self contained. For `parseo` to discover it, the file must
-include `"schema_id"` and `"schema_version"` at the top level. Multiple
-versions of the same product can live side by side; add a `"status"` field to
-each file to mark its lifecycle (`current`, `deprecated`, ...).
-
-When several versions are present, `parseo` selects the one whose `status` is
-`"current"`. If none are marked current, the highest `schema_version`
-is used automatically.
+When several versions are present, `parseo` selects the one whose `status` is `"current"`. If none are marked current, the highest `schema_version` is used automatically.
 
 ### Default behaviour
 
-```python
+``` python
 from parseo import parse_auto
 
 res = parse_auto("S2B_MSIL2A_20241123T224759_N0511_R101_T03VUL_20241123T230829.SAFE")
@@ -364,7 +297,7 @@ print(res.status)   # -> 'current'
 
 Pass an explicit schema file to work with a particular version.
 
-```python
+``` python
 from pathlib import Path
 from parseo import assemble
 from parseo.parser import _load_json_from_path, _extract_fields, _try_validate
@@ -373,72 +306,44 @@ schema_v100 = Path("src/parseo/schemas/copernicus/sentinel/s2/s2_filename_v1_0_0
 
 # assemble with that exact schema version
 filename = assemble(fields, schema_path=schema_v100)
+print(filename)
 
 # parse with that schema version
 schema = _load_json_from_path(schema_v100)
 if _try_validate(name, schema):
     fields = _extract_fields(name, schema)
+print(fields)
 ```
-
----
 
 ## Creating a New Filename Schema
 
-Adding support for a new product requires only a JSON schema placed under
-`src/parseo/schemas/`. All field definitions live inside the schema file.
-For a starting you can either use one of the used ones or you can use the 
-one in `examples/schema_skeleton/`.
+Adding support for a new product requires only a JSON schema placed under `src/parseo/schemas/`. All field definitions live inside the schema file. For a starting you can either use one of the used ones or you can use the one in `examples/schema_skeleton/`.
 
-1. **Create the product directory**
-   - Path: `src/parseo/schemas/<family>/<mission>/<product>/`. `family` 
-   folder is required, the rest is up to you.  
-
-2. **Write the versioned schema file**
-   - Filename: `<product>_filename_vX_Y_Z.json`
-   - Include top-level metadata such as **required** `schema_id` and
-     `schema_version` (needed for discovery), `status` (`current`,
-     `deprecated`, etc.), `stac_version`, optional `stac_extensions`, and a
-     short `description`. ParsEO will use the version flagged as current
-     as a default when assembling a filename.
-
-3. **Define fields inline**
-   - Add a top-level `"fields"` object. Each field uses JSON Schema
-     keywords like `type`, `pattern` or `enum`, plus an optional
-     `description`.
-   - Mark required fields in a top-level `"required"` array. Any field not
-     listed there is optional.
-
-4. **Describe the filename structure**
-   - Provide a `"template"` string that arranges fields using `{field}`
-     placeholders. Optional parts can be wrapped in square brackets, e.g.,
-     `[.{extension}]`.
-   - At runtime the template is compiled into a regex by replacing each
-     placeholder with the field's pattern or enum values.
-
-5. **Provide examples**
-   - Include an `"examples"` array showing valid filenames with and without
-     optional components.
-
-6. **Maintain versions**
-   - Add a `"status"` field to every schema file. Mark the active schema as
-     `"current"` and older ones as `"deprecated"` (or similar).
-   - `parseo` selects the schema marked `"current"`; if none is marked,
-     the highest `schema_version` is chosen automatically.
-
-7. **Test the schema**
-   - Use `parseo parse <filename>` to check parsing and `parseo assemble`
-     with field dictionaries to ensure round-trip consistency.
-
----
+1.  **Create the product directory**
+    -   Path: `src/parseo/schemas/<family>/<mission>/<product>/`. `family` folder is required, the rest is up to you.
+2.  **Write the versioned schema file**
+    -   Filename: `<product>_filename_vX_Y_Z.json`
+    -   Include top-level metadata such as **required** `schema_id` and `schema_version` (needed for discovery), `status` (`current`, `deprecated`, etc.), `stac_version`, optional `stac_extensions`, and a short `description`. ParsEO will use the version flagged as current as a default when assembling a filename.
+3.  **Define fields inline**
+    -   Add a top-level `"fields"` object. Each field uses JSON Schema keywords like `type`, `pattern` or `enum`, plus an optional `description`.
+    -   Mark required fields in a top-level `"required"` array. Any field not listed there is optional.
+4.  **Describe the filename structure**
+    -   Provide a `"template"` string that arranges fields using `{field}` placeholders. Optional parts can be wrapped in square brackets, e.g., `[.{extension}]`.
+    -   At runtime the template is compiled into a regex by replacing each placeholder with the field's pattern or enum values.
+5.  **Provide examples**
+    -   Include an `"examples"` array showing valid filenames with and without optional components.
+6.  **Maintain versions**
+    -   Add a `"status"` field to every schema file. Mark the active schema as `"current"` and older ones as `"deprecated"` (or similar).
+    -   `parseo` selects the schema marked `"current"`; if none is marked, the highest `schema_version` is chosen automatically.
+7.  **Test the schema**
+    -   Use `parseo parse <filename>` to check parsing and `parseo assemble` with field dictionaries to ensure round-trip consistency.
 
 ## Contributing
 
-- Add new schemas under `src/parseo/schemas/<product_family>/`
-- Include at least one positive example in the schema file
-- Run tests with `pytest`
-- submit a pull request
-
----
+-   Add new schemas under `src/parseo/schemas/<product_family>/`
+-   Include at least one positive example in the schema file
+-   Run tests with `pytest`
+-   submit a pull request
 
 ## License
 
