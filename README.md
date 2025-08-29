@@ -2,22 +2,15 @@
 
 **parsEO** is a Python package for **parsing and assembling filenames** of satellite data and derived products. It also serves as an **authoritative definition of filename structures** through machine-readable JSON schemas.
 
-------------------------------------------------------------------------
-
 ## Features
 
 -   **Bidirectional support**:\
     Parse existing product filenames into structured fields, and assemble new filenames from fields.
 
--   **Schema-driven**: Filename rules are defined in JSON schema files under `src/parseo/schemas/`. Dropping a new schema file into this tree is enough—parsEO discovers it automatically with no central index to maintain.
+-   **Schema-driven**: Filename rules are defined in JSON schema files under `src/parseo/schemas/`. Dropping a new schema file into this tree is enough — parsEO discovers it automatically.
 
--   **Flexible folder structure**:\
-    parsEO does not assume a fixed folder depth. Products can live in arbitrary directory structures,\
-    and the schema only describes the filename itself.
+-   **Extensible**: New product families can be added by dropping schema definitions into the repo (see below).
 
--   **Extensible**: New Copernicus or Landsat product families can be added by dropping schema definitions into the repo; no index file needs updating.
-
-------------------------------------------------------------------------
 
 ## Currently Supported Products
 
@@ -30,8 +23,6 @@
     -   High Resolution Vegetation Phenology & Productivity (HR-VPP)
     -   High Resolution Water & Snow / Ice (HR-WSI)
     -   High Resolution Layers (HRL)
-
-------------------------------------------------------------------------
 
 ## Installation
 
@@ -51,7 +42,6 @@ pip install -e .
 parseo --version
 ```
 
-------------------------------------------------------------------------
 
 ## Usage
 
@@ -184,8 +174,6 @@ Open <http://127.0.0.1:8000/docs> to access Swagger UI:
 
 The interactive page lets you call `/parse` and `/assemble` directly from the browser to verify the API.
 
-------------------------------------------------------------------------
-
 ### List STAC collections (not functional yet!)
 
 Use the `list-stac-collections` subcommand to list collection IDs exposed by a STAC API. The STAC root URL must be supplied via `--stac-url`:
@@ -236,8 +224,6 @@ for cid in stac_scraper.list_collections_client(stac_url):
 ```
 
 This functionality depends on the `pystac-client` and `requests` packages being available at runtime. If either is missing an `ImportError` is raised.
-
-------------------------------------------------------------------------
 
 ## Command Line Interface
 
@@ -293,7 +279,6 @@ parseo assemble prefix=CLMS_VPP product=FAPAR resolution=100m mgrs_tile=T32TNS s
 ```
 
 ## Schema discovery and versioning
-
 Each JSON schema is self contained. For `parseo` to discover it, the file must include `"schema_id"` and `"schema_version"` at the top level. Multiple versions of the same product can live side by side; add a `"status"` field to each file to mark its lifecycle (`current`, `deprecated`, ...).
 
 When several versions are present, `parseo` selects the one whose `status` is `"current"`. If none are marked current, the highest `schema_version` is used automatically.
@@ -330,8 +315,6 @@ if _try_validate(name, schema):
 print(fields)
 ```
 
-------------------------------------------------------------------------
-
 ## Creating a New Filename Schema
 
 Adding support for a new product requires only a JSON schema placed under `src/parseo/schemas/`. All field definitions live inside the schema file. For a starting you can either use one of the used ones or you can use the one in `examples/schema_skeleton/`.
@@ -355,16 +338,12 @@ Adding support for a new product requires only a JSON schema placed under `src/p
 7.  **Test the schema**
     -   Use `parseo parse <filename>` to check parsing and `parseo assemble` with field dictionaries to ensure round-trip consistency.
 
-------------------------------------------------------------------------
-
 ## Contributing
 
 -   Add new schemas under `src/parseo/schemas/<product_family>/`
 -   Include at least one positive example in the schema file
 -   Run tests with `pytest`
 -   submit a pull request
-
-------------------------------------------------------------------------
 
 ## License
 
