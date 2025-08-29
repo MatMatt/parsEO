@@ -1,7 +1,3 @@
----
-title: "parsEO"
----
-
 # parsEO
 
 **parsEO** is a Python package for **parsing and assembling filenames** of satellite data and derived products. It also serves as an **authoritative definition of filename structures** through machine-readable JSON schemas.
