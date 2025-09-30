@@ -4,8 +4,8 @@
   "schema_version": "0.0.0",
   "status": "current",
   "stac_version": "1.1.0",
-  "stac_extensions": ["vector"],
-  "description": "Copernicus Urban Atlas land cover / land use 0.25 ha product filename (extension optional).",
+  "stac_extensions": ["vector", "raster"],
+  "description": "Copernicus Urban Atlas filename schema covering status and change layers (extension optional).",
   "fields": {
     "prefix": {
       "type": "string",
@@ -19,18 +19,18 @@
     },
     "product": {
       "type": "string",
-      "enum": ["LCU"],
-      "description": "Product theme (Land Cover / Land Use)"
+      "enum": ["LCU", "LCUC", "BBH", "GUA"],
+      "description": "Urban Atlas sub-theme identifier"
     },
     "survey": {
       "type": "string",
-      "pattern": "^S\\d{4}$",
-      "description": "Survey year token (e.g., S2021)"
+      "pattern": "^(?:S\\d{4}|C\\d{4}-\\d{4})$",
+      "description": "Temporal coverage token (e.g., S2021 or C2018-2021)"
     },
     "resolution": {
       "type": "string",
-      "pattern": "^V\\d{3}ha$",
-      "description": "Minimum mapping unit (e.g., V025ha)"
+      "pattern": "^(?:V\\d{3}ha|R\\d{2}m)$",
+      "description": "Spatial resolution or minimum mapping unit"
     },
     "area_code": {
       "type": "string",
@@ -70,6 +70,10 @@
   },
   "template": "{prefix}_{programme}_{product}_{survey}_{resolution}_{area_code}_{city}_{tile}_{version}_{release}_{production_date}[.{extension}]",
   "examples": [
-    "CLMS_UA_LCU_S2021_V025ha_DK004L3_AALBORG_03035_V01_R00_20240212"
+    "CLMS_UA_LCU_S2021_V025ha_DK004L3_AALBORG_03035_V01_R00_20240212",
+    "CLMS_UA_LCU_S2018_V025ha_DK004L3_AALBORG_03035_V02_R01_20240212",
+    "CLMS_UA_LCUC_C2018-2021_V025ha_DK004L3_AALBORG_03035_V01_R04_20240212",
+    "CLMS_UA_BBH_S2021_R10m_DK004L3_AALBORG_03035_V01_R00_20240212",
+    "CLMS_UA_GUA_S2021_V025ha_DK004L3_AALBORG_03035_V01_R11_20240212"
   ]
 }
