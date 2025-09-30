@@ -157,3 +157,25 @@ def test_parsing_fails_without_current(tmp_path, monkeypatch):
         parse_auto("ABC_X.txt")
     assert "current" in str(exc.value)
     schema_registry.clear_cache()
+
+
+def test_parse_urban_atlas_lcu():
+    name = "CLMS_UA_LCU_S2021_V025ha_DK004L3_AALBORG_03035_V01_R00_20240212"
+    result = parse_auto(name)
+
+    assert result.valid
+    assert result.match_family == "UA-LCU"
+    assert result.fields == {
+        "prefix": "CLMS",
+        "programme": "UA",
+        "product": "LCU",
+        "survey": "S2021",
+        "resolution": "V025ha",
+        "area_code": "DK004L3",
+        "city": "AALBORG",
+        "tile": "03035",
+        "version": "V01",
+        "release": "R00",
+        "production_date": "20240212",
+        "extension": None,
+    }

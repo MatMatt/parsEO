@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "schema_id": "copernicus:clms:ua-lcu",
+  "schema_version": "0.0.0",
+  "status": "current",
+  "stac_version": "1.1.0",
+  "stac_extensions": ["vector"],
+  "description": "Copernicus Urban Atlas land cover / land use 0.25 ha product filename (extension optional).",
+  "fields": {
+    "prefix": {
+      "type": "string",
+      "enum": ["CLMS"],
+      "description": "Constant programme prefix"
+    },
+    "programme": {
+      "type": "string",
+      "enum": ["UA"],
+      "description": "Programme code (Urban Atlas)"
+    },
+    "product": {
+      "type": "string",
+      "enum": ["LCU"],
+      "description": "Product theme (Land Cover / Land Use)"
+    },
+    "survey": {
+      "type": "string",
+      "pattern": "^S\\d{4}$",
+      "description": "Survey year token (e.g., S2021)"
+    },
+    "resolution": {
+      "type": "string",
+      "pattern": "^V\\d{3}ha$",
+      "description": "Minimum mapping unit (e.g., V025ha)"
+    },
+    "area_code": {
+      "type": "string",
+      "pattern": "^[A-Z]{2}\\d{3}L\\d$",
+      "description": "Local administrative area code"
+    },
+    "city": {
+      "type": "string",
+      "pattern": "^[A-Z0-9-]+$",
+      "description": "City or metropolitan area identifier"
+    },
+    "tile": {
+      "type": "string",
+      "pattern": "^\\d{5}$",
+      "description": "Tile identifier"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^V\\d{2}$",
+      "description": "Product version"
+    },
+    "release": {
+      "type": "string",
+      "pattern": "^R\\d{2}$",
+      "description": "Release identifier"
+    },
+    "production_date": {
+      "type": "string",
+      "pattern": "^\\d{8}$",
+      "description": "Production date (YYYYMMDD)"
+    },
+    "extension": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9]+(?:\\.[A-Za-z0-9]+)?$",
+      "description": "Optional file extension without leading dot (allows compound extensions such as gpkg.zip)"
+    }
+  },
+  "template": "{prefix}_{programme}_{product}_{survey}_{resolution}_{area_code}_{city}_{tile}_{version}_{release}_{production_date}[.{extension}]",
+  "examples": [
+    "CLMS_UA_LCU_S2021_V025ha_DK004L3_AALBORG_03035_V01_R00_20240212"
+  ]
+}
