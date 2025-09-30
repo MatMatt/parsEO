@@ -14,3 +14,4 @@ These instructions apply to the entire repository.
 ## Development workflow
 - Use the `develop` branch as the base for changes.
 
+**New/all schemas shall follow the tempplate in 'examples/schema_skeleton/' striclty.** 
