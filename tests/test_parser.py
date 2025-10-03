@@ -181,6 +181,7 @@ def test_parse_urban_atlas_lcu():
     }
 
 
+
 def test_parse_clms_hrl_nvlcc():
     name = "CLMS_HRLNVLCC_IMD_S2021_R10m_E09N27_03035_V01_R01.tif"
     result = parse_auto(name)
@@ -198,6 +199,24 @@ def test_parse_clms_hrl_nvlcc():
         "version": "V01",
         "release": "R01",
         "extension": "tif",
+    }
+
+def test_parse_clms_egms_l3_velocity_grid():
+    name = "EGMS_L3_E28N49_100km_U_2018_2022_1.tiff"
+    result = parse_auto(name)
+
+    assert result.valid
+    assert result.match_family == "EGMS-L3"
+    assert result.fields == {
+        "prefix": "EGMS",
+        "level": "L3",
+        "tile": "E28N49",
+        "tile_size": "100km",
+        "component": "U",
+        "start_year": "2018",
+        "end_year": "2022",
+        "version": "1",
+        "extension": "tiff",
     }
 
 
