@@ -179,3 +179,15 @@ def test_parse_urban_atlas_lcu():
         "production_date": "20240212",
         "extension": None,
     }
+
+
+def test_parse_modis_stac_mapping():
+    name = "MOD09GA.A2021123.h18v04.006.2021132234506.hdf"
+    result = parse_auto(name)
+
+    assert result.valid
+    assert result.match_family == "MODIS"
+    assert result.fields["platform"] == "Terra"
+    assert result.fields["instrument"] == "MODIS"
+    assert result.fields["platform_code"] == "MOD"
+    assert result.fields["product"] == "09"

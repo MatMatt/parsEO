@@ -13,6 +13,7 @@ from typing import Iterable
 from typing import Optional
 from typing import Union
 
+from ._field_mappings import apply_schema_mappings
 from .schema_registry import _discover_family_info
 from .schema_registry import _get_schema_paths
 from .schema_registry import _load_json_from_path
@@ -96,7 +97,10 @@ def _extract_fields(name: str, schema: Dict) -> Dict[str, str]:
     If the regex doesn't match, return an empty dict.
     """
     m = _match_filename(name, schema)
-    return m.groupdict() if m else {}
+    if not m:
+        return {}
+    extracted = m.groupdict()
+    return apply_schema_mappings(extracted, schema)
 
 
 def _try_validate(name: str, schema: Dict) -> bool:

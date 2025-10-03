@@ -10,6 +10,7 @@ from typing import Any
 from typing import Dict
 from typing import Union
 
+from ._field_mappings import translate_fields_to_tokens
 from ._json import load_json
 from .schema_registry import get_schema_path
 from .template import _field_regex
@@ -80,10 +81,11 @@ def _assemble_schema(schema_path: Union[str, Path], fields: Dict[str, Any]) -> s
     """
 
     sch = _load_schema(schema_path)
+    prepared_fields = translate_fields_to_tokens(fields, sch)
 
     # Validate provided fields against schema definitions
     specs = sch.get("fields", {})
-    for name, value in fields.items():
+    for name, value in prepared_fields.items():
         spec = specs.get(name)
         if not spec:
             continue
@@ -104,7 +106,7 @@ def _assemble_schema(schema_path: Union[str, Path], fields: Dict[str, Any]) -> s
         raise ValueError(f"Schema {schema_path} missing 'template' string.")
 
     try:
-        return _assemble_from_template(template, fields)
+        return _assemble_from_template(template, prepared_fields)
     except KeyError as exc:
         name = exc.args[0]
         raise ValueError(
