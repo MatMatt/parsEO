@@ -87,3 +87,24 @@ def test_assemble_with_family_s2():
         == "S2B_MSIL2A_20241123T224759_N0511_R101_T03VUL_20241123T230829.SAFE"
     )
 
+
+def test_assemble_modis_from_stac_fields():
+    schema = (
+        Path(__file__).resolve().parents[1]
+        / "src/parseo/schemas/nasa/modis/modis_filename_v1_0_0.json"
+    )
+    fields = {
+        "platform": "Terra",
+        "instrument": "MODIS",
+        "product": "09",
+        "variant": "GA",
+        "acq_date": "A2021123",
+        "tile": "h18v04",
+        "collection": "006",
+        "proc_date": "2021132234506",
+        "extension": "hdf",
+    }
+
+    assembled = assemble(fields, schema_path=schema)
+    assert assembled == "MOD09GA.A2021123.h18v04.006.2021132234506.hdf"
+

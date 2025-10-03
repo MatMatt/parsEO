@@ -10,7 +10,13 @@
     "prefix": {
       "type": "string",
       "pattern": "^PRD$",
-      "description": "Static prefix identifying the product family"
+      "description": "Static prefix identifying the product family",
+      "stac_map": {
+        "PRD": {
+          "platform": "ExamplePlatform",
+          "instrument": "ExampleInstrument"
+        }
+      }
     },
     "product": {
       "type": "string",

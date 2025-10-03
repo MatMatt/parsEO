@@ -9,7 +9,21 @@
     "platform": {
       "type": "string",
       "pattern": "^(MOD|MYD|MCD)$",
-      "description": "Spacecraft platform (MOD=Terra, MYD=Aqua, MCD=Combined)"
+      "description": "Spacecraft platform (MOD=Terra, MYD=Aqua, MCD=Combined)",
+      "stac_map": {
+        "MOD": {
+          "platform": "Terra",
+          "instrument": "MODIS"
+        },
+        "MYD": {
+          "platform": "Aqua",
+          "instrument": "MODIS"
+        },
+        "MCD": {
+          "platform": "Combined",
+          "instrument": "MODIS"
+        }
+      }
     },
     "product": {
       "type": "string",
