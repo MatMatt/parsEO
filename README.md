@@ -11,7 +11,6 @@
 
 -   **Extensible**: New product families can be added by dropping schema definitions into the repo (see below).
 
-
 ## Currently Supported Products
 
 -   **Sentinel missions**: S1, S2, S3, S4, S5P, S6\
@@ -41,7 +40,6 @@ pip install -e .
 ``` bash
 parseo --version
 ```
-
 
 ## Usage
 
@@ -279,6 +277,7 @@ parseo assemble prefix=CLMS_VPP product=FAPAR resolution=100m mgrs_tile=T32TNS s
 ```
 
 ## Schema discovery and versioning
+
 Each JSON schema is self contained. For `parseo` to discover it, the file must include `"schema_id"` and `"schema_version"` at the top level. Multiple versions of the same product can live side by side; add a `"status"` field to each file to mark its lifecycle (`current`, `deprecated`, ...).
 
 When several versions are present, `parseo` selects the one whose `status` is `"current"`. If none are marked current, the highest `schema_version` is used automatically.
