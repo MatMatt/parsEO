@@ -29,8 +29,8 @@
     },
     "epsg_code": {
       "type": "string",
-      "pattern": "^\\d{5}$",
-      "description": "EPSG code padded to five digits"
+      "pattern": "^\\d{4,5}$",
+      "description": "EPSG code (optionally zero-padded to five digits)"
     },
     "extension": {
       "type": "string",

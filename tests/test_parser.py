@@ -202,6 +202,15 @@ def test_parse_clms_hrl_nvlcc():
     }
 
 
+def test_parse_clms_hrl_nvlcc_unpadded_epsg():
+    name = "CLMS_HRLNVLCC_IMD_S2021_R10m_E09N27_3035_V01_R01.tif"
+    result = parse_auto(name)
+
+    assert result.valid
+    assert result.match_family == "NVLCC"
+    assert result.fields["epsg_code"] == "03035"
+
+
 def test_parse_clms_hrl_small_woody_features():
     name = "SWF_2018_005m_E34N27_03035.tif"
     result = parse_auto(name)
