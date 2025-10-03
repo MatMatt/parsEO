@@ -181,6 +181,26 @@ def test_parse_urban_atlas_lcu():
     }
 
 
+def test_parse_clms_hrl_nvlcc():
+    name = "CLMS_HRLNVLCC_IMD_S2021_R10m_E09N27_03035_V01_R01.tif"
+    result = parse_auto(name)
+
+    assert result.valid
+    assert result.match_family == "NVLCC"
+    assert result.fields == {
+        "prefix": "CLMS",
+        "theme": "HRLNVLCC",
+        "layer": "IMD",
+        "temporal_coverage": "S2021",
+        "resolution": "R10m",
+        "tile": "E09N27",
+        "epsg_code": "03035",
+        "version": "V01",
+        "release": "R01",
+        "extension": "tif",
+    }
+
+
 def test_parse_modis_stac_mapping():
     name = "MOD09GA.A2021123.h18v04.006.2021132234506.hdf"
     result = parse_auto(name)
