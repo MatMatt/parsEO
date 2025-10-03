@@ -201,6 +201,22 @@ def test_parse_clms_hrl_nvlcc():
         "extension": "tif",
     }
 
+
+def test_parse_clms_hrl_small_woody_features():
+    name = "SWF_2018_005m_E34N27_03035.tif"
+    result = parse_auto(name)
+
+    assert result.valid
+    assert result.match_family == "SMALL-WOODY-FEATURES"
+    assert result.fields == {
+        "product": "SWF",
+        "reference_year": "2018",
+        "resolution": "005m",
+        "tile_id": "E34N27",
+        "epsg_code": "03035",
+        "extension": "tif",
+    }
+
 def test_parse_clms_egms_l3_velocity_grid():
     name = "EGMS_L3_E28N49_100km_U_2018_2022_1.tiff"
     result = parse_auto(name)
