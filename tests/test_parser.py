@@ -191,3 +191,14 @@ def test_parse_modis_stac_mapping():
     assert result.fields["instrument"] == "MODIS"
     assert result.fields["platform_code"] == "MOD"
     assert result.fields["product"] == "09"
+
+
+def test_parse_landsat_stac_mapping():
+    name = "LC08_L1TP_190026_20200101_20200114_02_T1.tar"
+    result = parse_auto(name)
+
+    assert result.valid
+    assert result.match_family == "LANDSAT"
+    assert result.fields["mission_code"] == "LC08"
+    assert result.fields["platform"] == "landsat-8"
+    assert result.fields["instrument"] == "OLI_TIRS"
