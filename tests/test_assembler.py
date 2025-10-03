@@ -108,3 +108,25 @@ def test_assemble_modis_from_stac_fields():
     assembled = assemble(fields, schema_path=schema)
     assert assembled == "MOD09GA.A2021123.h18v04.006.2021132234506.hdf"
 
+
+def test_assemble_landsat_from_stac_fields():
+    schema = (
+        Path(__file__).resolve().parents[1]
+        / "src/parseo/schemas/usgs/landsat/landsat_filename_v1_0_0.json"
+    )
+    fields = {
+        "platform": "landsat-8",
+        "instrument": "OLI_TIRS",
+        "processing_level": "L1TP",
+        "wrs_path": "190",
+        "wrs_row": "026",
+        "acq_date": "20200101",
+        "proc_date": "20200114",
+        "collection_number": "02",
+        "tier": "T1",
+        "extension": "tar",
+    }
+
+    assembled = assemble(fields, schema_path=schema)
+    assert assembled == "LC08_L1TP_190026_20200101_20200114_02_T1.tar"
+
