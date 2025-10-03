@@ -199,6 +199,6 @@ def test_parse_landsat_stac_mapping():
 
     assert result.valid
     assert result.match_family == "LANDSAT"
-    assert result.fields["mission_code"] == "LC08"
     assert result.fields["platform"] == "landsat-8"
     assert result.fields["instrument"] == "OLI_TIRS"
+    assert result.fields["platform_code"] == "LC08"
