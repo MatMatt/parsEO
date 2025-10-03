@@ -181,6 +181,25 @@ def test_parse_urban_atlas_lcu():
     }
 
 
+def test_parse_clms_egms_l3_velocity_grid():
+    name = "EGMS_L3_E28N49_100km_U_2018_2022_1.tiff"
+    result = parse_auto(name)
+
+    assert result.valid
+    assert result.match_family == "EGMS-L3"
+    assert result.fields == {
+        "prefix": "EGMS",
+        "level": "L3",
+        "tile": "E28N49",
+        "tile_size": "100km",
+        "component": "U",
+        "start_year": "2018",
+        "end_year": "2022",
+        "version": "1",
+        "extension": "tiff",
+    }
+
+
 def test_parse_modis_stac_mapping():
     name = "MOD09GA.A2021123.h18v04.006.2021132234506.hdf"
     result = parse_auto(name)
