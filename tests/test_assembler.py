@@ -72,7 +72,7 @@ def test_list_schema_versions():
 def test_assemble_with_family_s2():
     fields = {
         "platform": "S2B",
-        "sensor": "MSI",
+        "instrument": "MSI",
         "processing_level": "L2A",
         "sensing_datetime": "20241123T224759",
         "processing_baseline": "N0511",

@@ -73,7 +73,7 @@ from parseo import assemble, assemble_auto
 
 fields = {
     "platform": "S2B",
-    "sensor": "MSI",
+    "instrument": "MSI",
     "processing_level": "L2A",
     "sensing_datetime": "20241123T224759",
     "processing_baseline": "N0511",
@@ -244,15 +244,15 @@ GFSC                 0.0.0   current ...\src\parseo\schemas\copernicus\clms\hr-w
 parseo schema-info S2
 # -> {
 #      "schema_id": "copernicus:sentinel:s2",
-#      "description": "Sentinel-2 product filename (MSI sensor, processing levels L1C/L2A; extension optional).",
-#      "template": "{platform}_{sensor}{processing_level}_{sensing_datetime}_..._[.{extension}]",
+#      "description": "Sentinel-2 product filename (MSI instrument, processing levels L1C/L2A; extension optional).",
+#      "template": "{platform}_{instrument}{processing_level}_{sensing_datetime}_..._[.{extension}]",
 #      "examples": [
 #        "S2B_MSIL2A_20241123T224759_N0511_R101_T03VUL_20241123T230829.SAFE",
 #        "..."
 #      ],
 #      "fields": {
 #        "platform": {"type": "string", "enum": ["S2A", "S2B", "S2C"], "description": "Spacecraft unit"},
-#        "sensor": {"type": "string", "enum": ["MSI"], "description": "Sensor"},
+#        "instrument": {"type": "string", "enum": ["MSI"], "description": "Instrument"},
 #        ...
 #      }
 #    }
@@ -264,7 +264,7 @@ Use the CLI to assemble filenames.
 # The CLI auto-selects a schema based on the first compulsory field.
 
 # Example: Sentinel-2 SAFE (first field: platform)
-parseo assemble platform=S2B sensor=MSI processing_level=L2A sensing_datetime=20241123T224759 processing_baseline=N0511 relative_orbit=R101 mgrs_tile=T03VUL generation_datetime=20241123T230829 extension=SAFE
+parseo assemble platform=S2B instrument=MSI processing_level=L2A sensing_datetime=20241123T224759 processing_baseline=N0511 relative_orbit=R101 mgrs_tile=T03VUL generation_datetime=20241123T230829 extension=SAFE
 # -> S2B_MSIL2A_20241123T224759_N0511_R101_T03VUL_20241123T230829.SAFE
 
 # Example: CLMS HR-WSI product (first field: prefix)

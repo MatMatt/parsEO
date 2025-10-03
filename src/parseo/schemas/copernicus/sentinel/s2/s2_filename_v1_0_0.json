@@ -5,17 +5,17 @@
   "status": "current",
   "stac_version": "1.1.0",
   "stac_extensions": ["processing", "sat", "raster", "eo", "mgrs"],
-  "description": "Sentinel-2 product filename (MSI sensor, processing levels L1C/L2A; extension optional).",
+  "description": "Sentinel-2 product filename (MSI instrument, processing levels L1C/L2A; extension optional).",
   "fields": {
     "platform": {
       "type": "string",
       "enum": ["S2A", "S2B", "S2C"],
       "description": "Spacecraft unit"
     },
-    "sensor": {
+    "instrument": {
       "type": "string",
       "enum": ["MSI"],
-      "description": "Sensor"
+      "description": "Instrument"
     },
     "processing_level": {
       "type": "string",
@@ -53,7 +53,7 @@
       "description": "File extension without leading dot"
     }
   },
-  "template": "{platform}_{sensor}{processing_level}_{sensing_datetime}_{processing_baseline}_{relative_orbit}_{mgrs_tile}_{generation_datetime}[.{extension}]",
+  "template": "{platform}_{instrument}{processing_level}_{sensing_datetime}_{processing_baseline}_{relative_orbit}_{mgrs_tile}_{generation_datetime}[.{extension}]",
   "examples": [
     "S2B_MSIL2A_20241123T224759_N0511_R101_T03VUL_20241123T230829.SAFE",
     "S2A_MSIL1C_20230715T103021_N0400_R052_T32TNS_20230715T103555",
