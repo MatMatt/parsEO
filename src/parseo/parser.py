@@ -91,6 +91,20 @@ def _match_filename(name: str, schema: Dict) -> Optional[re.Match]:
     return rx.match(name)
 
 
+def _normalize_epsg_fields(fields: Dict[str, Any]) -> Dict[str, Any]:
+    """Normalize EPSG-related fields to consistently use 5-digit codes."""
+
+    normalized = dict(fields)
+    for key, value in fields.items():
+        if not isinstance(key, str):
+            continue
+        if "epsg" not in key.lower():
+            continue
+        if isinstance(value, str) and value.isdigit() and len(value) in {4, 5}:
+            normalized[key] = value.zfill(5)
+    return normalized
+
+
 def _extract_fields(name: str, schema: Dict) -> Dict[str, str]:
     """
     Extract named groups as fields from 'name' using the schema's regex.
@@ -100,7 +114,8 @@ def _extract_fields(name: str, schema: Dict) -> Dict[str, str]:
     if not m:
         return {}
     extracted = m.groupdict()
-    return apply_schema_mappings(extracted, schema)
+    enriched = apply_schema_mappings(extracted, schema)
+    return _normalize_epsg_fields(enriched)
 
 
 def _try_validate(name: str, schema: Dict) -> bool:
