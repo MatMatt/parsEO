@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "schema_id": "copernicus:clms:ua-dhm",
+  "schema_version": "0.0.0",
+  "status": "current",
+  "stac_version": "1.1.0",
+  "stac_extensions": ["vector"],
+  "description": "Copernicus Urban Atlas 2021 Digital Height Model (DHM) vector filename schema.",
+  "fields": {
+    "area_code": {
+      "type": "string",
+      "pattern": "^[A-Z]{2}\\d{3}Lx$",
+      "description": "Local administrative area code"
+    },
+    "city": {
+      "type": "string",
+      "pattern": "^[A-Z0-9_À-ÖØ-öø-ÿ]+$",
+      "description": "City or metropolitan area identifier (uppercase, underscores for spaces)"
+    },
+    "campaign": {
+      "type": "string",
+      "enum": ["UA2021"],
+      "description": "Survey campaign identifier"
+    },
+    "product": {
+      "type": "string",
+      "enum": ["DHM"],
+      "description": "Product type (Digital Height Model)"
+    },
+    "extension": {
+      "type": "string",
+      "enum": ["shp"],
+      "description": "Vector file extension without leading dot"
+    }
+  },
+  "template": "{area_code}_{city}_{campaign}_{product}.{extension}",
+  "examples": [
+    "DE074Lx_GÖRLITZ_UA2021_DHM.shp",
+    "DE510Lx_LÜBECK_UA2021_DHM.shp",
+    "DK001Lx_KØBENHAVN_UA2021_DHM.shp",
+    "ES012Lx_VITORIA_GASTEIZ_UA2021_DHM.shp",
+    "ES031Lx_LUGO_UA2021_DHM.shp"
+  ]
+}
