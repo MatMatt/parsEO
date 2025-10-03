@@ -10,7 +10,7 @@
     "prefix": {
       "type": "string",
       "pattern": "^PRD$",
-      "description": "Static prefix identifying the product family",
+      "description": "Translate combinted elements to/from pure STAC fields",
       "stac_map": {
         "PRD": {
           "platform": "ExamplePlatform",
