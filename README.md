@@ -382,12 +382,22 @@ Adding support for a new product requires only a JSON schema placed under `src/p
     -   Example:
 
         ``` jsonc
-        "collection": {
+        "prefix": {
           "type": "string",
-          "enum": ["MOD09GA", "MYD09GA"],
+          "pattern": "^(MOD|MYD|MCD)$",
           "stac_map": {
-            "MOD09GA": {"collection": "mod09ga"},
-            "MYD09GA": {"collection": "myd09ga"}
+            "MOD": {
+              "platform": "Terra",
+              "instrument": "MODIS"
+            },
+            "MYD": {
+              "platform": "Aqua",
+              "instrument": "MODIS"
+            },
+            "MCD": {
+              "platform": "Combined",
+              "instrument": "MODIS"
+            }
           }
         },
         "tile": {
