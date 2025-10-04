@@ -4,7 +4,7 @@
   "schema_version": "0.0.0",
   "status": "current",
   "stac_version": "1.1.0",
-  "stac_extensions": ["raster", "eo"],
+  "stac_extensions": ["https://stac-extensions.github.io/raster/v1.0.0/schema.json", "https://stac-extensions.github.io/eo/v1.0.0/schema.json"],
   "description": "CLMS High Resolution Layer Water & Wetness product filename (extension optional).",
   "fields": {
     "product": {"type": "string", "enum": ["WAW"], "description": "Product code"},

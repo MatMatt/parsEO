@@ -370,6 +370,7 @@ Adding support for a new product requires only a JSON schema placed under `src/p
 2.  **Write the versioned schema file**
     -   Filename: `<product>_filename_vX_Y_Z.json`
     -   Include top-level metadata such as **required** `schema_id` and `schema_version` (needed for discovery), `status` (`current`, `deprecated`, etc.), `stac_version`, optional `stac_extensions`, and a short `description`. ParsEO will use the version flagged as current as a default when assembling a filename.
+    -   When populating `stac_extensions`, always list the canonical schema URIs published at [stac-extensions.github.io](https://stac-extensions.github.io) (for example, `https://stac-extensions.github.io/eo/v1.0.0/schema.json`).
 3.  **Define fields inline**
     -   Add a top-level `"fields"` object. Each field uses JSON Schema keywords like `type`, `pattern` or `enum`, plus an optional `description`.
     -   Mark required fields in a top-level `"required"` array. Any field not listed there is optional.
