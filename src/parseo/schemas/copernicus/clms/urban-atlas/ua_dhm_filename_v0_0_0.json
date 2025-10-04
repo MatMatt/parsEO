@@ -7,10 +7,10 @@
   "stac_extensions": ["https://stac-extensions.github.io/vector/v1.0.0/schema.json"],
   "description": "Copernicus Urban Atlas 2021 Digital Height Model (DHM) vector filename schema.",
   "fields": {
-    "fua": {
+    "area_code": {
       "type": "string",
       "pattern": "^[A-Z]{2}\\d{3}L[A-Za-z0-9]$",
-      "description": "Local administrative area code (FUA)"
+      "description": "Functional urban area (FUA) code"
     },
     "city": {
       "type": "string",
@@ -33,7 +33,7 @@
       "description": "Vector file extension without leading dot"
     }
   },
-  "template": "{fua}_{city}_{campaign}_{variable}[.{extension}]",
+  "template": "{area_code}_{city}_{campaign}_{variable}[.{extension}]",
   "examples": [
     "DE074Lx_GÖRLITZ_UA2021_DHM.shp",
     "DE510Lx_LÜBECK_UA2021_DHM.shp",

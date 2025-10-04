@@ -30,7 +30,7 @@
     "type": {
       "type": "string",
       "enum": ["V","R"],
-      "description": "Spatial resolution or minimum mapping unit"
+      "description": "Data type raster or vector"
     },
     "resolution": {
       "type": "string",
