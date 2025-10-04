@@ -12,7 +12,7 @@
     "pixel_spacing": {"type": "string", "enum": ["060m"], "description": "Pixel spacing"},
     "mgrs_tile": {"type": "string", "pattern": "^T\\d{2}[C-HJ-NP-X][A-Z]{2}$", "description": "MGRS tile identifier"},
     "sensing_datetime": {"type": "string", "pattern": "^\\d{8}T\\d{6}$", "description": "Acquisition datetime (UTC)"},
-    "platform": {"type": "string", "enum": ["S1A", "S1B"], "description": "Satellite platform"},
+    "platform": {"type": "string", "enum": ["S1A", "S1B", "S1C"], "description": "Satellite platform"},
     "version": {"type": "string", "pattern": "^V\\d{3}$", "description": "Product version"},
     "file_id": {"type": "string", "enum": ["SSC", "SSC-QA", "MTD"], "description": "File identifier"},
     "extension": {"type": "string", "enum": ["tif", "xml"], "description": "File extension without leading dot"}
