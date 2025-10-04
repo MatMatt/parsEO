@@ -142,6 +142,47 @@ validate_schema(
 
 The paresos internal tests call this `validate_schema` so that schema examples stay in sync with the parser over time.
 
+### Map combined tokens to STAC fields (`stac_map`)
+
+Some schemas contain filename tokens that encode multiple STAC metadata fields (for example, a platform identifier that also implies the satellite name and instrument). You can declare a `stac_map` block inside the token definition to expand those combined values into richer STAC metadata when parsing, and to translate STAC fields back into tokens when assembling filenames.
+
+Below is an excerpt from the Landsat schema (`src/parseo/schemas/usgs/landsat/landsat_filename_v1_0_0.json`) that maps the combined `platform` token to STAC fields:
+
+``` json
+{
+  "fields": {
+    "platform": {
+      "description": "Landsat platform identifier",
+      "stac_map": {
+        "preserve_original_as": "platform_code",
+        "LC08": {
+          "platform": "landsat-8",
+          "instrument": "OLI_TIRS"
+        },
+        "LE07": {
+          "platform": "landsat-7",
+          "instrument": "ETM+"
+        }
+      }
+    }
+  }
+}
+```
+
+When you parse a Landsat filename, `parse_auto` uses this mapping to enrich the result:
+
+``` python
+from parseo import parse_auto
+
+result = parse_auto("LC08_L1TP_190026_20200101_20200114_02_T1.tar")
+
+result.fields["platform_code"]  # "LC08" (preserved token value)
+result.fields["platform"]        # "landsat-8" (STAC platform name)
+result.fields["instrument"]      # "OLI_TIRS"
+```
+
+The same mapping is applied in reverse when assembling filenames. If you provide the STAC values along with `platform_code`, `assemble_auto` (or `assemble`) picks the correct token for the output filename. This keeps your schemas declarative while ensuring that parse results remain STAC-friendly.
+
 ### Run as API
 
 parsEO functions can be exposed through a web service. The example below uses [FastAPI](https://fastapi.tiangolo.com), which provides an automatic Swagger UI for trying out the endpoints.
