@@ -359,7 +359,7 @@ print(fields)
 
 ## Creating a New Filename Schema
 
-Adding support for a new product requires only a JSON schema placed under `src/parseo/schemas/`. All field definitions live inside the schema file. For a starting you can either use one of the used ones or you can use the one in `examples/schema_skeleton/`.
+Adding support for a new product requires only a JSON schema placed under `src/parseo/schemas/`. All field definitions live inside the schema file. Start from an existing product schema or copy the skeleton in `examples/schema_skeleton/`.
 
 1.  **Create the product directory**
     -   Path: `src/parseo/schemas/<family>/<mission>/<product>/`. `family` folder is required, the rest is up to you.
@@ -369,6 +369,37 @@ Adding support for a new product requires only a JSON schema placed under `src/p
 3.  **Define fields inline**
     -   Add a top-level `"fields"` object. Each field uses JSON Schema keywords like `type`, `pattern` or `enum`, plus an optional `description`.
     -   Mark required fields in a top-level `"required"` array. Any field not listed there is optional.
+
+    **Picking `enum` vs. `pattern`**
+
+    -   Use an `enum` when the field value must be selected from a finite vocabulary (e.g., `extension`, `collection`, or `processing_mode`). Enums keep the schema readable and help surface invalid tokens early.
+    -   Use a `pattern` when the field must match a structured value such as timestamps (`^\d{8}T\d{6}$`), version identifiers (`^V\d{3}$`), or grid/tile IDs (`^h\d{2}v\d{2}$`). Patterns work best when the allowed set is large but follows a consistent structure.
+
+    **Linking fields to STAC metadata**
+
+    -   Populate a field-level `stac_map` when the filename token should be expanded into richer STAC properties. Map enum entries to dictionaries and use `pattern` capture groups (`$1`, `$2`, …) to fill values derived from the match.
+    -   Keep the STAC mappings near the relevant field definitions so downstream tooling can translate filenames into STAC items without extra lookups.
+    -   Example:
+
+        ``` jsonc
+        "collection": {
+          "type": "string",
+          "enum": ["MOD09GA", "MYD09GA"],
+          "stac_map": {
+            "MOD09GA": {"collection": "mod09ga"},
+            "MYD09GA": {"collection": "myd09ga"}
+          }
+        },
+        "tile": {
+          "type": "string",
+          "pattern": "^(h\d{2})(v\d{2})$",
+          "stac_map": {
+            "tile": "$0",
+            "horizontal_grid": "$1",
+            "vertical_grid": "$2"
+          }
+        }
+        ```
 4.  **Describe the filename structure**
     -   Provide a `"template"` string that arranges fields using `{field}` placeholders. Optional parts can be wrapped in square brackets, e.g., `[.{extension}]`.
     -   At runtime the template is compiled into a regex by replacing each placeholder with the field's pattern or enum values.
