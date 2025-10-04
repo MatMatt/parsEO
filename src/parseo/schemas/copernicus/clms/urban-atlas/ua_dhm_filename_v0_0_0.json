@@ -7,22 +7,22 @@
   "stac_extensions": ["https://stac-extensions.github.io/vector/v1.0.0/schema.json"],
   "description": "Copernicus Urban Atlas 2021 Digital Height Model (DHM) vector filename schema.",
   "fields": {
-    "area_code": {
+    "fua": {
       "type": "string",
-      "pattern": "^[A-Z]{2}\\d{3}Lx$",
-      "description": "Local administrative area code"
+      "pattern": "^[A-Z]{2}\\d{3}L\\d$",
+      "description": "Local administrative area code (FUA)"
     },
     "city": {
       "type": "string",
-      "pattern": "^[A-Z0-9_À-ÖØ-öø-ÿ]+$",
-      "description": "City or metropolitan area identifier (uppercase, underscores for spaces)"
+      "pattern": "^[A-Z0-9-]+$",
+      "description": "City or metropolitan area identifier"
     },
     "campaign": {
       "type": "string",
       "enum": ["UA2021"],
       "description": "Survey campaign identifier"
     },
-    "product": {
+    "variable": {
       "type": "string",
       "enum": ["DHM"],
       "description": "Product type (Digital Height Model)"
@@ -33,7 +33,7 @@
       "description": "Vector file extension without leading dot"
     }
   },
-  "template": "{area_code}_{city}_{campaign}_{product}.{extension}",
+  "template": "{fua}_{city}_{campaign}_{variable}.{extension}",
   "examples": [
     "DE074Lx_GÖRLITZ_UA2021_DHM.shp",
     "DE510Lx_LÜBECK_UA2021_DHM.shp",

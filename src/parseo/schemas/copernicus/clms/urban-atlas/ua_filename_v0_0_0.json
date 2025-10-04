@@ -32,20 +32,20 @@
       "pattern": "^(?:V\\d{3}ha|R\\d{2}m)$",
       "description": "Spatial resolution or minimum mapping unit"
     },
-    "area_code": {
+    "fua": {
       "type": "string",
       "pattern": "^[A-Z]{2}\\d{3}L\\d$",
-      "description": "Local administrative area code"
+      "description": "Local administrative area code (FUA)"
     },
     "city": {
       "type": "string",
       "pattern": "^[A-Z0-9-]+$",
       "description": "City or metropolitan area identifier"
     },
-    "tile": {
-      "type": "string",
+    "epsg_code": {
+      "type": "string", 
       "pattern": "^\\d{5}$",
-      "description": "Tile identifier"
+      "description": "EPSG code of the product grid"
     },
     "version": {
       "type": "string",
@@ -68,7 +68,7 @@
       "description": "Optional file extension without leading dot (allows compound extensions such as gpkg.zip)"
     }
   },
-  "template": "{prefix}_{programme}_{product}_{survey}_{resolution}_{area_code}_{city}_{tile}_{version}_{release}_{production_date}[.{extension}]",
+  "template": "{prefix}_{programme}_{product}_{survey}_{resolution}_{fua}_{city}_{epsg_code}_{version}_{release}_{production_date}[.{extension}]",
   "examples": [
     "CLMS_UA_LCU_S2021_V025ha_DK004L3_AALBORG_03035_V01_R00_20240212",
     "CLMS_UA_LCU_S2018_V025ha_DK004L3_AALBORG_03035_V02_R01_20240212",
