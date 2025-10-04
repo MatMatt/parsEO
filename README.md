@@ -359,7 +359,7 @@ print(fields)
 
 ## Creating a New Filename Schema
 
-Adding support for a new product requires only a JSON schema placed under `src/parseo/schemas/`. All field definitions live inside the schema file. Start from an existing product schema or copy the skeleton in `examples/schema_skeleton/`.
+Adding support for a new product requires only a JSON schema placed under `src/parseo/schemas/`. All field definitions live inside the schema file. Start from an existing product schema or copy the skeleton in `template/`.
 
 1.  **Create the product directory**
     -   Path: `src/parseo/schemas/<family>/<mission>/<product>/`. `family` folder is required, the rest is up to you.
