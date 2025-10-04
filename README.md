@@ -19,7 +19,7 @@
 -   **EUMETSAT missions**: MTG, Metop
 -   **Copernicus Land Monitoring Service (CLMS)**:
     -   Corine Land Cover (CLC) and CLC+ Raster
-    -   European Ground Motion Service (EGMS) Level 3 velocity grid
+    -   European Ground Motion Service (EGMS) Level 2 basic/calibrated products, Level 3 velocity grid, and GNSS model
     -   Urban Atlas Land Cover / Land Use
     -   High Resolution Vegetation Phenology & Productivity (HR-VPP): Seasonal Trajectories (PPI) and Vegetation Indices (FAPAR, LAI, NDVI, PPI, FCOVER, DMP)
     -   High Resolution Water & Snow / Ice (HR-WSI): CC, FSC, GFSC, ICD, SWS, WDS, WIC, WIC-COMB, SP_S2, SP_COMB
