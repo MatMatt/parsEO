@@ -173,7 +173,7 @@ def test_parse_urban_atlas_lcu():
         "resolution": "V025ha",
         "area_code": "DK004L3",
         "city": "AALBORG",
-        "tile": "03035",
+        "epsg_code": "03035",
         "version": "V01",
         "release": "R00",
         "production_date": "20240212",

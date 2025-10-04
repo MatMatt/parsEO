@@ -36,7 +36,7 @@ class ParseResult:
     match_family: Optional[str] = None  # e.g., "S1", "S2", "LANDSAT"
 
 
-@dataclass(frozen=True)
+@dataclass
 class ParseError(Exception):
     """Raised when a filename nearly matches a schema but fails on a field."""
 
@@ -98,7 +98,8 @@ def _normalize_epsg_fields(fields: Dict[str, Any]) -> Dict[str, Any]:
     for key, value in fields.items():
         if not isinstance(key, str):
             continue
-        if "epsg" not in key.lower():
+        key_lower = key.lower()
+        if "epsg" not in key_lower and key_lower not in {"tile", "tile_id"}:
             continue
         if isinstance(value, str) and value.isdigit() and len(value) in {4, 5}:
             normalized[key] = value.zfill(5)
