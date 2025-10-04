@@ -227,6 +227,22 @@ def test_parse_clms_hrl_small_woody_features():
         "extension": "tif",
     }
 
+
+def test_parse_clms_hrl_imperviousness():
+    name = "IMD_2021_E042N018_010m_V100.tif"
+    result = parse_auto(name)
+
+    assert result.valid
+    assert result.match_family == "IMPERVIOUSNESS"
+    assert result.fields == {
+        "variable": "IMD",
+        "reference_year": "2021",
+        "eea_tile": "E042N018",
+        "resolution": "010m",
+        "version": "V100",
+        "extension": "tif",
+    }
+
 def test_parse_clms_egms_l3_velocity_grid():
     name = "EGMS_L3_E28N49_100km_U_2018_2022_1.tiff"
     result = parse_auto(name)
