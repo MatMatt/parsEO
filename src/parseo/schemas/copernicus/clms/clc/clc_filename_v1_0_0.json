@@ -2,9 +2,12 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "schema_id": "copernicus:clms:clc",
   "schema_version": "1.0.0",
-  "status": "current",
+  "status": "deprecated",
   "stac_version": "1.1.0",
-  "stac_extensions": ["https://stac-extensions.github.io/raster/v1.0.0/schema.json", "https://stac-extensions.github.io/eo/v1.0.0/schema.json"],
+  "stac_extensions": [
+    "https://stac-extensions.github.io/raster/v1.0.0/schema.json",
+    "https://stac-extensions.github.io/eo/v1.0.0/schema.json"
+  ],
   "description": "Corine Land Cover product filename (extension optional).",
   "fields": {
     "project": {
