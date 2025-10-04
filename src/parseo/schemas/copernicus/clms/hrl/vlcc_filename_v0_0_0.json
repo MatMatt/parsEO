@@ -7,17 +7,17 @@
   "stac_extensions": ["https://stac-extensions.github.io/raster/v1.0.0/schema.json", "https://stac-extensions.github.io/eo/v1.0.0/schema.json"],
   "description": "CLMS High Resolution Layer Vegetated Land Cover Characteristics product filename (extension optional).",
   "fields": {
-    "prefix": {
+    "programme": {
       "type": "string",
       "enum": ["CLMS"],
       "description": "Constant program prefix"
     },
-    "theme": {
+    "product": {
       "type": "string",
       "enum": ["HRLVLCC"],
       "description": "High Resolution Layer theme identifier"
     },
-    "layer": {
+    "variable": {
       "type": "string",
       "pattern": "^[A-Z0-9]{3,7}$",
       "description": "Layer code (e.g., GRAMD1, CPBSACL, DLT, CPSCT)"
@@ -58,7 +58,7 @@
       "description": "File extension without leading dot"
     }
   },
-  "template": "{prefix}_{theme}_{layer}_{temporal_coverage}_{resolution}_{tile}_{epsg_code}_{version}[_{release}][.{extension}]",
+  "template": "{programme}_{product}_{variable}_{temporal_coverage}_{resolution}_{tile}_{epsg_code}_{version}[_{release}][.{extension}]",
   "examples": [
     "CLMS_HRLVLCC_GRA_S2021_R10m_E27N48_03035_V01_R00.tif",
     "CLMS_HRLVLCC_CTY_S2021_R10m_E48N41_03035_V01_R00.tif",
