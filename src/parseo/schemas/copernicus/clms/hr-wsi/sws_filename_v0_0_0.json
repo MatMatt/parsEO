@@ -7,7 +7,16 @@
   "stac_extensions": ["https://stac-extensions.github.io/raster/v1.0.0/schema.json", "https://stac-extensions.github.io/eo/v1.0.0/schema.json"],
   "description": "CLMS HR-WSI Small Water Surface product filename (extension optional).",
   "fields": {
-    "prefix": {"type": "string", "enum": ["CLMS_WSI"], "description": "Constant prefix"},
+    "programme": {
+      "type": "string",
+      "enum": ["CLMS"],
+      "description": "Constant programme prefix"
+    },
+    "project": {
+      "type": "string",
+      "enum": ["WSI"],
+      "description": "Project"
+    },
     "product": {"type": "string", "enum": ["SWS"], "description": "Product code"},
     "pixel_spacing": {"type": "string", "enum": ["060m"], "description": "Pixel spacing"},
     "mgrs_tile": {"type": "string", "pattern": "^T\\d{2}[C-HJ-NP-X][A-Z]{2}$", "description": "MGRS tile identifier"},
@@ -17,7 +26,7 @@
     "variable": {"type": "string", "enum": ["WSM", "WSM-QA", "MTD"], "description": "File identifier"},
     "extension": {"type": "string", "enum": ["tif", "xml"], "description": "File extension without leading dot"}
   },
-  "template": "{prefix}_{product}_{pixel_spacing}_{mgrs_tile}_{sensing_datetime}_{platform}_{version}_{variable}[.{extension}]",
+  "template": "{programme}_{project}_{product}_{pixel_spacing}_{mgrs_tile}_{sensing_datetime}_{platform}_{version}_{variable}[.{extension}]",
   "examples": [
     "CLMS_WSI_SWS_060m_T32TNS_20210217T053159_S1B_V100_WSM.tif"
   ]
