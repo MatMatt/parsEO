@@ -13,7 +13,7 @@ from parseo import (
 def test_assemble_missing_field_template_schema():
     schema = (
         Path(__file__).resolve().parents[1]
-        / "src/parseo/schemas/copernicus/clms/hr-wsi/fsc/fsc_filename_v0_0_0.json"
+        / "src/parseo/schemas/copernicus/clms/hr-wsi/fsc_filename_v0_0_0.json"
     )
     fields = {
         "prefix": "CLMS_WSI",
@@ -91,7 +91,7 @@ def test_assemble_with_family_s2():
 def test_assemble_modis_from_stac_fields():
     schema = (
         Path(__file__).resolve().parents[1]
-        / "src/parseo/schemas/nasa/modis/modis_filename_v1_0_0.json"
+        / "src/parseo/schemas/nasa/modis_filename_v1_0_0.json"
     )
     fields = {
         "platform": "Terra",
