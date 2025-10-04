@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "schema_id": "copernicus:clms:rz",
+  "schema_version": "0.0.0",
+  "status": "current",
+  "stac_version": "1.1.0",
+  "stac_extensions": [],
+  "description": "CLMS Riparian Zones Land Cover / Land Use filename (extension optional).",
+  "fields": {
+    "theme": {
+      "type": "string",
+      "enum": ["rpz"],
+      "description": "Product theme prefix"
+    },
+    "delivery_unit_id": {
+      "type": "string",
+      "pattern": "^DU\\d{3}[A-Z]$",
+      "description": "Delivery unit identifier (A=full delivery, B-Z=partial)"
+    },
+    "product": {
+      "type": "string",
+      "enum": ["lclu"],
+      "description": "Product abbreviation"
+    },
+    "reference_years": {
+      "type": "string",
+      "pattern": "^\\d{4}_\\d{4}$",
+      "description": "Reference year pair (YYYY_YYYY)"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^v\\d{2}$",
+      "description": "Product version"
+    },
+    "extension": {
+      "type": "string",
+      "enum": ["shp"],
+      "description": "File extension without leading dot"
+    }
+  },
+  "template": "{theme}_{delivery_unit_id}_{product}_{reference_years}_{version}[.{extension}]",
+  "examples": [
+    "rpz_DU001A_lclu_2012_2018_v03.shp"
+  ]
+}
