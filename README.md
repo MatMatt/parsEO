@@ -23,6 +23,10 @@
     -   High Resolution Vegetation Phenology & Productivity (HR-VPP)
     -   High Resolution Water & Snow / Ice (HR-WSI)
     -   High Resolution Layers (HRL)
+-   **Copernicus European Ground Motion Service (EGMS)**:
+    -   L2a Basic & Calibrated products
+    -   L3 Ortho tiles (vertical and east-west components)
+    -   GNSS model product (AEPND)
 
 ## Installation
 
