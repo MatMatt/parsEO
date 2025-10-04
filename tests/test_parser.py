@@ -166,16 +166,17 @@ def test_parse_urban_atlas_lcu():
     assert result.valid
     assert result.match_family == "UA-LCU"
     assert result.fields == {
-        "prefix": "CLMS",
-        "programme": "UA",
-        "product": "LCU",
+        "programme": "CLMS",
+        "product": "UA",
+        "variable": "LCU",
         "survey": "S2021",
-        "resolution": "V025ha",
+        "type": "V",
+        "resolution": "025ha",
         "area_code": "DK004L3",
         "city": "AALBORG",
         "epsg_code": "03035",
         "version": "V01",
-        "release": "R00",
+        "revision": "R00",
         "production_date": "20240212",
         "extension": None,
     }
@@ -191,7 +192,7 @@ def test_parse_clms_hrl_nvlcc():
     assert result.fields == {
         "prefix": "CLMS",
         "theme": "HRLNVLCC",
-        "layer": "IMD",
+        "variable": "IMD",
         "temporal_coverage": "S2021",
         "resolution": "R10m",
         "tile": "E09N27",
@@ -218,10 +219,10 @@ def test_parse_clms_hrl_small_woody_features():
     assert result.valid
     assert result.match_family == "SMALL-WOODY-FEATURES"
     assert result.fields == {
-        "product": "SWF",
+        "variable": "SWF",
         "reference_year": "2018",
         "resolution": "005m",
-        "tile_id": "E34N27",
+        "tile": "E34N27",
         "epsg_code": "03035",
         "extension": "tif",
     }

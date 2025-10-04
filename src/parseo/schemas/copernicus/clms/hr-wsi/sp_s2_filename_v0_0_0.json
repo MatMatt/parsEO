@@ -7,7 +7,16 @@
   "stac_extensions": ["https://stac-extensions.github.io/raster/v1.0.0/schema.json", "https://stac-extensions.github.io/eo/v1.0.0/schema.json"],
   "description": "CLMS HR-WSI Snow Products Sentinel-2 source filename (extension optional).",
   "fields": {
-    "prefix": {"type": "string", "enum": ["CLMS_WSI"], "description": "Constant prefix"},
+    "programme": {
+      "type": "string",
+      "enum": ["CLMS"],
+      "description": "Constant programme prefix"
+    },
+    "project": {
+      "type": "string",
+      "enum": ["WSI"],
+      "description": "Project"
+    },
     "product": {"type": "string", "enum": ["SP"], "description": "Product code"},
     "pixel_spacing": {"type": "string", "enum": ["020m", "100m"], "description": "Pixel spacing"},
     "tile_id": {"type": "string", "pattern": "^(?:T\\d{2}[C-HJ-NP-X][A-Z]{2}|E\\d{2}N\\d{2})$", "description": "Tile identifier"},
@@ -17,7 +26,7 @@
     "variable": {"type": "string", "enum": ["SCD", "SCO", "SCM", "NOBS", "QAFLAGS", "SCD-QA", "SCO-QA", "SCM-QA", "MTD"], "description": "File identifier"},
     "extension": {"type": "string", "enum": ["tif", "xml"], "description": "File extension without leading dot"}
   },
-  "template": "{prefix}_{product}_{pixel_spacing}_{tile_id}_{period_start}_{source}_{version}_{variable}[.{extension}]",
+  "template": "{programme}_{project}_{product}_{pixel_spacing}_{tile_id}_{period_start}_{source}_{version}_{variable}[.{extension}]",
   "examples": [
     "CLMS_WSI_SP_020m_T38TKL_20200901P1Y_S2_V100_SCD.tif"
   ]

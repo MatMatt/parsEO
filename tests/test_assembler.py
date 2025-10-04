@@ -16,14 +16,15 @@ def test_assemble_missing_field_template_schema():
         / "src/parseo/schemas/copernicus/clms/hr-wsi/fsc_filename_v0_0_0.json"
     )
     fields = {
-        "prefix": "CLMS_WSI",
+        "programme": "CLMS",
+        "project": "WSI",
         "product": "FSC",
         "pixel_spacing": "020m",
         "mgrs_tile": "T32TNS",
         "sensing_datetime": "20211018T103021",
         # "platform" is intentionally omitted
         "version": "V100",
-        "file_id": "FSCOG",
+        "variable": "FSCOG",
         "extension": "tif",
     }
     msg = r"Missing field 'platform' for schema .*fsc_filename_v0_0_0\.json"
@@ -33,14 +34,15 @@ def test_assemble_missing_field_template_schema():
 
 def test_assemble_auto_missing_optional_fields():
     fields = {
-        "prefix": "CLMS_WSI",
+        "programme": "CLMS",
+        "project": "WSI",
         "product": "WIC",
         "pixel_spacing": "020m",
         "mgrs_tile": "T33WXP",
         "sensing_datetime": "20201024T103021",
         "platform": "S2B",
         "version": "V100",
-        "file_id": "WIC",
+        "variable": "WIC",
     }
     name = assemble_auto(fields)
     assert name == "CLMS_WSI_WIC_020m_T33WXP_20201024T103021_S2B_V100_WIC"
