@@ -14,10 +14,10 @@
     "sensing_datetime": {"type": "string", "pattern": "^\\d{8}T\\d{6}$", "description": "Acquisition datetime (UTC)"},
     "platform": {"type": "string", "enum": ["S1A", "S1B", "S1C"], "description": "Satellite platform"},
     "version": {"type": "string", "pattern": "^V\\d{3}$", "description": "Product version"},
-    "file_id": {"type": "string", "enum": ["SSC", "SSC-QA", "MTD"], "description": "File identifier"},
+    "variable": {"type": "string", "enum": ["SSC", "SSC-QA", "MTD"], "description": "File identifier"},
     "extension": {"type": "string", "enum": ["tif", "xml"], "description": "File extension without leading dot"}
   },
-  "template": "{prefix}_{product}_{pixel_spacing}_{mgrs_tile}_{sensing_datetime}_{platform}_{version}_{file_id}[.{extension}]",
+  "template": "{prefix}_{product}_{pixel_spacing}_{mgrs_tile}_{sensing_datetime}_{platform}_{version}_{variable}[.{extension}]",
   "examples": [
     "CLMS_WSI_WDS_060m_T32TNS_20210217T053159_S1B_V100_SSC.tif"
   ]

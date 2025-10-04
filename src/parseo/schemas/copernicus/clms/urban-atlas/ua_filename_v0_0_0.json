@@ -73,7 +73,7 @@
       "description": "Optional file extension without leading dot (allows compound extensions such as gpkg.zip)"
     }
   },
-  "template": "{programme}_{product}_{variable}_{survey}_{type}{resolution}_{area_code}_{city}_{epsg_code}_{version}_{release}_{production_date}[.{extension}]",
+  "template": "{programme}_{product}_{variable}_{survey}_{type}{resolution}_{area_code}_{city}_{epsg_code}_{version}_{revision}_{production_date}[.{extension}]",
   "examples": [
     "CLMS_UA_LCU_S2021_V025ha_DK004L3_AALBORG_03035_V01_R00_20240212",
     "CLMS_UA_LCU_S2018_V025ha_DK004L3_AALBORG_03035_V02_R01_20240212",

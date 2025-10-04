@@ -14,14 +14,14 @@
     "period": {"type": "string", "pattern": "^\\d{8}P7D$", "description": "Aggregation period"},
     "combination": {"type": "string", "enum": ["COMB"], "description": "Combination method"},
     "version": {"type": "string", "pattern": "^V\\d{3}$", "description": "Product version"},
-    "file_id": {
+    "variable": {
       "type": "string",
       "enum": ["AT", "GF", "GF-QA", "MTD", "QAFLAGS"],
       "description": "File identifier"
     },
     "extension": {"type": "string", "enum": ["tif", "xml"], "description": "File extension without leading dot"}
   },
-  "template": "{prefix}_{product}_{pixel_spacing}_{mgrs_tile}_{period}_{combination}_{version}_{file_id}[.{extension}]",
+  "template": "{prefix}_{product}_{pixel_spacing}_{mgrs_tile}_{period}_{combination}_{version}_{variable}[.{extension}]",
   "examples": [
     "CLMS_WSI_GFSC_060m_T32TNS_20211018P7D_COMB_V100_GF-QA.tif"
   ]

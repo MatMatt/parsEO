@@ -14,10 +14,10 @@
     "period_start": {"type": "string", "pattern": "^\\d{8}P1Y$", "description": "Aggregation period start"},
     "combination": {"type": "string", "enum": ["COMB"], "description": "Combination method"},
     "version": {"type": "string", "pattern": "^V\\d{3}$", "description": "Product version"},
-    "file_id": {"type": "string", "enum": ["SCD", "SCO", "SCM", "NCSO", "NWSO", "QAFLAGS", "SCD-QA", "SCO-QA", "SCM-QA", "MTD"], "description": "File identifier"},
+    "variable": {"type": "string", "enum": ["SCD", "SCO", "SCM", "NCSO", "NWSO", "QAFLAGS", "SCD-QA", "SCO-QA", "SCM-QA", "MTD"], "description": "File identifier"},
     "extension": {"type": "string", "enum": ["tif", "xml"], "description": "File extension without leading dot"}
   },
-  "template": "{prefix}_{product}_{pixel_spacing}_{tile_id}_{period_start}_{combination}_{version}_{file_id}[.{extension}]",
+  "template": "{prefix}_{product}_{pixel_spacing}_{tile_id}_{period_start}_{combination}_{version}_{variable}[.{extension}]",
   "examples": [
     "CLMS_WSI_SP_060m_T38TKL_20200901P1Y_COMB_V100_SCD-QA.tif"
   ]
