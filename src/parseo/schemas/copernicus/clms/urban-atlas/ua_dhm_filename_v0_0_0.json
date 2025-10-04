@@ -43,7 +43,7 @@
       "description": "Vector file extension without leading dot"
     }
   },
-  "template": "{area_code}_{city}_{product}[reference_year}_{variable}[.{extension}]",
+  "template": "{area_code}_{city}_{product}{reference_year}_{variable}[.{extension}]",
   "examples": [
     "DE074Lx_GÖRLITZ_UA2021_DHM.shp",
     "DE510Lx_LÜBECK_UA2021_DHM.shp",
