@@ -87,3 +87,15 @@ def test_assemble_with_family_s2():
         == "S2B_MSIL2A_20241123T224759_N0511_R101_T03VUL_20241123T230829.SAFE"
     )
 
+
+def test_assemble_with_family_n2k():
+    fields = {
+        "theme": "N2K_Change",
+        "reference": "2012-2018",
+        "epsg_code": "EPSG3035",
+        "version": "V2_0",
+        "extension": "zip",
+    }
+    name = assemble(fields, family="N2K")
+    assert name == "N2K_Change_2012-2018_EPSG3035_V2_0.zip"
+

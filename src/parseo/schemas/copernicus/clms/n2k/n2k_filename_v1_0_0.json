@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "schema_id": "copernicus:clms:n2k",
+  "schema_version": "1.0.0",
+  "status": "current",
+  "stac_version": "1.1.0",
+  "description": "Copernicus CLMS Natura 2000 (N2K) status and change layers filename (extension optional).",
+  "fields": {
+    "theme": {
+      "type": "string",
+      "enum": ["N2K", "N2K_Change"],
+      "description": "Dataset theme"
+    },
+    "reference": {
+      "type": "string",
+      "pattern": "^(?:2006|2012|2018|2006-2012|2012-2018)$",
+      "description": "Reference year or period"
+    },
+    "epsg_code": {
+      "type": "string",
+      "pattern": "^EPSG\\d{4,5}$",
+      "description": "EPSG code"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^V\\d+(?:_\\d+)*$",
+      "description": "Product version"
+    },
+    "extension": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9]+$",
+      "description": "File extension without leading dot"
+    }
+  },
+  "template": "{theme}_{reference}_{epsg_code}_{version}[.{extension}]",
+  "examples": [
+    "N2K_2018_EPSG3035_V1_0.gpkg",
+    "N2K_Change_2012-2018_EPSG3035_V2_0.zip"
+  ]
+}

@@ -157,3 +157,23 @@ def test_parsing_fails_without_current(tmp_path, monkeypatch):
         parse_auto("ABC_X.txt")
     assert "current" in str(exc.value)
     schema_registry.clear_cache()
+
+
+def test_parse_n2k_status_and_change():
+    res_status = parse_auto("N2K_2018_EPSG3035_V1_0.gpkg")
+    assert res_status.valid
+    assert res_status.match_family == "N2K"
+    assert res_status.fields["theme"] == "N2K"
+    assert res_status.fields["reference"] == "2018"
+    assert res_status.fields["epsg_code"] == "EPSG3035"
+    assert res_status.fields["version"] == "V1_0"
+    assert res_status.fields["extension"] == "gpkg"
+
+    res_change = parse_auto("N2K_Change_2012-2018_EPSG3035_V2_0.zip")
+    assert res_change.valid
+    assert res_change.match_family == "N2K"
+    assert res_change.fields["theme"] == "N2K_Change"
+    assert res_change.fields["reference"] == "2012-2018"
+    assert res_change.fields["epsg_code"] == "EPSG3035"
+    assert res_change.fields["version"] == "V2_0"
+    assert res_change.fields["extension"] == "zip"
