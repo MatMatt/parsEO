@@ -90,6 +90,20 @@ def test_assemble_with_family_s2():
     )
 
 
+def test_assemble_clms_hrl_imperviousness():
+    fields = {
+        "variable": "IMD",
+        "reference_year": "2021",
+        "eea_tile": "E042N018",
+        "resolution": "010m",
+        "version": "V100",
+        "extension": "tif",
+    }
+
+    name = assemble(fields, family="IMPERVIOUSNESS")
+    assert name == "IMD_2021_E042N018_010m_V100.tif"
+
+
 def test_assemble_modis_from_stac_fields():
     schema = (
         Path(__file__).resolve().parents[1]
