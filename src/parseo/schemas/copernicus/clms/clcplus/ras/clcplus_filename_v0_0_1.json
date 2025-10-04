@@ -17,7 +17,7 @@
       "enum": ["CLCPLUS"],
       "description": "Product family identifier"
     },
-    "data_class": {
+    "type": {
       "type": "string",
       "enum": ["RAS"],
       "description": "Data class code (raster)"
@@ -58,7 +58,7 @@
       "description": "File extension without leading dot"
     }
   },
-  "template": "{programme}_{product}_{data_class}_{season}_{resolution}_{tile}_{product_code}_{version}_{revision}[.{extension}]",
+  "template": "{programme}_{product}_{type}_{season}_{resolution}_{tile}_{product_code}_{version}_{revision}[.{extension}]",
   "examples": [
     "CLMS_CLCPLUS_RAS_S2023_R10m_E48N37_03035_V01_R00.tif"
   ]
