@@ -13,8 +13,8 @@
 
 ## Currently Supported Products
 
--   **Sentinel missions**: S1, S2, S3, S4, S5P, S6\
--   **Landsat**: LT04, LT05, LE07, LC08, LC09\
+-   **Sentinel missions**: S1, S2, S3, S4, S5P, S6
+-   **Landsat**: LT04, LT05, LE07, LC08, LC09
 -   **NASA MODIS**: Terra/Aqua MODIS products
 -   **EUMETSAT missions**: MTG, Metop
 -   **Copernicus Land Monitoring Service (CLMS)**:
@@ -23,7 +23,7 @@
     -   Urban Atlas Land Cover / Land Use
     -   High Resolution Vegetation Phenology & Productivity (HR-VPP): Seasonal Trajectories (PPI) and Vegetation Indices (FAPAR, LAI, NDVI, PPI, FCOVER, DMP)
     -   High Resolution Water & Snow / Ice (HR-WSI): CC, FSC, GFSC, ICD, SWS, WDS, WIC, WIC-COMB, SP_S2, SP_COMB
-    -   High Resolution Layers (HRL): Forest Type, Grassland, Imperviousness, Non-Vegetated Land Cover Characteristics, Tree Cover Density, Water & Wetness, Small Woody Features (legacy and EPSG-coded filenames)
+    -   High Resolution Layers (HRL): Forest Type, Grassland, Imperviousness, Non-Vegetated Land Cover Characteristics, Tree Cover Density, Water & Wetness, Small Woody Features
 
 ## Installation
 
