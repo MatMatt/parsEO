@@ -34,8 +34,8 @@
     },
     "tile": {
       "type": "string",
-      "pattern": "^(?:[EW]\\d{2,3}[NS]\\d{2,3}|[A-Z]{2})$",
-      "description": "EEA reference grid tile identifier or two-letter geographic code"
+      "pattern": "^(?:[EW]\\d{2}[NS]\\d{2}|[A-Z]{2})$",
+      "description": "Tile identifier in the EEA 10m grid (easting/northing) or two-letter geographic code"
     },
     "epsg_code": {
       "type": "string",

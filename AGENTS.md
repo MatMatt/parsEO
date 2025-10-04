@@ -15,3 +15,6 @@ These instructions apply to the entire repository.
 - Use the `develop` branch as the base for changes.
 
 **New/all schemas shall follow the tempplate in 'examples/schema_skeleton/' striclty.** 
+
+References are: 
+CLMS STAC: https://github.com/copernicus-land/clms-stac
