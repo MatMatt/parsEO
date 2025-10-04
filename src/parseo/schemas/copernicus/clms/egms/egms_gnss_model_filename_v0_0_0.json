@@ -6,19 +6,19 @@
   "stac_version": "1.1.0",
   "description": "Copernicus European Ground Motion Service GNSS model filename.",
   "fields": {
-    "prefix": {
+    "product": {
       "type": "string",
       "enum": ["EGMS"],
       "description": "Constant service prefix"
     },
-    "product": {
+    "variable": {
       "type": "string",
       "enum": ["AEPND"],
       "description": "Product identifier"
     },
     "issue_year": {
       "type": "string",
-      "pattern": "^\\d{4}$",
+      "pattern": "^V\\d{4}$",
       "description": "Year of issue"
     },
     "revision": {
@@ -32,7 +32,7 @@
       "description": "File extension without leading dot"
     }
   },
-  "template": "{prefix}_{product}_V{issue_year}.{revision}.{extension}",
+  "template": "{product}_{variable}_{issue_year}.{revision}.{extension}",
   "examples": [
     "EGMS_AEPND_V2020.0.csv",
     "EGMS_AEPND_V2023.1.csv"

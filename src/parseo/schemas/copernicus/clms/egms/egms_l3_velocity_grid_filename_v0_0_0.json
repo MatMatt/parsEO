@@ -7,7 +7,7 @@
   "stac_extensions": ["https://stac-extensions.github.io/raster/v1.0.0/schema.json"],
   "description": "Copernicus European Ground Motion Service Level 3 velocity grid filename (extension optional).",
   "fields": {
-    "prefix": {
+    "product": {
       "type": "string",
       "enum": ["EGMS"],
       "description": "Constant service prefix"
@@ -53,7 +53,7 @@
       "description": "File extension without leading dot"
     }
   },
-  "template": "{prefix}_{level}_{tile}_{tile_size}_{component}_{start_year}_{end_year}_{version}[.{extension}]",
+  "template": "{product}_{level}_{tile}_{tile_size}_{component}_{start_year}_{end_year}_{version}[.{extension}]",
   "examples": [
     "EGMS_L3_E28N49_100km_U_2018_2022_1.tiff",
     "EGMS_L3_E37N28_100km_U_2019_2023_1.tiff"

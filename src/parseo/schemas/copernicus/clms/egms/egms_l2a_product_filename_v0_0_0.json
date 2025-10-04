@@ -6,7 +6,7 @@
   "stac_version": "1.1.0",
   "description": "Copernicus European Ground Motion Service Level 2 basic and calibrated product filename (extension optional).",
   "fields": {
-    "prefix": {
+    "product": {
       "type": "string",
       "enum": ["EGMS"],
       "description": "Constant service prefix"
@@ -57,7 +57,7 @@
       "description": "File extension without leading dot"
     }
   },
-  "template": "{prefix}_{level}_{track}_{burst}_{swath}_{polarisation}_{start_year}_{end_year}_{version}[.{extension}]",
+  "template": "{product}_{level}_{track}_{burst}_{swath}_{polarisation}_{start_year}_{end_year}_{version}[.{extension}]",
   "examples": [
     "EGMS_L2a_088_0282_IW2_VV_2018_2022_1.csv",
     "EGMS_L2a_088_0282_IW2_VV_2018_2022_1.zip",
