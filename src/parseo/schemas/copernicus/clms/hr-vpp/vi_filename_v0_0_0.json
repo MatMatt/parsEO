@@ -15,10 +15,10 @@
     "start_date": {"type": "string", "pattern": "^\\d{8}$", "description": "Start date (YYYYMMDD)"},
     "end_date": {"type": "string", "pattern": "^\\d{8}$", "description": "End date (YYYYMMDD)"},
     "version": {"type": "string", "pattern": "^V\\d{3}$", "description": "Product version"},
-    "measurant": {"type": "string", "enum": ["FAPAR", "LAI", "NDVI", "PPI", "FCOVER", "DMP", "MTD"], "description": "File identifier"},
+    "variable": {"type": "string", "enum": ["FAPAR", "LAI", "NDVI", "PPI", "FCOVER", "DMP", "MTD"], "description": "File identifier"},
     "extension": {"type": "string", "enum": ["tif", "xml"], "description": "File extension without leading dot"}
   },
-  "template": "{programme}_{product}_{parameter}_{resolution}_{mgrs_tile}_{start_date}_{end_date}_{version}_{measurant}[.{extension}]",
+  "template": "{programme}_{product}_{parameter}_{resolution}_{mgrs_tile}_{start_date}_{end_date}_{version}_{variable}[.{extension}]",
   "examples": [
     "CLMS_VPP_FAPAR_100m_T32TNS_20210101_20210110_V100_FAPAR.tif"
   ]

@@ -13,10 +13,10 @@
     "laea_tile": {"type": "string", "pattern": "^[EW]\\d{2}[NS]\\d{2}-\\d{5}$", "description": "Regional LAEA grid tile identifier"},
     "resolution": {"type": "string", "pattern": "^\\d{3}m$", "description": "Spatial resolution"},
     "version": {"type": "string", "pattern": "^V\\d{3}$", "description": "Product version"},
-    "product": {"type": "string", "enum": ["PPI"], "description": "Product code"},
+    "variable": {"type": "string", "enum": ["PPI"], "description": "Product code"},
     "extension": {"type": "string", "enum": ["tif"], "description": "File extension without leading dot"}
   },
-  "template": "{prefix}_{timestamp}_{sensor}_{laea_tile}_{resolution}_{version}_{product}[.{extension}]",
+  "template": "{prefix}_{timestamp}_{sensor}_{laea_tile}_{resolution}_{version}_{variable}[.{extension}]",
   "examples": [
     "ST_20240101T123045_S2_E15N45-01234_010m_V100_PPI.tif"
   ]
