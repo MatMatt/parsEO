@@ -35,6 +35,11 @@
       "type": "string",
       "pattern": "^\\d{8}T\\d{6}$",
       "description": "Acquisition datetime (UTC, YYYYMMDDTHHMMSS)"
+    },    
+    "epsg": {
+      "type": "string",
+      "pattern": "^\\d{5}$",
+      "description": "EPSG code of the product grid"
     },
     "version": {
       "type": "string",
@@ -49,6 +54,6 @@
   },
   "template": "{prefix}_{product}_{sensing_datetime}_{version}[.{extension}]",
   "examples": [
-    "PRD_XYZ_20240101T000000_V100.tif"
+    "PRD_XYZ_20240101T000000_3035_V100.tif"
   ]
 }
