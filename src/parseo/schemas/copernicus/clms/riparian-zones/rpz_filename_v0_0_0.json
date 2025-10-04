@@ -7,7 +7,7 @@
   "stac_extensions": [],
   "description": "CLMS Riparian Zones Land Cover / Land Use filename (extension optional).",
   "fields": {
-    "theme": {
+    "product": {
       "type": "string",
       "enum": ["rpz"],
       "description": "Product theme prefix"
@@ -17,7 +17,7 @@
       "pattern": "^DU\\d{3}[A-Z]$",
       "description": "Delivery unit identifier (A=full delivery, B-Z=partial)"
     },
-    "product": {
+    "vriable": {
       "type": "string",
       "enum": ["lclu"],
       "description": "Product abbreviation"
@@ -38,7 +38,7 @@
       "description": "File extension without leading dot"
     }
   },
-  "template": "{theme}_{delivery_unit_id}_{product}_{reference_years}_{version}[.{extension}]",
+  "template": "{product}_{delivery_unit_id}_{variable}_{reference_years}_{version}[.{extension}]",
   "examples": [
     "rpz_DU001A_lclu_2012_2018_v03.shp"
   ]
