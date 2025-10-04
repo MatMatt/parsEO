@@ -15,7 +15,7 @@
     "product": {
       "type": "string",
       "enum": ["UA"],
-      "description": "Programme code (Urban Atlas)"
+      "description": "Product code (Urban Atlas)"
     },
     "variable": {
       "type": "string",
@@ -57,10 +57,10 @@
       "pattern": "^V\\d{2}$",
       "description": "Product version"
     },
-    "release": {
+    "revision": {
       "type": "string",
       "pattern": "^R\\d{2}$",
-      "description": "Release identifier"
+      "description": "Revision identifier"
     },
     "production_date": {
       "type": "string",
