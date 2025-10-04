@@ -67,6 +67,10 @@ print(res.fields["product"])   # 09
 print(res.fields["variant"])   # GA
 ```
 
+This schema advertises the Processing, Sat, Raster, and Electro-Optical STAC
+extensions so MODIS filenames can be associated with the corresponding STAC
+metadata (`processing`, `sat`, `raster`, `eo`).
+
 ### Assembling a filename
 
 ``` python
