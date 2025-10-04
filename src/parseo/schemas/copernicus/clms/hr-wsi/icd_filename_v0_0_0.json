@@ -19,8 +19,7 @@
   },
   "template": "{prefix}_{product}_{pixel_spacing}_{tile_id}_{period_start}_{combination}_{version}_{variable}[.{extension}]",
   "examples": [
-    "CLMS_WSI_ICD_020m_T31TCH_20160901P1Y_COMB_V100_ICD-QA.tif",
-    "CLMS_WSI_ICD_020m_E70N20_20160901P1Y_COMB_V100_ICD-QA.tif",
+    "CLMS_WSI_ICD_020m_T31TCH_20160901P1Y_COMB_V100_ICD.tif",
     "CLMS_WSI_ICD_100m_E70N20_20160901P1Y_COMB_V100_ICD-QA.tif"
   ]
 }
