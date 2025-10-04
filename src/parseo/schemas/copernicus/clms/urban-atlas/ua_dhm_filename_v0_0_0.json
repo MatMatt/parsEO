@@ -9,13 +9,13 @@
   "fields": {
     "fua": {
       "type": "string",
-      "pattern": "^[A-Z]{2}\\d{3}L\\d$",
+      "pattern": "^[A-Z]{2}\\d{3}L[A-Za-z0-9]$",
       "description": "Local administrative area code (FUA)"
     },
     "city": {
       "type": "string",
-      "pattern": "^[A-Z0-9-]+$",
-      "description": "City or metropolitan area identifier"
+      "pattern": "^[\\w-]+$",
+      "description": "City or metropolitan area identifier (letters, digits and hyphen)"
     },
     "campaign": {
       "type": "string",

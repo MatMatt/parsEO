@@ -39,8 +39,8 @@
     },
     "epsg_code": {
       "type": "string",
-      "pattern": "^\\d{5}$",
-      "description": "EPSG code of the product grid"
+      "pattern": "^\\d{4,5}$",
+      "description": "EPSG code of the product grid (unpadded values are zero-filled on output)"
     },
     "version": {
       "type": "string",
