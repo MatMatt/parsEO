@@ -9,12 +9,20 @@
   "fields": {
     "prefix": {
       "type": "string",
-      "pattern": "^PRD$",
-      "description": "Translate combinted elements to/from pure STAC fields",
+      "pattern": "^(MOD|MYD|MCD)$",
+      "description": "Use stac_map to split/merge combinted name fields from/into STAC fields",
       "stac_map": {
-        "PRD": {
-          "platform": "ExamplePlatform",
-          "instrument": "ExampleInstrument"
+        "MOD": {
+          "platform": "Terra",
+          "instrument": "MODIS"
+        },
+        "MYD": {
+          "platform": "Aqua",
+          "instrument": "MODIS"
+        },
+        "MCD": {
+          "platform": "Combined",
+          "instrument": "MODIS"
         }
       }
     },
