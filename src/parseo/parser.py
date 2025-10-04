@@ -402,7 +402,16 @@ def validate_schema(
             res = parse_auto(example)
             if not res.valid:
                 raise ValueError(f"Parsing failed for {example}")
-            fields = {k: v for k, v in res.fields.items() if v is not None}
+            fields = {
+                k: v
+                for k, v in _extract_fields(example, schema).items()
+                if v is not None
+            }
+            if not fields:
+                raise ValueError(
+                    "Example parsed globally but not by its declared schema: "
+                    f"{schema_path} -> {example}"
+                )
             assembled = assemble(fields, schema_path=schema_path)
             if assembled != example:
                 raise ValueError(f"Round trip failed for {example}")

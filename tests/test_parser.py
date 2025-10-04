@@ -262,6 +262,61 @@ def test_parse_clms_egms_l3_velocity_grid():
     }
 
 
+def test_parse_clms_egms_l2a_product_csv():
+    name = "EGMS_L2a_088_0282_IW2_VV_2018_2022_1.csv"
+    result = parse_auto(name)
+
+    assert result.valid
+    assert result.match_family == "EGMS-L2A"
+    assert result.fields == {
+        "prefix": "EGMS",
+        "level": "L2a",
+        "track": "088",
+        "burst": "0282",
+        "swath": "IW2",
+        "polarisation": "VV",
+        "start_year": "2018",
+        "end_year": "2022",
+        "version": "1",
+        "extension": "csv",
+    }
+
+
+def test_parse_clms_egms_l2a_product_zip():
+    name = "EGMS_L2a_124_0135_IW1_VH_2015_2020_2.zip"
+    result = parse_auto(name)
+
+    assert result.valid
+    assert result.match_family == "EGMS-L2A"
+    assert result.fields == {
+        "prefix": "EGMS",
+        "level": "L2a",
+        "track": "124",
+        "burst": "0135",
+        "swath": "IW1",
+        "polarisation": "VH",
+        "start_year": "2015",
+        "end_year": "2020",
+        "version": "2",
+        "extension": "zip",
+    }
+
+
+def test_parse_clms_egms_gnss_model():
+    name = "EGMS_AEPND_V2023.1.csv"
+    result = parse_auto(name)
+
+    assert result.valid
+    assert result.match_family == "EGMS-GNSS-MODEL"
+    assert result.fields == {
+        "prefix": "EGMS",
+        "product": "AEPND",
+        "issue_year": "2023",
+        "revision": "1",
+        "extension": "csv",
+    }
+
+
 def test_parse_modis_stac_mapping():
     name = "MOD09GA.A2021123.h18v04.006.2021132234506.hdf"
     result = parse_auto(name)
