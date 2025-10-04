@@ -4,7 +4,7 @@
   "schema_version": "0.0.0",
   "status": "current",
   "stac_version": "1.1.0",
-  "stac_extensions": ["vector"],
+  "stac_extensions": ["https://stac-extensions.github.io/vector/v1.0.0/schema.json"],
   "description": "Copernicus Urban Atlas 2021 Digital Height Model (DHM) vector filename schema.",
   "fields": {
     "area_code": {

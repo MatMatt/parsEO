@@ -4,7 +4,7 @@
   "schema_version": "1.0.0",
   "status": "current",
   "stac_version": "1.1.0",
-  "stac_extensions": ["processing", "sat"],
+  "stac_extensions": ["https://stac-extensions.github.io/processing/v1.0.0/schema.json", "https://stac-extensions.github.io/sat/v1.0.0/schema.json"],
   "description": "Sentinel-6 product filename (P4 altimetry; extension optional).",
   "fields": {
     "platform": {"type": "string", "enum": ["S6A", "S6B"]},

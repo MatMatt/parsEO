@@ -4,7 +4,7 @@
   "schema_version": "1.0.0",
   "status": "current",
   "stac_version": "1.1.0",
-  "stac_extensions": ["processing", "sat", "sar"],
+  "stac_extensions": ["https://stac-extensions.github.io/processing/v1.0.0/schema.json", "https://stac-extensions.github.io/sat/v1.0.0/schema.json", "https://stac-extensions.github.io/sar/v1.0.0/schema.json"],
   "description": "Sentinel-1 product filename; TTTR token is RAW_, SLC_, OCN_, or GRD(F|H|M|E); extension optional.",
   "fields": {
     "platform": {

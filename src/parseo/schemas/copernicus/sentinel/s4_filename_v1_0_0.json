@@ -4,7 +4,7 @@
   "schema_version": "1.0.0",
   "status": "current",
   "stac_version": "1.1.0",
-  "stac_extensions": ["processing", "sat", "raster", "eo"],
+  "stac_extensions": ["https://stac-extensions.github.io/processing/v1.0.0/schema.json", "https://stac-extensions.github.io/sat/v1.0.0/schema.json", "https://stac-extensions.github.io/raster/v1.0.0/schema.json", "https://stac-extensions.github.io/eo/v1.0.0/schema.json"],
   "description": "Sentinel-4 product filename (UVN; optional tile, extension).",
   "fields": {
     "platform": {"type": "string", "enum": ["S4A", "S4B"]},
