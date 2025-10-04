@@ -10,7 +10,7 @@
     "prefix": {
       "type": "string",
       "pattern": "^(MOD|MYD|MCD)$",
-      "description": "Use stac_map to split/merge combinted name fields from/into STAC fields",
+      "description": "Use stac_map to translate combinted name fields from/into STAC fields",
       "stac_map": {
         "MOD": {
           "platform": "Terra",
