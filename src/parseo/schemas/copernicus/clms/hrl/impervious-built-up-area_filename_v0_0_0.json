@@ -10,12 +10,8 @@
     "product": {"type": "string", "enum": ["IBU"], "description": "Product code"},
     "reference_year": {"type": "string", "pattern": "^\\d{4}$", "description": "Reference year"},
     "resolution": {"type": "string", "pattern": "^\\d{3}m$", "description": "Spatial resolution in metres with leading zeros"},
-    "tile": {
-      "type": "string",
-      "pattern": "^[EW]\\d{2}[NS]\\d{2}$",
-      "description": "Tile identifier in the EEA 10m grid (easting/northing)"
-    },
-    "epsg_code": {"type": "string", "pattern": "^\\d{4,5}$", "description": "EPSG code (optionally zero-padded to five digits)"},
+    "tile": {"type": "string", "pattern": "^[EW]\\d{2,3}[NS]\\d{2,3}$", "description": "EEA reference grid tile identifier"},
+    "epsg_code": {"type": "string", "pattern": "^\\d{5}$", "description": "EPSG code of the product grid"},
     "version": {"type": "string", "pattern": "^v\\d{3}$", "description": "Product version"},
     "extension": {"type": "string", "enum": ["tif"], "description": "File extension without leading dot"}
   },
