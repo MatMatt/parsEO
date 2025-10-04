@@ -4,6 +4,7 @@
   "schema_version": "1.0.0",
   "status": "current",
   "stac_version": "1.1.0",
+  "stac_extensions": ["processing", "sat", "raster", "eo"],
   "description": "MODIS product filename (extension optional).",
   "fields": {
     "platform": {
