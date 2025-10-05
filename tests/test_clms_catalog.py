@@ -29,6 +29,19 @@ def test_cli_clms_products_reads_env(monkeypatch, capsys):
     assert out == ["Dataset One", "Dataset Two"]
 
 
+def test_cli_clms_alias(monkeypatch, capsys):
+    monkeypatch.setenv("CLMS_DATASET_CATALOG_URL", "https://example.test/catalog")
+
+    def fake_fetch(url=None):  # type: ignore[override]
+        assert url is None
+        return ["Dataset One"]
+
+    monkeypatch.setattr("parseo.cli.fetch_clms_products", fake_fetch)
+    rc = cli.main(["clms"])
+    assert rc == 0
+    assert capsys.readouterr().out.splitlines() == ["Dataset One"]
+
+
 def test_cli_clms_products_accepts_custom_url(monkeypatch, capsys):
     seen = {}
 
