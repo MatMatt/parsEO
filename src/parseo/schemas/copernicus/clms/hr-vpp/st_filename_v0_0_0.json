@@ -11,9 +11,19 @@
     "timestamp": {"type": "string", "pattern": "^\\d{8}T\\d{6}$", "description": "Acquisition timestamp (YYYYMMDDTHHMMSS)"},
     "sensor": {"type": "string", "enum": ["S2"], "description": "Sensor platform"},
     "eea_tile": {
-      "type": "string",
-      "pattern": "^([EW]\\d{2,3}[NS]\\d{2,3}|T\\d{2}[C-HJ-NP-X][A-Z]{2})$",
-      "description": "Regional LAEA grid tile or Sentinel-2 MGRS tile identifier (2- or 3-digit coordinates)"
+      "description": "Regional LAEA grid tile or Sentinel-2 MGRS tile identifier (2- or 3-digit coordinates)",
+      "oneOf": [
+        {
+          "type": "string",
+          "pattern": "^[EW]\\d{2,3}[NS]\\d{2,3}$",
+          "description": "Regional LAEA grid tile identifier (2- or 3-digit coordinates)"
+        },
+        {
+          "type": "string",
+          "pattern": "^T\\d{2}[C-HJ-NP-X][A-Z]{2}$",
+          "description": "Sentinel-2 MGRS tile identifier"
+        }
+      ]
     },
     "epsg_code": {
       "type": "string",

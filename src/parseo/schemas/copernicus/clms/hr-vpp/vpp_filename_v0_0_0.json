@@ -33,9 +33,19 @@
       }
     },
     "tile": {
-      "type": "string",
-      "pattern": "^(?:T\\d{2}[C-HJ-NP-X][A-Z]{2}|[EW]\\d{2,3}[NS]\\d{2,3})$",
-      "description": "Sentinel-2 MGRS tile or EEA LAEA reference grid cell identifier (2- or 3-digit coordinates)"
+      "description": "Sentinel-2 MGRS tile or EEA LAEA reference grid cell identifier (2- or 3-digit coordinates)",
+      "oneOf": [
+        {
+          "type": "string",
+          "pattern": "^T\\d{2}[C-HJ-NP-X][A-Z]{2}$",
+          "description": "Sentinel-2 MGRS tile identifier"
+        },
+        {
+          "type": "string",
+          "pattern": "^[EW]\\d{2,3}[NS]\\d{2,3}$",
+          "description": "EEA LAEA reference grid cell identifier (2- or 3-digit coordinates)"
+        }
+      ]
     },
     "epsg_code": {
       "type": "string",
