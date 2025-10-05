@@ -32,7 +32,7 @@
       "pattern": "^R\\d{2,3}m$",
       "description": "Spatial resolution"
     },
-    "tile": {
+    "eea_tile": {
       "type": "string",
       "pattern": "^[EW]\\d{2}[NS]\\d{2}$",
       "description": "Tile identifier in the EEA 10m grid (easting/northing)"
@@ -58,7 +58,7 @@
       "description": "File extension without leading dot"
     }
   },
-  "template": "{prefix}_{theme}_{variable}_{temporal_coverage}_{resolution}_{tile}_{epsg_code}_{version}_{release}[.{extension}]",
+  "template": "{prefix}_{theme}_{variable}_{temporal_coverage}_{resolution}_{eea_tile}_{epsg_code}_{version}_{release}[.{extension}]",
   "examples": [
     "CLMS_HRLNVLCC_IMCCS_C2018-2021_R20m_E09N27_03035_V01_R01.tif",
     "CLMS_HRLNVLCC_IMD_S2021_R10m_E09N27_03035_V01_R01.tif",
