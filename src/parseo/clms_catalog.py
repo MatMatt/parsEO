@@ -1,7 +1,8 @@
 """Utilities to discover Copernicus Land Monitoring Service (CLMS) products.
 
-This module provides a tiny HTML scraper for the public CLMS dataset
-catalog (https://land.copernicus.eu/en/dataset-catalog).  It exposes two
+This module provides a tiny HTML/XML scraper for the public CLMS dataset
+catalog (https://land.copernicus.eu/en/dataset-catalog) and the portal
+sitemap (https://land.copernicus.eu/en/portal-sitemap).  It exposes two
 functions:
 
 - :func:`parse_html` which extracts dataset titles from a HTML page.
@@ -19,7 +20,76 @@ import os
 from typing import Iterable
 from typing import List
 from typing import Union
+from urllib.parse import unquote
+from urllib.parse import urlparse
 from urllib.request import urlopen
+from xml.etree import ElementTree
+
+
+def _strip_namespace(tag: str) -> str:
+    """Return the local XML tag name without namespace information."""
+    if "}" in tag:
+        return tag.split("}", 1)[1]
+    return tag
+
+
+def _title_from_url(url: str) -> str:
+    """Best-effort conversion of a dataset URL into a human readable label."""
+    parsed = urlparse(url)
+    path = unquote(parsed.path or "")
+    path = path.strip("/")
+    if not path:
+        return url
+    segment = path.split("/")[-1]
+    segment = segment.strip()
+    if not segment:
+        return url
+    label = segment.replace("-", " ").replace("_", " ").strip()
+    return label or url
+
+
+def _parse_portal_sitemap(xml: str) -> List[str]:
+    """Extract dataset titles from the CLMS portal sitemap XML document."""
+    try:
+        root = ElementTree.fromstring(xml)
+    except ElementTree.ParseError:
+        return []
+
+    titles: List[str] = []
+    seen: set[str] = set()
+
+    for url_node in root.iter():
+        if _strip_namespace(url_node.tag) != "url":
+            continue
+
+        loc_text = ""
+        for child in url_node:
+            if _strip_namespace(child.tag) == "loc" and child.text:
+                loc_text = child.text.strip()
+                break
+
+        title_text = ""
+        for descendant in url_node.iter():
+            if descendant is url_node:
+                continue
+            if _strip_namespace(descendant.tag) == "title" and descendant.text:
+                candidate = descendant.text.strip()
+                if candidate:
+                    title_text = candidate
+                    break
+
+        if not title_text and loc_text:
+            title_text = _title_from_url(loc_text)
+
+        if not title_text:
+            continue
+
+        normalized = " ".join(title_text.split())
+        if normalized and normalized not in seen:
+            seen.add(normalized)
+            titles.append(normalized)
+
+    return titles
 
 
 class _DatasetTitleParser(HTMLParser):
@@ -49,7 +119,7 @@ class _DatasetTitleParser(HTMLParser):
 
 
 def parse_html(html: str) -> List[str]:
-    """Parse raw HTML from the CLMS catalog and return dataset titles."""
+    """Parse raw HTML or XML from the CLMS catalog and return dataset titles."""
     parser = _DatasetTitleParser()
     parser.feed(html)
     # Deduplicate while preserving order
@@ -59,7 +129,9 @@ def parse_html(html: str) -> List[str]:
         if title not in seen:
             seen.add(title)
             out.append(title)
-    return out
+    if out:
+        return out
+    return _parse_portal_sitemap(html)
 
 
 def fetch_clms_products(url: Union[str, None] = None) -> List[str]:
