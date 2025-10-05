@@ -207,7 +207,7 @@ def test_parse_clms_hrl_nvlcc():
         "variable": "IMD",
         "temporal_coverage": "S2021",
         "resolution": "R10m",
-        "tile": "E09N27",
+        "eea_tile": "E09N27",
         "epsg_code": "03035",
         "version": "V01",
         "release": "R01",
@@ -234,7 +234,7 @@ def test_parse_clms_hrl_small_woody_features():
         "variable": "SWF",
         "reference_year": "2018",
         "resolution": "005m",
-        "tile": "E34N27",
+        "eea_tile": "E34N27",
         "epsg_code": "03035",
         "extension": "tif",
     }
