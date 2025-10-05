@@ -171,7 +171,6 @@ def test_parse_urban_atlas_lcu():
         "variable": "LCU",
         "survey": "S2021",
         "type": "vector",
-        "type_code": "V",
         "resolution": "025ha",
         "area_code": "DK004L3",
         "city": "AALBORG",
@@ -181,6 +180,7 @@ def test_parse_urban_atlas_lcu():
         "production_date": "20240212",
         "extension": None,
     }
+    assert "type_code" not in result.fields
 
 
 def test_parse_clms_clcplus_type_mapping():
@@ -190,7 +190,7 @@ def test_parse_clms_clcplus_type_mapping():
     assert result.valid
     assert result.match_family == "RAS"
     assert result.fields["type"] == "raster"
-    assert result.fields["type_code"] == "RAS"
+    assert "type_code" not in result.fields
 
 
 
