@@ -188,3 +188,43 @@ def test_assemble_landsat_from_stac_fields():
     assembled = assemble(fields, schema_path=schema)
     assert assembled == "LC08_L1TP_190026_20200101_20200114_02_T1.tar"
 
+
+
+
+def test_assemble_clms_hr_vpp_from_mgrs_tile():
+    fields = {
+        "product": "VPP",
+        "reference_year": "2017",
+        "platform": "Sentinel-2",
+        "constellation": "Sentinel-2",
+        "instruments": ["MSI"],
+        "mgrs_tile": "T32TPR",
+        "resolution": "010m",
+        "version": "V101",
+        "season": "s1",
+        "variable": "AMPL",
+        "extension": "tif",
+    }
+
+    name = assemble(fields, family="VPP")
+    assert name == "VPP_2017_S2_T32TPR-010m_V101_s1_AMPL.tif"
+
+
+def test_assemble_clms_hr_vpp_from_eea_tile():
+    fields = {
+        "product": "VPP",
+        "reference_year": "2017",
+        "platform": "Sentinel-2",
+        "constellation": "Sentinel-2",
+        "instruments": ["MSI"],
+        "eea_tile": "E45N28",
+        "epsg_code": "03035",
+        "resolution": "010m",
+        "version": "V101",
+        "season": "s1",
+        "variable": "EOSD",
+        "extension": "tif",
+    }
+
+    name = assemble(fields, family="VPP")
+    assert name == "VPP_2017_S2_E45N28-03035-010m_V101_s1_EOSD.tif"
