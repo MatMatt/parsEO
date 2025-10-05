@@ -104,6 +104,19 @@ def test_assemble_clms_hrl_imperviousness():
     assert name == "IMD_2021_E042N018_010m_V100.tif"
 
 
+def test_assemble_clms_n2k():
+    fields = {
+        "theme": "N2K",
+        "reference": "2018",
+        "epsg_code": "EPSG3035",
+        "version": "V1_0",
+        "extension": "gpkg",
+    }
+
+    name = assemble(fields, family="N2K")
+    assert name == "N2K_2018_EPSG3035_V1_0.gpkg"
+
+
 def test_assemble_clms_urban_atlas_with_canonical_type():
     fields = {
         "programme": "CLMS",
