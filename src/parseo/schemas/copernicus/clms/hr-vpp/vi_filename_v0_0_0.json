@@ -4,33 +4,60 @@
   "schema_version": "0.0.0",
   "status": "current",
   "stac_version": "1.1.0",
-  "stac_extensions": ["https://stac-extensions.github.io/raster/v1.0.0/schema.json", "https://stac-extensions.github.io/eo/v1.0.0/schema.json"],
+  "stac_extensions": [
+    "https://stac-extensions.github.io/raster/v1.0.0/schema.json",
+    "https://stac-extensions.github.io/eo/v1.0.0/schema.json"
+  ],
   "description": "Copernicus Land Monitoring Service Vegetation Index filename schema covering the HR-VPP suite (FAPAR, LAI, NDVI, PPI, FCOVER, DMP).",
   "fields": {
     "programme": {
       "type": "string",
-      "enum": ["CLMS"],
+      "enum": [
+        "CLMS"
+      ],
       "description": "Programme prefix (Copernicus Land Monitoring Service)"
     },
     "product": {
       "type": "string",
-      "enum": ["VPP"],
+      "enum": [
+        "VPP"
+      ],
       "description": "Product family identifier (Vegetation Phenology & Productivity)"
     },
     "parameter": {
       "type": "string",
-      "enum": ["FAPAR", "LAI", "NDVI", "PPI", "FCOVER", "DMP"],
+      "enum": [
+        "FAPAR",
+        "LAI",
+        "NDVI",
+        "PPI",
+        "FCOVER",
+        "DMP"
+      ],
       "description": "Biophysical variable encoded in the product"
     },
     "resolution": {
       "type": "string",
-      "enum": ["100m"],
+      "enum": [
+        "100m"
+      ],
       "description": "Spatial resolution of the raster"
     },
     "mgrs_tile": {
       "type": "string",
-      "pattern": "^T\\d{2}[C-HJ-NP-X][A-Z]{2}$",
-      "description": "MGRS tile identifier"
+      "description": "Regional LAEA grid tile or Sentinel-2 MGRS tile identifier (2- or 3-digit coordinates)",
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^[EW]\\d{2,3}[NS]\\d{2,3}$",
+          "description": "Regional LAEA grid tile identifier (2- or 3-digit coordinates)"
+        },
+        {
+          "type": "string",
+          "pattern": "^T\\d{2}[C-HJ-NP-X][A-Z]{2}$",
+          "description": "Sentinel-2 MGRS tile identifier"
+        }
+      ]
     },
     "start_date": {
       "type": "string",
@@ -49,12 +76,23 @@
     },
     "variable": {
       "type": "string",
-      "enum": ["FAPAR", "LAI", "NDVI", "PPI", "FCOVER", "DMP", "MTD"],
+      "enum": [
+        "FAPAR",
+        "LAI",
+        "NDVI",
+        "PPI",
+        "FCOVER",
+        "DMP",
+        "MTD"
+      ],
       "description": "Filename suffix indicating product content"
     },
     "extension": {
       "type": "string",
-      "enum": ["tif", "xml"],
+      "enum": [
+        "tif",
+        "xml"
+      ],
       "description": "File extension without leading dot"
     }
   },

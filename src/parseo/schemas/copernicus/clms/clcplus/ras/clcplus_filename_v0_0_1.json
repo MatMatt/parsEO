@@ -4,26 +4,37 @@
   "schema_version": "0.0.1",
   "status": "current",
   "stac_version": "1.1.0",
-  "stac_extensions": ["https://stac-extensions.github.io/raster/v1.0.0/schema.json", "https://stac-extensions.github.io/eo/v1.0.0/schema.json"],
+  "stac_extensions": [
+    "https://stac-extensions.github.io/raster/v1.0.0/schema.json",
+    "https://stac-extensions.github.io/eo/v1.0.0/schema.json"
+  ],
   "description": "CLMS CLC+ raster product filename (extension optional).",
   "fields": {
     "programme": {
       "type": "string",
-      "enum": ["CLMS"],
+      "enum": [
+        "CLMS"
+      ],
       "description": "Copernicus Land Monitoring Service programme identifier"
     },
     "product": {
       "type": "string",
-      "enum": ["CLCPLUS"],
+      "enum": [
+        "CLCPLUS"
+      ],
       "description": "Product family identifier"
     },
     "type": {
       "type": "string",
-      "enum": ["RAS"],
+      "enum": [
+        "RAS"
+      ],
       "description": "Data class code (raster)",
       "stac_map": {
         "values": {
-          "RAS": {"type": "raster"}
+          "RAS": {
+            "type": "raster"
+          }
         }
       }
     },
@@ -39,8 +50,19 @@
     },
     "eea_tile": {
       "type": "string",
-      "pattern": "^[EW]\\d{2}[NS]\\d{2}$",
-      "description": "Tile identifier in the EEA 10m grid (easting/northing)"
+      "description": "Regional LAEA grid tile or Sentinel-2 MGRS tile identifier (2- or 3-digit coordinates)",
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^[EW]\\d{2,3}[NS]\\d{2,3}$",
+          "description": "Regional LAEA grid tile identifier (2- or 3-digit coordinates)"
+        },
+        {
+          "type": "string",
+          "pattern": "^T\\d{2}[C-HJ-NP-X][A-Z]{2}$",
+          "description": "Sentinel-2 MGRS tile identifier"
+        }
+      ]
     },
     "epsg_code": {
       "type": "string",
@@ -59,7 +81,9 @@
     },
     "extension": {
       "type": "string",
-      "enum": ["tif"],
+      "enum": [
+        "tif"
+      ],
       "description": "File extension without leading dot"
     }
   },

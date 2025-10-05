@@ -353,3 +353,28 @@ def test_parse_sentinel2_epsg_lookup():
     assert result.match_family == "S2"
     assert result.fields["mgrs_tile"] == "T03VUL"
     assert result.fields["epsg_code"] == "32603"
+
+
+
+
+def test_parse_clms_hr_vpp_mgrs_tile():
+    name = "VPP_2017_S2_T32TPR-010m_V101_s1_AMPL.tif"
+    result = parse_auto(name)
+
+    assert result.valid
+    assert result.match_family == "VPP"
+    assert result.fields["tile"] == "T32TPR"
+    assert result.fields["mgrs_tile"] == "T32TPR"
+    assert "eea_tile" not in result.fields
+
+
+def test_parse_clms_hr_vpp_eea_tile():
+    name = "VPP_2017_S2_E042N018-03035-010m_V101_s1_EOSD.tif"
+    result = parse_auto(name)
+
+    assert result.valid
+    assert result.match_family == "VPP"
+    assert result.fields["tile"] == "E042N018"
+    assert result.fields["eea_tile"] == "E042N018"
+    assert result.fields["epsg_code"] == "03035"
+    assert "mgrs_tile" not in result.fields

@@ -4,12 +4,16 @@
   "schema_version": "0.0.0",
   "status": "current",
   "stac_version": "1.1.0",
-  "stac_extensions": ["https://stac-extensions.github.io/raster/v1.0.0/schema.json"],
+  "stac_extensions": [
+    "https://stac-extensions.github.io/raster/v1.0.0/schema.json"
+  ],
   "description": "Copernicus European Ground Motion Service Level 3 velocity grid filename (extension optional).",
   "fields": {
     "product": {
       "type": "string",
-      "enum": ["EGMS"],
+      "enum": [
+        "EGMS"
+      ],
       "description": "Constant service prefix"
     },
     "level": {
@@ -19,8 +23,19 @@
     },
     "tile": {
       "type": "string",
-      "pattern": "^E\\d{2,3}N\\d{2,3}$",
-      "description": "EGMS 100 km grid tile identifier"
+      "description": "Regional LAEA grid tile or Sentinel-2 MGRS tile identifier (2- or 3-digit coordinates)",
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^[EW]\\d{2,3}[NS]\\d{2,3}$",
+          "description": "Regional LAEA grid tile identifier (2- or 3-digit coordinates)"
+        },
+        {
+          "type": "string",
+          "pattern": "^T\\d{2}[C-HJ-NP-X][A-Z]{2}$",
+          "description": "Sentinel-2 MGRS tile identifier"
+        }
+      ]
     },
     "tile_size": {
       "type": "string",
@@ -49,7 +64,10 @@
     },
     "extension": {
       "type": "string",
-      "enum": ["tif", "tiff"],
+      "enum": [
+        "tif",
+        "tiff"
+      ],
       "description": "File extension without leading dot"
     }
   },
