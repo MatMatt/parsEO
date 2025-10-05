@@ -7,6 +7,9 @@ from typing import Any
 from typing import Dict
 from typing import Mapping
 
+from ._epsg_lookup import landsat_path_row_to_epsg
+from ._epsg_lookup import mgrs_tile_to_epsg
+
 
 @dataclass(frozen=True)
 class FieldMapping:
@@ -67,8 +70,6 @@ def apply_schema_mappings(
     """Augment *extracted* fields with STAC values defined in *schema*."""
 
     mappings = get_schema_field_mappings(schema)
-    if not mappings:
-        return extracted
 
     enriched = dict(extracted)
     for field_name, mapping in mappings.items():
@@ -84,6 +85,23 @@ def apply_schema_mappings(
 
         for target_field, target_value in targets.items():
             enriched[target_field] = target_value
+
+    schema_id = str(schema.get("schema_id", "")).lower()
+
+    if "epsg_code" not in enriched:
+        tile = enriched.get("mgrs_tile")
+        if tile and "sentinel:s2" in schema_id:
+            epsg = mgrs_tile_to_epsg(str(tile))
+            if epsg:
+                enriched["epsg_code"] = epsg
+
+    if "epsg_code" not in enriched:
+        path = enriched.get("wrs_path")
+        row = enriched.get("wrs_row")
+        if path and row and schema_id.startswith("usgs:landsat"):
+            epsg = landsat_path_row_to_epsg(str(path), str(row))
+            if epsg:
+                enriched["epsg_code"] = epsg
 
     return enriched
 

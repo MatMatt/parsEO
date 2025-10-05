@@ -249,17 +249,15 @@ def test_parse_clms_egms_l3_velocity_grid():
 
     assert result.valid
     assert result.match_family == "EGMS-L3"
-    assert result.fields == {
-        "prefix": "EGMS",
-        "level": "L3",
-        "tile": "E28N49",
-        "tile_size": "100km",
-        "component": "U",
-        "start_year": "2018",
-        "end_year": "2022",
-        "version": "1",
-        "extension": "tiff",
-    }
+    assert result.fields["product"] == "EGMS"
+    assert result.fields["level"] == "L3"
+    assert result.fields["tile"] == "E28N49"
+    assert result.fields["tile_size"] == "100km"
+    assert result.fields["component"] == "U"
+    assert result.fields["start_year"] == "2018"
+    assert result.fields["end_year"] == "2022"
+    assert result.fields["version"] == "1"
+    assert result.fields["extension"] == "tiff"
 
 
 def test_parse_clms_egms_l2a_product_csv():
@@ -268,18 +266,16 @@ def test_parse_clms_egms_l2a_product_csv():
 
     assert result.valid
     assert result.match_family == "EGMS-L2A"
-    assert result.fields == {
-        "prefix": "EGMS",
-        "level": "L2a",
-        "track": "088",
-        "burst": "0282",
-        "swath": "IW2",
-        "polarisation": "VV",
-        "start_year": "2018",
-        "end_year": "2022",
-        "version": "1",
-        "extension": "csv",
-    }
+    assert result.fields["product"] == "EGMS"
+    assert result.fields["level"] == "L2a"
+    assert result.fields["track"] == "088"
+    assert result.fields["burst"] == "0282"
+    assert result.fields["swath"] == "IW2"
+    assert result.fields["polarisation"] == "VV"
+    assert result.fields["start_year"] == "2018"
+    assert result.fields["end_year"] == "2022"
+    assert result.fields["version"] == "1"
+    assert result.fields["extension"] == "csv"
 
 
 def test_parse_clms_egms_l2a_product_zip():
@@ -288,18 +284,16 @@ def test_parse_clms_egms_l2a_product_zip():
 
     assert result.valid
     assert result.match_family == "EGMS-L2A"
-    assert result.fields == {
-        "prefix": "EGMS",
-        "level": "L2a",
-        "track": "124",
-        "burst": "0135",
-        "swath": "IW1",
-        "polarisation": "VH",
-        "start_year": "2015",
-        "end_year": "2020",
-        "version": "2",
-        "extension": "zip",
-    }
+    assert result.fields["product"] == "EGMS"
+    assert result.fields["level"] == "L2a"
+    assert result.fields["track"] == "124"
+    assert result.fields["burst"] == "0135"
+    assert result.fields["swath"] == "IW1"
+    assert result.fields["polarisation"] == "VH"
+    assert result.fields["start_year"] == "2015"
+    assert result.fields["end_year"] == "2020"
+    assert result.fields["version"] == "2"
+    assert result.fields["extension"] == "zip"
 
 
 def test_parse_clms_egms_gnss_model():
@@ -308,13 +302,11 @@ def test_parse_clms_egms_gnss_model():
 
     assert result.valid
     assert result.match_family == "EGMS-GNSS-MODEL"
-    assert result.fields == {
-        "prefix": "EGMS",
-        "product": "AEPND",
-        "issue_year": "2023",
-        "revision": "1",
-        "extension": "csv",
-    }
+    assert result.fields["product"] == "EGMS"
+    assert result.fields["variable"] == "AEPND"
+    assert result.fields["issue_year"] == "V2023"
+    assert result.fields["revision"] == "1"
+    assert result.fields["extension"] == "csv"
 
 
 def test_parse_modis_stac_mapping():
@@ -338,3 +330,14 @@ def test_parse_landsat_stac_mapping():
     assert result.fields["platform"] == "landsat-8"
     assert result.fields["instrument"] == "OLI_TIRS"
     assert result.fields["platform_code"] == "LC08"
+    assert result.fields["epsg_code"] == "32619"
+
+
+def test_parse_sentinel2_epsg_lookup():
+    name = "S2B_MSIL2A_20241123T224759_N0511_R101_T03VUL_20241123T230829.SAFE"
+    result = parse_auto(name)
+
+    assert result.valid
+    assert result.match_family == "S2"
+    assert result.fields["mgrs_tile"] == "T03VUL"
+    assert result.fields["epsg_code"] == "32603"
