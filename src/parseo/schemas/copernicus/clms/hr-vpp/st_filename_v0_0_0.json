@@ -39,7 +39,7 @@
     },
     "extension": {"type": "string", "enum": ["tif"], "description": "File extension without leading dot"}
   },
-  "template": "{product}_{timestamp}_{sensor}_{tile_id}[-03035]-{resolution}_{version}_{variable}[.{extension}]",
+  "template": "{product}_{timestamp}_{sensor}_{tile_id}[-{epsg_code}]-{resolution}_{version}_{variable}[.{extension}]",
   "examples": [
     "ST_20170101T000000_S2_E10N25-03035-010m_V101_PPI.tif",
     "ST_20170101T000000_S2_E10N25-03035-010m_V101_QFLAG.tif",

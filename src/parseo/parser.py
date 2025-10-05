@@ -94,8 +94,8 @@ def _match_filename(name: str, schema: Dict) -> Optional[re.Match]:
 def _normalize_epsg_fields(fields: Dict[str, Any]) -> Dict[str, Any]:
     """Normalize EPSG-related fields to consistently use 5-digit codes."""
 
-    normalized = dict(fields)
-    for key, value in fields.items():
+    normalized = {k: v for k, v in fields.items() if v is not None}
+    for key, value in list(normalized.items()):
         if not isinstance(key, str):
             continue
         key_lower = key.lower()

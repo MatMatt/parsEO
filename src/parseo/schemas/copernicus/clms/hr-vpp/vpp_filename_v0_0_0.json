@@ -47,6 +47,11 @@
         }
       ]
     },
+    "epsg_code": {
+      "type": "string",
+      "pattern": "^\\d{5}$",
+      "description": "EPSG code of the product grid (zero-padded)"
+    },
     "resolution": {
       "type": "string",
       "pattern": "^\\d{3}m$",
@@ -88,7 +93,7 @@
       "description": "File extension without leading dot"
     }
   },
-  "template": "{product}_{reference_year}_{sensor}_{tile}[-03035]-{resolution}_{version}_{season}_{variable}[.{extension}]",
+  "template": "{product}_{reference_year}_{sensor}_{tile}[-{epsg_code}]-{resolution}_{version}_{season}_{variable}[.{extension}]",
   "examples": [
     "VPP_2017_S2_T32TPR-010m_V101_s1_AMPL.tif",
     "VPP_2017_S2_E45N28-03035-010m_V101_s1_EOSD.tif",

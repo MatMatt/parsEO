@@ -22,7 +22,7 @@
       "pattern": "^(?:005m|010m|020m|100m)$",
       "description": "Spatial resolution"
     },
-    "eea_tile": {
+    "tile_id": {
       "type": "string",
       "pattern": "^[EW]\\d{2,3}[NS]\\d{2,3}$",
       "description": "EEA reference grid tile identifier"
@@ -38,7 +38,7 @@
       "description": "File extension without leading dot"
     }
   },
-  "template": "{variable}_{reference_year}_{resolution}_{eea_tile}_{epsg_code}[.{extension}]",
+  "template": "{variable}_{reference_year}_{resolution}_{tile_id}_{epsg_code}[.{extension}]",
   "examples": [
     "SWF_2018_005m_E34N27_03035.tif",
     "SWF_2018_005m_E36N31_03035.tif"

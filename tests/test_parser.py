@@ -178,7 +178,6 @@ def test_parse_urban_atlas_lcu():
         "version": "V01",
         "revision": "R00",
         "production_date": "20240212",
-        "extension": None,
     }
     assert "type_code" not in result.fields
 
@@ -207,7 +206,7 @@ def test_parse_clms_hrl_nvlcc():
         "variable": "IMD",
         "temporal_coverage": "S2021",
         "resolution": "R10m",
-        "eea_tile": "E09N27",
+        "tile_id": "E09N27",
         "epsg_code": "03035",
         "version": "V01",
         "release": "R01",
@@ -234,7 +233,7 @@ def test_parse_clms_hrl_small_woody_features():
         "variable": "SWF",
         "reference_year": "2018",
         "resolution": "005m",
-        "eea_tile": "E34N27",
+        "tile_id": "E34N27",
         "epsg_code": "03035",
         "extension": "tif",
     }
@@ -249,7 +248,8 @@ def test_parse_clms_hrl_imperviousness():
     assert result.fields == {
         "variable": "IMD",
         "reference_year": "2021",
-        "eea_tile": "E042N018",
+        "tile_id": "E042N018",
+        "epsg_code": "03035",
         "resolution": "010m",
         "version": "V100",
         "extension": "tif",
@@ -365,17 +365,17 @@ def test_parse_clms_hr_vpp_mgrs_tile():
     assert result.match_family == "VPP"
     assert result.fields["tile"] == "T32TPR"
     assert result.fields["mgrs_tile"] == "T32TPR"
-    assert "eea_tile" not in result.fields
+    assert "tile_id" not in result.fields
 
 
-def test_parse_clms_hr_vpp_eea_tile():
+def test_parse_clms_hr_vpp_tile_id():
     name = "VPP_2017_S2_E45N28-03035-010m_V101_s1_EOSD.tif"
     result = parse_auto(name)
 
     assert result.valid
     assert result.match_family == "VPP"
     assert result.fields["tile"] == "E45N28"
-    assert result.fields["eea_tile"] == "E45N28"
+    assert result.fields["tile_id"] == "E45N28"
     assert result.fields["epsg_code"] == "03035"
     assert "mgrs_tile" not in result.fields
 
@@ -389,7 +389,7 @@ def test_parse_clms_n2k_change():
     assert result.fields == {
         "theme": "N2K_Change",
         "reference": "2012-2018",
-        "epsg_code": "EPSG3035",
+        "epsg_code": "03035",
         "version": "V2_0",
         "extension": "zip",
     }
