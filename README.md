@@ -133,8 +133,6 @@ parseo parse S2B_MSIL2A_20241123T224759_N0511_R101_T03VUL_20241123T230829.SAFE
 # Assemble using a JSON document with the required fields
 parseo assemble --family S2 fields.json
 
-# Review Copernicus Land Monitoring Service datasets from the public catalog
-parseo clms-products --catalog-url https://land.copernicus.eu/en/dataset-catalog
 ```
 
 ### Working with specific schema versions
