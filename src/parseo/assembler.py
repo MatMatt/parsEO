@@ -83,6 +83,18 @@ def _assemble_schema(schema_path: Union[str, Path], fields: Dict[str, Any]) -> s
     sch = _load_schema(schema_path)
     prepared_fields = translate_fields_to_tokens(fields, sch)
 
+    template = sch.get("template")
+    if not isinstance(template, str):
+        raise ValueError(f"Schema {schema_path} missing 'template' string.")
+
+    epsg_value = prepared_fields.get("epsg_code")
+    if (
+        isinstance(epsg_value, str)
+        and "EPSG{epsg_code}" in template
+        and epsg_value
+    ):
+        prepared_fields["epsg_code"] = epsg_value.lstrip("0") or "0"
+
     # Validate provided fields against schema definitions
     specs = sch.get("fields", {})
     for name, value in prepared_fields.items():
@@ -100,10 +112,6 @@ def _assemble_schema(schema_path: Union[str, Path], fields: Dict[str, Any]) -> s
                 raise ValueError(
                     f"Field '{name}' with value {value!r} does not match pattern {spec['pattern']}."
                 )
-
-    template = sch.get("template")
-    if not isinstance(template, str):
-        raise ValueError(f"Schema {schema_path} missing 'template' string.")
 
     try:
         return _assemble_from_template(template, prepared_fields)

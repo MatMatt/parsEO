@@ -27,11 +27,11 @@
       "pattern": "^(?:C\\d{4}(?:-\\d{4})?|P\\d{4}-\\d{4}|S\\d{4})$",
       "description": "Temporal coverage token where CYYYY or CYYYY-YYYY captures change layers, PYYYY-YYYY captures period aggregates, and SYYYY captures status layers"
     },
-    "type":{
+    "type": {
       "type": "string",
       "enum": ["R"],
       "description": "Data type Raster/Vector"
-    }
+    },
     "resolution": {
       "type": "string",
       "pattern": "^\\d{2,3}m$",

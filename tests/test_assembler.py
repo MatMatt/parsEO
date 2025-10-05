@@ -94,7 +94,7 @@ def test_assemble_clms_hrl_imperviousness():
     fields = {
         "variable": "IMD",
         "reference_year": "2021",
-        "eea_tile": "E042N018",
+        "tile_id": "E042N018",
         "resolution": "010m",
         "version": "V100",
         "extension": "tif",
@@ -108,7 +108,7 @@ def test_assemble_clms_n2k():
     fields = {
         "theme": "N2K",
         "reference": "2018",
-        "epsg_code": "EPSG3035",
+        "epsg_code": "03035",
         "version": "V1_0",
         "extension": "gpkg",
     }
@@ -148,7 +148,7 @@ def test_assemble_clms_clcplus_with_canonical_type():
         "type": "raster",
         "season": "S2023",
         "resolution": "R10m",
-        "eea_tile": "E48N37",
+        "tile_id": "E48N37",
         "epsg_code": "03035",
         "version": "V01",
         "revision": "R00",
@@ -223,14 +223,14 @@ def test_assemble_clms_hr_vpp_from_mgrs_tile():
     assert name == "VPP_2017_S2_T32TPR-010m_V101_s1_AMPL.tif"
 
 
-def test_assemble_clms_hr_vpp_from_eea_tile():
+def test_assemble_clms_hr_vpp_from_tile_id():
     fields = {
         "product": "VPP",
         "reference_year": "2017",
         "platform": "Sentinel-2",
         "constellation": "Sentinel-2",
         "instruments": ["MSI"],
-        "eea_tile": "E45N28",
+        "tile_id": "E45N28",
         "epsg_code": "03035",
         "resolution": "010m",
         "version": "V101",

@@ -37,7 +37,7 @@
       "pattern": "^R\\d{2}m$",
       "description": "Spatial resolution expressed with leading 'R' and units"
     },
-    "eea_tile": {
+    "tile_id": {
       "type": "string",
       "pattern": "^[EW]\\d{2}[NS]\\d{2}$",
       "description": "Tile identifier in the EEA 10m grid (easting/northing)"
@@ -63,7 +63,7 @@
       "description": "File extension without leading dot"
     }
   },
-  "template": "{programme}_{product}_{type}_{season}_{resolution}_{eea_tile}_{epsg_code}_{version}_{revision}[.{extension}]",
+  "template": "{programme}_{product}_{type}_{season}_{resolution}_{tile_id}_{epsg_code}_{version}_{revision}[.{extension}]",
   "examples": [
     "CLMS_CLCPLUS_RAS_S2023_R10m_E48N37_03035_V01_R00.tif"
   ]
