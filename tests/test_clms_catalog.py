@@ -15,6 +15,30 @@ def test_parse_html_extracts_titles():
     assert parse_html(html) == ["Product A", "Product B"]
 
 
+def test_parse_html_supports_portal_sitemap_xml():
+    xml = """
+    <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+            xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">
+        <url>
+            <loc>https://land.copernicus.eu/en/portal/data/imperviousness</loc>
+            <news:news>
+                <news:title>Imperviousness High Resolution Layer</news:title>
+            </news:news>
+        </url>
+        <url>
+            <loc>https://land.copernicus.eu/en/portal/data/ndvi</loc>
+        </url>
+        <url>
+            <loc>https://land.copernicus.eu/en/portal/data/ndvi</loc>
+        </url>
+    </urlset>
+    """
+    assert parse_html(xml) == [
+        "Imperviousness High Resolution Layer",
+        "ndvi",
+    ]
+
+
 def test_cli_clms_products_reads_env(monkeypatch, capsys):
     monkeypatch.setenv("CLMS_DATASET_CATALOG_URL", "https://example.test/catalog")
 
