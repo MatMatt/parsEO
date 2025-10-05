@@ -11,6 +11,7 @@ from typing import Union
 
 from parseo import __version__
 from parseo.assembler import assemble_auto
+from parseo.clms_catalog import fetch_clms_products
 from parseo.parser import describe_schema  # parser helpers
 from parseo.parser import parse_auto
 from parseo.schema_registry import list_schema_families
@@ -37,6 +38,19 @@ def _build_arg_parser() -> argparse.ArgumentParser:
 
     # list-schemas
     sp.add_parser("list-schemas", help="List available schema families")
+
+    # clms-products
+    p_clms = sp.add_parser(
+        "clms-products",
+        help="List dataset titles from the Copernicus Land Monitoring Service catalog",
+    )
+    p_clms.add_argument(
+        "--catalog-url",
+        help=(
+            "Override the catalog URL. When omitted, the CLMS_DATASET_CATALOG_URL "
+            "environment variable is used."
+        ),
+    )
 
     # schema-info
     p_info = sp.add_parser("schema-info", help="Show details for a mission family")
@@ -218,6 +232,15 @@ def main(argv: Union[List[str], None] = None) -> int:
         except KeyError as e:
             raise SystemExit(str(e))
         print(json.dumps(info, indent=2, ensure_ascii=False))
+        return 0
+
+    if args.cmd == "clms-products":
+        try:
+            products = fetch_clms_products(url=args.catalog_url)
+        except ValueError as exc:
+            raise SystemExit(str(exc))
+        for title in products:
+            print(title)
         return 0
 
     if args.cmd == "list-stac-collections":
