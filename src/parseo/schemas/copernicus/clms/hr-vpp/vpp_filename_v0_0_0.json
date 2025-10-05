@@ -52,7 +52,7 @@
       "enum": ["s1", "s2"],
       "description": "Season identifier (s1 = first season, s2 = second season)"
     },
-    "parameter": {
+    "variable": {
       "type": "string",
       "enum": [
         "AMPL",
@@ -78,7 +78,7 @@
       "description": "File extension without leading dot"
     }
   },
-  "template": "{product}_{reference_year}_{sensor}_{tile}-{resolution}_{version}_{season}_{parameter}[.{extension}]",
+  "template": "{product}_{reference_year}_{sensor}_{tile}-{resolution}_{version}_{season}_{variable}[.{extension}]",
   "examples": [
     "VPP_2017_S2_T32TPR-010m_V101_s1_AMPL.tif",
     "VPP_2017_S2_E45N28-03035-010m_V101_s1_EOSD.tif",
