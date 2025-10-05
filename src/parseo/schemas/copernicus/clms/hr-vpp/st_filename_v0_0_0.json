@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "schema_id": "copernicus:clms:hr-vpp:st",
   "schema_version": "0.0.0",
-  "status": "current",
+  "status": "deprecated",
   "stac_version": "1.1.0",
   "stac_extensions": ["https://stac-extensions.github.io/raster/v1.0.0/schema.json", "https://stac-extensions.github.io/eo/v1.0.0/schema.json"],
   "description": "CLMS HR-VPP Seasonal Trajectories Plant Phenology Index product filename (extension optional).",
