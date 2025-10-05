@@ -170,7 +170,8 @@ def test_parse_urban_atlas_lcu():
         "product": "UA",
         "variable": "LCU",
         "survey": "S2021",
-        "type": "V",
+        "type": "vector",
+        "type_code": "V",
         "resolution": "025ha",
         "area_code": "DK004L3",
         "city": "AALBORG",
@@ -180,6 +181,16 @@ def test_parse_urban_atlas_lcu():
         "production_date": "20240212",
         "extension": None,
     }
+
+
+def test_parse_clms_clcplus_type_mapping():
+    name = "CLMS_CLCPLUS_RAS_S2023_R10m_E48N37_03035_V01_R00.tif"
+    result = parse_auto(name)
+
+    assert result.valid
+    assert result.match_family == "RAS"
+    assert result.fields["type"] == "raster"
+    assert result.fields["type_code"] == "RAS"
 
 
 

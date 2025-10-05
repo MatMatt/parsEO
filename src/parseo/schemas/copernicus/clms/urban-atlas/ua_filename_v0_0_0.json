@@ -30,7 +30,14 @@
     "type": {
       "type": "string",
       "enum": ["V","R"],
-      "description": "Data type raster or vector"
+      "description": "Data type raster or vector",
+      "stac_map": {
+        "preserve_original_as": "type_code",
+        "values": {
+          "V": {"type": "vector"},
+          "R": {"type": "raster"}
+        }
+      }
     },
     "resolution": {
       "type": "string",
