@@ -136,7 +136,7 @@ def test_assemble_clms_clcplus_with_canonical_type():
         "season": "S2023",
         "resolution": "R10m",
         "tile": "E48N37",
-        "product_code": "03035",
+        "epsg_code": "03035",
         "version": "V01",
         "revision": "R00",
         "extension": "tif",
