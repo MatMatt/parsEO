@@ -10,6 +10,9 @@ from typing import Optional
 
 from ._epsg_lookup import landsat_path_row_to_epsg
 from ._epsg_lookup import mgrs_tile_to_epsg
+from ._tile_systems import TileSystem
+from ._tile_systems import detect_tile_system
+from ._tile_systems import normalize_tile
 
 
 @dataclass(frozen=True)
@@ -74,6 +77,51 @@ def get_schema_field_mappings(schema: Mapping[str, Any]) -> Dict[str, FieldMappi
     return mappings
 
 
+def _augment_with_tile_variants(fields: Dict[str, Any]) -> Dict[str, Any]:
+    enriched = dict(fields)
+    for candidate in ("tile", "tile_id", "mgrs_tile", "eea_tile"):
+        value = enriched.get(candidate)
+        if not isinstance(value, str):
+            continue
+
+        system = detect_tile_system(value)
+        if system is None:
+            continue
+
+        normalized = normalize_tile(value)
+        enriched[candidate] = normalized
+
+        if system is TileSystem.MGRS and "mgrs_tile" not in enriched:
+            enriched["mgrs_tile"] = normalized
+        if system is TileSystem.EEA and "eea_tile" not in enriched:
+            enriched["eea_tile"] = normalized
+
+    return enriched
+
+
+def _backfill_tile_tokens(
+    fields: Dict[str, Any], schema: Mapping[str, Any]
+) -> Dict[str, Any]:
+    translated = dict(fields)
+    specs = schema.get("fields", {})
+
+    if "tile" in specs and "tile" not in translated:
+        for key in ("mgrs_tile", "eea_tile", "tile_id"):
+            value = translated.get(key)
+            if isinstance(value, str) and value:
+                translated["tile"] = normalize_tile(value)
+                break
+
+    if "tile_id" in specs and "tile_id" not in translated:
+        for key in ("mgrs_tile", "eea_tile", "tile"):
+            value = translated.get(key)
+            if isinstance(value, str) and value:
+                translated["tile_id"] = normalize_tile(value)
+                break
+
+    return translated
+
+
 def apply_schema_mappings(
     extracted: Dict[str, Any], schema: Mapping[str, Any]
 ) -> Dict[str, Any]:
@@ -81,7 +129,7 @@ def apply_schema_mappings(
 
     mappings = get_schema_field_mappings(schema)
 
-    enriched = dict(extracted)
+    enriched = _augment_with_tile_variants(extracted)
     for field_name, mapping in mappings.items():
         token = extracted.get(field_name)
         if token is None:
@@ -126,7 +174,7 @@ def translate_fields_to_tokens(
     if not mappings:
         return fields
 
-    translated = dict(fields)
+    translated = _augment_with_tile_variants(fields)
     for field_name, mapping in mappings.items():
         token: Any = None
 
@@ -152,5 +200,6 @@ def translate_fields_to_tokens(
 
         translated[field_name] = token
 
+    translated = _backfill_tile_tokens(translated, schema)
     return translated
 
