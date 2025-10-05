@@ -228,3 +228,4 @@ def test_assemble_clms_hr_vpp_from_eea_tile():
 
     name = assemble(fields, family="VPP")
     assert name == "VPP_2017_S2_E45N28-03035-010m_V101_s1_EOSD.tif"
+
