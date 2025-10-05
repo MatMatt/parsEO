@@ -43,6 +43,7 @@ def _build_arg_parser() -> argparse.ArgumentParser:
     p_clms = sp.add_parser(
         "clms-products",
         help="List dataset titles from the Copernicus Land Monitoring Service catalog",
+        aliases=["clms"],
     )
     p_clms.add_argument(
         "--catalog-url",
@@ -234,7 +235,7 @@ def main(argv: Union[List[str], None] = None) -> int:
         print(json.dumps(info, indent=2, ensure_ascii=False))
         return 0
 
-    if args.cmd == "clms-products":
+    if args.cmd in {"clms-products", "clms"}:
         try:
             products = fetch_clms_products(url=args.catalog_url)
         except ValueError as exc:
