@@ -188,8 +188,9 @@ def test_parse_clms_clcplus_type_mapping():
     result = parse_auto(name)
 
     assert result.valid
-    assert result.match_family == "RAS"
+    assert result.match_family == "CLCPLUS"
     assert result.fields["type"] == "raster"
+    assert result.fields["epsg_code"] == "03035"
     assert "type_code" not in result.fields
 
 

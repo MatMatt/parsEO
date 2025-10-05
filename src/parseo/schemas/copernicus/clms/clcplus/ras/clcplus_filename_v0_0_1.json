@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "schema_id": "copernicus:clms:clcplus:ras",
+  "schema_id": "copernicus:clms:clcplus",
   "schema_version": "0.0.1",
   "status": "current",
   "stac_version": "1.1.0",
@@ -42,9 +42,9 @@
       "pattern": "^[EW]\\d{2}[NS]\\d{2}$",
       "description": "Tile identifier in the EEA 10m grid (easting/northing)"
     },
-    "product_code": {
+    "epsg_code": {
       "type": "string",
-      "pattern": "^\\d{5}$",
+      "pattern": "^0?\\d{4}$",
       "description": "EPSG code of the product grid"
     },
     "version": {
@@ -63,7 +63,7 @@
       "description": "File extension without leading dot"
     }
   },
-  "template": "{programme}_{product}_{type}_{season}_{resolution}_{tile}_{product_code}_{version}_{revision}[.{extension}]",
+  "template": "{programme}_{product}_{type}_{season}_{resolution}_{tile}_{epsg_code}_{version}_{revision}[.{extension}]",
   "examples": [
     "CLMS_CLCPLUS_RAS_S2023_R10m_E48N37_03035_V01_R00.tif"
   ]
