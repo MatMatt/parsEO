@@ -22,7 +22,6 @@
       "enum": ["RAS"],
       "description": "Data class code (raster)",
       "stac_map": {
-        "preserve_original_as": "type_code",
         "values": {
           "RAS": {"type": "raster"}
         }

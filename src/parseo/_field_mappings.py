@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from typing import Any
 from typing import Dict
 from typing import Mapping
+from typing import Optional
 
 from ._epsg_lookup import landsat_path_row_to_epsg
 from ._epsg_lookup import mgrs_tile_to_epsg
@@ -15,7 +16,7 @@ from ._epsg_lookup import mgrs_tile_to_epsg
 class FieldMapping:
     """Represents a mapping between a filename token and STAC fields."""
 
-    preserve_as: str
+    preserve_as: Optional[str]
     token_map: Dict[str, Dict[str, Any]]
 
 
@@ -43,7 +44,19 @@ def get_schema_field_mappings(schema: Mapping[str, Any]) -> Dict[str, FieldMappi
         if not isinstance(raw_map, Mapping):
             continue
 
-        preserve_as = raw_map.get("preserve_original_as")
+        has_explicit_values = "values" in raw_map
+        preserve_raw = raw_map.get("preserve_original_as")
+        preserve_as: Optional[str]
+
+        if isinstance(preserve_raw, str):
+            preserve_as = preserve_raw.strip() or None
+        elif isinstance(preserve_raw, bool):
+            preserve_as = f"{field_name}_code" if preserve_raw else None
+        elif preserve_raw is not None:
+            preserve_as = str(preserve_raw).strip() or None
+        else:
+            preserve_as = None if has_explicit_values else f"{field_name}_code"
+
         values: Any
         if "values" in raw_map:
             values = raw_map.get("values")
@@ -55,9 +68,6 @@ def get_schema_field_mappings(schema: Mapping[str, Any]) -> Dict[str, FieldMappi
         normalized = _normalize_mapping_values(values)
         if not normalized:
             continue
-
-        if not isinstance(preserve_as, str) or not preserve_as:
-            preserve_as = f"{field_name}_code"
 
         mappings[str(field_name)] = FieldMapping(preserve_as=preserve_as, token_map=normalized)
 
@@ -77,7 +87,8 @@ def apply_schema_mappings(
         if token is None:
             continue
 
-        enriched[mapping.preserve_as] = token
+        if mapping.preserve_as:
+            enriched[mapping.preserve_as] = token
 
         targets = mapping.token_map.get(str(token))
         if not isinstance(targets, Mapping):
@@ -119,9 +130,11 @@ def translate_fields_to_tokens(
     for field_name, mapping in mappings.items():
         token: Any = None
 
-        preserved = fields.get(mapping.preserve_as)
-        if preserved not in (None, ""):
-            token = str(preserved)
+        preserved = None
+        if mapping.preserve_as:
+            preserved = fields.get(mapping.preserve_as)
+            if preserved not in (None, ""):
+                token = str(preserved)
 
         if token is None:
             current_value = fields.get(field_name)
