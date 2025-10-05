@@ -217,7 +217,7 @@ def test_assemble_clms_hr_vpp_from_eea_tile():
         "platform": "Sentinel-2",
         "constellation": "Sentinel-2",
         "instruments": ["MSI"],
-        "eea_tile": "E042N018",
+        "eea_tile": "E45N28",
         "epsg_code": "03035",
         "resolution": "010m",
         "version": "V101",
@@ -227,4 +227,5 @@ def test_assemble_clms_hr_vpp_from_eea_tile():
     }
 
     name = assemble(fields, family="VPP")
-    assert name == "VPP_2017_S2_E042N018-03035-010m_V101_s1_EOSD.tif"
+    assert name == "VPP_2017_S2_E45N28-03035-010m_V101_s1_EOSD.tif"
+

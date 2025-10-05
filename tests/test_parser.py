@@ -369,12 +369,12 @@ def test_parse_clms_hr_vpp_mgrs_tile():
 
 
 def test_parse_clms_hr_vpp_eea_tile():
-    name = "VPP_2017_S2_E042N018-03035-010m_V101_s1_EOSD.tif"
+    name = "VPP_2017_S2_E45N28-03035-010m_V101_s1_EOSD.tif"
     result = parse_auto(name)
 
     assert result.valid
     assert result.match_family == "VPP"
-    assert result.fields["tile"] == "E042N018"
-    assert result.fields["eea_tile"] == "E042N018"
+    assert result.fields["tile"] == "E45N28"
+    assert result.fields["eea_tile"] == "E45N28"
     assert result.fields["epsg_code"] == "03035"
     assert "mgrs_tile" not in result.fields
