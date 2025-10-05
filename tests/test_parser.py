@@ -378,3 +378,18 @@ def test_parse_clms_hr_vpp_eea_tile():
     assert result.fields["eea_tile"] == "E45N28"
     assert result.fields["epsg_code"] == "03035"
     assert "mgrs_tile" not in result.fields
+
+
+def test_parse_clms_n2k_change():
+    name = "N2K_Change_2012-2018_EPSG3035_V2_0.zip"
+    result = parse_auto(name)
+
+    assert result.valid
+    assert result.match_family == "N2K"
+    assert result.fields == {
+        "theme": "N2K_Change",
+        "reference": "2012-2018",
+        "epsg_code": "EPSG3035",
+        "version": "V2_0",
+        "extension": "zip",
+    }
