@@ -133,6 +133,20 @@ parseo parse S2B_MSIL2A_20241123T224759_N0511_R101_T03VUL_20241123T230829.SAFE
 # Assemble using a JSON document with the required fields
 parseo assemble --family S2 fields.json
 
+# Parse a Copernicus Land Monitoring Service (CLMS) filename
+parseo parse ST_20240101T123045_S2_E15N45-01234_010m_V100_PPI.tif
+
+# Assemble the same CLMS filename from key=value pairs
+parseo assemble \
+  prefix=ST \
+  timestamp=20240101T123045 \
+  sensor=S2 \
+  laea_tile=E15N45-01234 \
+  resolution=010m \
+  version=V100 \
+  variable=PPI \
+  extension=tif
+
 ```
 
 ### Working with specific schema versions
