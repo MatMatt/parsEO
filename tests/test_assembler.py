@@ -104,6 +104,48 @@ def test_assemble_clms_hrl_imperviousness():
     assert name == "IMD_2021_E042N018_010m_V100.tif"
 
 
+def test_assemble_clms_urban_atlas_with_canonical_type():
+    fields = {
+        "programme": "CLMS",
+        "product": "UA",
+        "variable": "LCU",
+        "survey": "S2021",
+        "type": "vector",
+        "resolution": "025ha",
+        "area_code": "DK004L3",
+        "city": "AALBORG",
+        "epsg_code": "03035",
+        "version": "V01",
+        "revision": "R00",
+        "production_date": "20240212",
+    }
+
+    name = assemble(fields, family="UA-LCU")
+    assert name == "CLMS_UA_LCU_S2021_V025ha_DK004L3_AALBORG_03035_V01_R00_20240212"
+
+
+def test_assemble_clms_clcplus_with_canonical_type():
+    schema = (
+        Path(__file__).resolve().parents[1]
+        / "src/parseo/schemas/copernicus/clms/clcplus/ras/clcplus_filename_v0_0_1.json"
+    )
+    fields = {
+        "programme": "CLMS",
+        "product": "CLCPLUS",
+        "type": "raster",
+        "season": "S2023",
+        "resolution": "R10m",
+        "tile": "E48N37",
+        "product_code": "03035",
+        "version": "V01",
+        "revision": "R00",
+        "extension": "tif",
+    }
+
+    name = assemble(fields, schema_path=schema)
+    assert name == "CLMS_CLCPLUS_RAS_S2023_R10m_E48N37_03035_V01_R00.tif"
+
+
 def test_assemble_modis_from_stac_fields():
     schema = (
         Path(__file__).resolve().parents[1]
