@@ -21,7 +21,7 @@
       "pattern": "^L[0-9]+$",
       "description": "Product processing level"
     },
-    "tile": {
+    "tile_id": {
       "type": "string",
       "description": "Regional LAEA grid tile or Sentinel-2 MGRS tile identifier (2- or 3-digit coordinates)",
       "anyOf": [
@@ -71,7 +71,7 @@
       "description": "File extension without leading dot"
     }
   },
-  "template": "{product}_{level}_{tile}_{tile_size}_{component}_{start_year}_{end_year}_{version}[.{extension}]",
+  "template": "{product}_{level}_{tile_id}_{tile_size}_{component}_{start_year}_{end_year}_{version}[.{extension}]",
   "examples": [
     "EGMS_L3_E28N49_100km_U_2018_2022_1.tiff",
     "EGMS_L3_E37N28_100km_U_2019_2023_1.tiff"

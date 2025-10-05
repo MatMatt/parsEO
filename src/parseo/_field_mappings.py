@@ -91,6 +91,11 @@ def _augment_with_tile_variants(fields: Dict[str, Any]) -> Dict[str, Any]:
         normalized = normalize_tile(value)
         enriched[candidate] = normalized
 
+        if "tile" not in enriched:
+            enriched["tile"] = normalized
+        if "tile_id" not in enriched:
+            enriched["tile_id"] = normalized
+
         if system is TileSystem.MGRS and "mgrs_tile" not in enriched:
             enriched["mgrs_tile"] = normalized
         if system is TileSystem.EEA and "eea_tile" not in enriched:
@@ -171,10 +176,10 @@ def translate_fields_to_tokens(
     """Translate STAC field values in *fields* back to schema tokens."""
 
     mappings = get_schema_field_mappings(schema)
-    if not mappings:
-        return fields
-
     translated = _augment_with_tile_variants(fields)
+
+    if not mappings:
+        return _backfill_tile_tokens(translated, schema)
     for field_name, mapping in mappings.items():
         token: Any = None
 

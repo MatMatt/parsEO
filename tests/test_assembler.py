@@ -20,7 +20,7 @@ def test_assemble_missing_field_template_schema():
         "project": "WSI",
         "product": "FSC",
         "pixel_spacing": "020m",
-        "mgrs_tile": "T32TNS",
+        "tile_id": "T32TNS",
         "sensing_datetime": "20211018T103021",
         # "platform" is intentionally omitted
         "version": "V100",
@@ -94,7 +94,7 @@ def test_assemble_clms_hrl_imperviousness():
     fields = {
         "variable": "IMD",
         "reference_year": "2021",
-        "eea_tile": "E042N018",
+        "tile_id": "E042N018",
         "resolution": "010m",
         "version": "V100",
         "extension": "tif",
@@ -135,7 +135,7 @@ def test_assemble_clms_clcplus_with_canonical_type():
         "type": "raster",
         "season": "S2023",
         "resolution": "R10m",
-        "eea_tile": "E48N37",
+        "tile_id": "E48N37",
         "epsg_code": "03035",
         "version": "V01",
         "revision": "R00",

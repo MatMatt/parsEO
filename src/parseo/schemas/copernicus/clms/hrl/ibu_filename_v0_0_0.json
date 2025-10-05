@@ -27,7 +27,7 @@
       "pattern": "^\\d{3}m$",
       "description": "Spatial resolution in metres with leading zeros"
     },
-    "eea_tile": {
+    "tile_id": {
       "type": "string",
       "description": "Regional LAEA grid tile or Sentinel-2 MGRS tile identifier (2- or 3-digit coordinates)",
       "anyOf": [
@@ -61,7 +61,7 @@
       "description": "File extension without leading dot"
     }
   },
-  "template": "{variable}_{reference_year}_{resolution}_{eea_tile}_{epsg_code}_{version}[.{extension}]",
+  "template": "{variable}_{reference_year}_{resolution}_{tile_id}_{epsg_code}_{version}[.{extension}]",
   "examples": [
     "IBU_2018_010m_E47N18_03035_v010.tif",
     "IBU_2018_010m_E47N19_03035_v010.tif",

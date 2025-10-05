@@ -201,18 +201,18 @@ def test_parse_clms_hrl_nvlcc():
 
     assert result.valid
     assert result.match_family == "NVLCC"
-    assert result.fields == {
-        "prefix": "CLMS",
-        "theme": "HRLNVLCC",
-        "variable": "IMD",
-        "temporal_coverage": "S2021",
-        "resolution": "R10m",
-        "eea_tile": "E09N27",
-        "epsg_code": "03035",
-        "version": "V01",
-        "release": "R01",
-        "extension": "tif",
-    }
+    assert result.fields["prefix"] == "CLMS"
+    assert result.fields["theme"] == "HRLNVLCC"
+    assert result.fields["variable"] == "IMD"
+    assert result.fields["temporal_coverage"] == "S2021"
+    assert result.fields["resolution"] == "R10m"
+    assert result.fields["tile_id"] == "E09N27"
+    assert result.fields["tile"] == "E09N27"
+    assert result.fields["eea_tile"] == "E09N27"
+    assert result.fields["epsg_code"] == "03035"
+    assert result.fields["version"] == "V01"
+    assert result.fields["release"] == "R01"
+    assert result.fields["extension"] == "tif"
 
 
 def test_parse_clms_hrl_nvlcc_unpadded_epsg():
@@ -230,14 +230,14 @@ def test_parse_clms_hrl_small_woody_features():
 
     assert result.valid
     assert result.match_family == "SMALL-WOODY-FEATURES"
-    assert result.fields == {
-        "variable": "SWF",
-        "reference_year": "2018",
-        "resolution": "005m",
-        "eea_tile": "E34N27",
-        "epsg_code": "03035",
-        "extension": "tif",
-    }
+    assert result.fields["variable"] == "SWF"
+    assert result.fields["reference_year"] == "2018"
+    assert result.fields["resolution"] == "005m"
+    assert result.fields["tile_id"] == "E34N27"
+    assert result.fields["tile"] == "E34N27"
+    assert result.fields["eea_tile"] == "E34N27"
+    assert result.fields["epsg_code"] == "03035"
+    assert result.fields["extension"] == "tif"
 
 
 def test_parse_clms_hrl_imperviousness():
@@ -246,14 +246,14 @@ def test_parse_clms_hrl_imperviousness():
 
     assert result.valid
     assert result.match_family == "IMPERVIOUSNESS"
-    assert result.fields == {
-        "variable": "IMD",
-        "reference_year": "2021",
-        "eea_tile": "E042N018",
-        "resolution": "010m",
-        "version": "V100",
-        "extension": "tif",
-    }
+    assert result.fields["variable"] == "IMD"
+    assert result.fields["reference_year"] == "2021"
+    assert result.fields["tile_id"] == "E042N018"
+    assert result.fields["tile"] == "E042N018"
+    assert result.fields["eea_tile"] == "E042N018"
+    assert result.fields["resolution"] == "010m"
+    assert result.fields["version"] == "V100"
+    assert result.fields["extension"] == "tif"
 
 def test_parse_clms_egms_l3_velocity_grid():
     name = "EGMS_L3_E28N49_100km_U_2018_2022_1.tiff"
@@ -263,6 +263,7 @@ def test_parse_clms_egms_l3_velocity_grid():
     assert result.match_family == "EGMS-L3"
     assert result.fields["product"] == "EGMS"
     assert result.fields["level"] == "L3"
+    assert result.fields["tile_id"] == "E28N49"
     assert result.fields["tile"] == "E28N49"
     assert result.fields["tile_size"] == "100km"
     assert result.fields["component"] == "U"
@@ -363,6 +364,7 @@ def test_parse_clms_hr_vpp_mgrs_tile():
 
     assert result.valid
     assert result.match_family == "VPP"
+    assert result.fields["tile_id"] == "T32TPR"
     assert result.fields["tile"] == "T32TPR"
     assert result.fields["mgrs_tile"] == "T32TPR"
     assert "eea_tile" not in result.fields
@@ -374,6 +376,7 @@ def test_parse_clms_hr_vpp_eea_tile():
 
     assert result.valid
     assert result.match_family == "VPP"
+    assert result.fields["tile_id"] == "E042N018"
     assert result.fields["tile"] == "E042N018"
     assert result.fields["eea_tile"] == "E042N018"
     assert result.fields["epsg_code"] == "03035"

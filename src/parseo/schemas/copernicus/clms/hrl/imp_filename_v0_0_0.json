@@ -22,7 +22,7 @@
       "pattern": "^\\d{4}$",
       "description": "Reference year"
     },
-    "eea_tile": {
+    "tile_id": {
       "type": "string",
       "description": "Regional LAEA grid tile or Sentinel-2 MGRS tile identifier (2- or 3-digit coordinates)",
       "anyOf": [
@@ -56,7 +56,7 @@
       "description": "File extension without leading dot"
     }
   },
-  "template": "{variable}_{reference_year}_{eea_tile}_{resolution}_{version}[.{extension}]",
+  "template": "{variable}_{reference_year}_{tile_id}_{resolution}_{version}[.{extension}]",
   "examples": [
     "IMD_2021_E042N018_010m_V100.tif"
   ]

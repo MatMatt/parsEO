@@ -38,7 +38,7 @@
       ],
       "description": "Pixel spacing"
     },
-    "mgrs_tile": {
+    "tile_id": {
       "type": "string",
       "description": "Regional LAEA grid tile or Sentinel-2 MGRS tile identifier (2- or 3-digit coordinates)",
       "anyOf": [
@@ -91,7 +91,7 @@
       "description": "File extension without leading dot"
     }
   },
-  "template": "{programme}_{project}_{product}_{pixel_spacing}_{mgrs_tile}_{period}_{combination}_{version}_{variable}[.{extension}]",
+  "template": "{programme}_{project}_{product}_{pixel_spacing}_{tile_id}_{period}_{combination}_{version}_{variable}[.{extension}]",
   "examples": [
     "CLMS_WSI_GFSC_060m_T32TNS_20211018P7D_COMB_V100_GF-QA.tif"
   ]

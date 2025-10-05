@@ -39,7 +39,7 @@
       "pattern": "^R\\d{2,3}m$",
       "description": "Spatial resolution"
     },
-    "tile": {
+    "tile_id": {
       "type": "string",
       "description": "Regional LAEA grid tile, Sentinel-2 MGRS tile (2- or 3-digit coordinates), or two-letter geographic code",
       "anyOf": [
@@ -84,7 +84,7 @@
       "description": "File extension without leading dot"
     }
   },
-  "template": "{programme}_{product}_{variable}_{temporal_coverage}_{resolution}_{tile}_{epsg_code}_{version}[_{release}][.{extension}]",
+  "template": "{programme}_{product}_{variable}_{temporal_coverage}_{resolution}_{tile_id}_{epsg_code}_{version}[_{release}][.{extension}]",
   "examples": [
     "CLMS_HRLVLCC_GRA_S2021_R10m_E27N48_03035_V01_R00.tif",
     "CLMS_HRLVLCC_CTY_S2021_R10m_E48N41_03035_V01_R00.tif",

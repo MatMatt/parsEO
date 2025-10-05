@@ -29,7 +29,7 @@
       ],
       "description": "Sensor platform"
     },
-    "eea_tile": {
+    "tile_id": {
       "type": "string",
       "description": "Regional LAEA grid tile or Sentinel-2 MGRS tile identifier (2- or 3-digit coordinates)",
       "anyOf": [
@@ -76,7 +76,7 @@
       "description": "File extension without leading dot"
     }
   },
-  "template": "{product}_{timestamp}_{sensor}_{eea_tile}[-{epsg_code}]-{resolution}_{version}_{variable}[.{extension}]",
+  "template": "{product}_{timestamp}_{sensor}_{tile_id}[-{epsg_code}]-{resolution}_{version}_{variable}[.{extension}]",
   "examples": [
     "ST_20170101T000000_S2_E10N25-03035-010m_V101_PPI.tif",
     "ST_20170101T000000_S2_E10N25-03035-010m_V101_QFLAG.tif",

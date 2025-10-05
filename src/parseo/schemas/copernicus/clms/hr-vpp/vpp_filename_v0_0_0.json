@@ -38,7 +38,7 @@
         }
       }
     },
-    "tile": {
+    "tile_id": {
       "type": "string",
       "description": "Regional LAEA grid tile or Sentinel-2 MGRS tile identifier (2- or 3-digit coordinates)",
       "anyOf": [
@@ -105,7 +105,7 @@
       "description": "File extension without leading dot"
     }
   },
-  "template": "{product}_{reference_year}_{sensor}_{tile}[-{epsg_code}]-{resolution}_{version}_{season}_{variable}[.{extension}]",
+  "template": "{product}_{reference_year}_{sensor}_{tile_id}[-{epsg_code}]-{resolution}_{version}_{season}_{variable}[.{extension}]",
   "examples": [
     "VPP_2017_S2_T32TPR-010m_V101_s1_AMPL.tif",
     "VPP_2017_S2_E45N28-03035-010m_V101_s1_EOSD.tif",
