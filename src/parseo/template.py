@@ -16,6 +16,12 @@ def _field_regex(spec: Union[Dict, None]) -> str:
         return ".+"
     if "enum" in spec:
         return "(?:" + "|".join(re.escape(v) for v in spec["enum"]) + ")"
+    for key in ("oneOf", "anyOf"):
+        if key in spec:
+            options = spec[key]
+            if not options:
+                raise KeyError(f"Field spec '{key}' is empty")
+            return "(?:" + "|".join(_field_regex(option) for option in options) + ")"
     pattern = spec.get("pattern")
     if pattern is None:
         raise KeyError("Field spec missing 'pattern' or 'enum'")
