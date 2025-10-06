@@ -138,14 +138,15 @@ parseo parse ST_20240101T123045_S2_E15N45-03035-010m_V100_PPI.tif
 parseo parse ST_20240101T123045_S2_E15N45-03035-010m_V100_PPI.tif --output result.json
 
 # Assemble the same CLMS filename from key=value pairs
-parseo assemble --family VPP \
-  prefix=ST \
-  timestamp=20240101T123045 \
-  sensor=S2 \
-  laea_tile=E15N45-01234 \
-  resolution=010m \
-  version=V100 \
-  variable=PPI \
+parseo assemble
+  product=ST 
+  timestamp=20240101T123045 
+  sensor=S2
+  tile_id=E15N45
+  epsg_code=03035
+  resolution=010m
+  version=V100
+  variable=PPI
   extension=tif
 ```
 
