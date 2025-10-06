@@ -27,6 +27,55 @@ def test_schema_paths_cached(monkeypatch):
     assert calls["n"] == 1
 
 
+def test_parse_with_explicit_schema(tmp_path):
+    import json
+
+    schema = {
+        "schema_id": "demo:example:DEMO",
+        "schema_version": "1.0.0",
+        "status": "current",
+        "template": "DEMO_{identifier}_{date}.txt",
+        "fields": {
+            "identifier": {"pattern": "[A-Z]+"},
+            "date": {"pattern": "\\d{8}"},
+        },
+    }
+    schema_path = tmp_path / "demo_filename_v1_0_0.json"
+    schema_path.write_text(json.dumps(schema))
+
+    result = parser.parse("DEMO_ABC_20240101.txt", schema_path=schema_path)
+
+    assert result.valid
+    assert result.version == "1.0.0"
+    assert result.status == "current"
+    assert result.match_family == "DEMO"
+    assert result.fields == {"identifier": "ABC", "date": "20240101"}
+
+
+def test_parse_with_explicit_schema_error(tmp_path):
+    import json
+
+    schema = {
+        "schema_id": "demo:example:DEMO",
+        "schema_version": "1.0.0",
+        "status": "current",
+        "template": "DEMO_{identifier}_{date}.txt",
+        "fields": {
+            "identifier": {"pattern": "[A-Z]+"},
+            "date": {"pattern": "\\d{8}"},
+        },
+    }
+    schema_path = tmp_path / "demo_filename_v1_0_0.json"
+    schema_path.write_text(json.dumps(schema))
+
+    with pytest.raises(parser.ParseError) as exc:
+        parser.parse("DEMO_123_20240101.txt", schema_path=schema_path)
+
+    assert exc.value.field == "identifier"
+    assert exc.value.schema_id == "demo:example:DEMO"
+    assert exc.value.match_family == "DEMO"
+
+
 def test_parse_bom_schema(tmp_path, monkeypatch):
     import json
 

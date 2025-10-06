@@ -558,6 +558,86 @@ def describe_schema(
     return out
 
 
+def parse(
+    name: str,
+    schema_path: Union[str, Path, None] = None,
+    *,
+    family: Optional[str] = None,
+    version: Optional[str] = None,
+    pkg: str = __package__,
+) -> ParseResult:
+    """Parse ``name`` using a specific schema.
+
+    Parameters
+    ----------
+    name:
+        Filename to parse.
+    schema_path:
+        Path to the schema JSON file. Optional when ``family`` is provided.
+    family:
+        Schema family identifier (e.g. ``"S2"``). Ignored when
+        ``schema_path`` is given.
+    version:
+        Semantic version string to resolve together with ``family``.
+    pkg:
+        Package that hosts the schemas. Defaults to the installed
+        :mod:`parseo` package.
+    """
+
+    if schema_path is None:
+        if not family:
+            raise ValueError("Provide either 'schema_path' or 'family'.")
+        schema_path = get_schema_path(family, version=version, pkg=pkg)
+
+    resolved_path = Path(schema_path)
+    schema = _load_json_from_path(resolved_path)
+
+    if not _try_validate(name, schema):
+        schema_id = schema.get("schema_id") if isinstance(schema.get("schema_id"), str) else None
+        family_hint = None
+        if schema_id:
+            family_hint = schema_id.split(":")[-1]
+        elif family:
+            family_hint = family
+        display_family = to_display_family(family_hint) if family_hint else None
+        mismatch = _explain_match_failure(name, schema)
+        if mismatch:
+            field, expected, value = mismatch
+            raise ParseError(
+                field=field,
+                expected=expected,
+                value=value,
+                schema_id=schema_id,
+                match_family=display_family,
+            )
+        raise ParseError(
+            field="filename",
+            expected=f"pattern defined by schema {schema_id or resolved_path}",
+            value=name,
+            schema_id=schema_id,
+            match_family=display_family,
+        )
+
+    fields = _extract_fields(name, schema)
+    version_info = schema.get("schema_version")
+    status_info = schema.get("status")
+    schema_id = schema.get("schema_id") if isinstance(schema.get("schema_id"), str) else None
+    family_hint = None
+    if schema_id:
+        family_hint = schema_id.split(":")[-1]
+    elif family:
+        family_hint = family
+    display_family = to_display_family(family_hint) if family_hint else None
+
+    return ParseResult(
+        valid=True,
+        fields=fields,
+        version=version_info if isinstance(version_info, str) else None,
+        status=status_info if isinstance(status_info, str) else None,
+        match_family=display_family,
+    )
+
+
 def parse_auto(name: str) -> ParseResult:
     """
     Try to parse `name` by matching it against any schema under schemas/**.json.
