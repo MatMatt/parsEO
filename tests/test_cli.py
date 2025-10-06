@@ -46,6 +46,20 @@ def test_cli_assemble_fapar_success(capsys):
     captured = capsys.readouterr()
     assert captured.out.strip() == example
 
+
+def test_cli_assemble_with_family(capsys):
+    example, args = _schema_example_args("S2")
+    assert cli.main(["assemble", "--family", "S2", *args]) == 0
+    captured = capsys.readouterr()
+    assert captured.out.strip() == example
+
+
+def test_cli_assemble_version_requires_family():
+    _, args = _schema_example_args("S2")
+    with pytest.raises(SystemExit) as exc:
+        cli.main(["assemble", "--version", "1.0.0", *args])
+    assert str(exc.value) == "--version requires --family to be set."
+
 def test_fields_json_invalid_string():
     sys.argv = ["parseo", "assemble", "--fields-json", "{"]
     with pytest.raises(SystemExit) as exc:

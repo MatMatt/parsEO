@@ -10,6 +10,7 @@ from typing import List
 from typing import Union
 
 from parseo import __version__
+from parseo.assembler import assemble
 from parseo.assembler import assemble_auto
 from parseo.parser import describe_schema  # parser helpers
 from parseo.parser import parse_auto
@@ -94,6 +95,14 @@ def _build_arg_parser() -> argparse.ArgumentParser:
     p_asm.add_argument(
         "--fields-json",
         help="JSON string with fields, or '-' to read JSON from stdin.",
+    )
+    p_asm.add_argument(
+        "--family",
+        help="Schema family to use when assembling the filename.",
+    )
+    p_asm.add_argument(
+        "--version",
+        help="Schema version to use (requires --family).",
     )
 
     return ap
@@ -240,7 +249,12 @@ def main(argv: Union[List[str], None] = None) -> int:
 
     if args.cmd == "assemble":
         fields = _resolve_fields(args)
-        out = assemble_auto(fields)
+        if args.version and not args.family:
+            raise SystemExit("--version requires --family to be set.")
+        if args.family:
+            out = assemble(fields, family=args.family, version=args.version)
+        else:
+            out = assemble_auto(fields)
         print(out)
         return 0
 
