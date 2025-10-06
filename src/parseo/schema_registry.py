@@ -28,6 +28,8 @@ _FAMILY_SYNONYMS: Dict[str, str] = {v: k for k, v in _FAMILY_ALIASES.items()}
 
 def _normalize_family_name(family: str) -> str:
     fam = family.upper()
+    if ":" in fam:
+        fam = fam.split(":")[-1]
     return _FAMILY_SYNONYMS.get(fam, fam)
 
 
