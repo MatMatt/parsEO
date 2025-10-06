@@ -12,7 +12,9 @@
   "fields": {
     "product": {
       "type": "string",
-      "enum": ["VPP"],
+      "enum": [
+        "VPP"
+      ],
       "description": "Product family prefix (Vegetation Phenology and Productivity)"
     },
     "reference_year": {
@@ -22,13 +24,17 @@
     },
     "sensor": {
       "type": "string",
-      "enum": ["S2"],
+      "enum": [
+        "S2"
+      ],
       "description": "Sensor platform",
       "stac_map": {
         "S2": {
           "platform": "Sentinel-2",
           "constellation": "Sentinel-2",
-          "instruments": ["MSI"]
+          "instruments": [
+            "MSI"
+          ]
         }
       }
     },
@@ -64,7 +70,10 @@
     },
     "season": {
       "type": "string",
-      "enum": ["s1", "s2"],
+      "enum": [
+        "s1",
+        "s2"
+      ],
       "description": "Season identifier (s1 = first season, s2 = second season)"
     },
     "variable": {
@@ -89,7 +98,9 @@
     },
     "extension": {
       "type": "string",
-      "enum": ["tif"],
+      "enum": [
+        "tif"
+      ],
       "description": "File extension without leading dot"
     }
   },

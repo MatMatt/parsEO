@@ -9,7 +9,10 @@
   "fields": {
     "theme": {
       "type": "string",
-      "enum": ["N2K", "N2K_Change"],
+      "enum": [
+        "N2K",
+        "N2K_Change"
+      ],
       "description": "Dataset theme"
     },
     "reference": {

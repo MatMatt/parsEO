@@ -4,12 +4,16 @@
   "schema_version": "0.0.0",
   "status": "current",
   "stac_version": "1.1.0",
-  "stac_extensions": ["https://stac-extensions.github.io/raster/v1.0.0/schema.json"],
+  "stac_extensions": [
+    "https://stac-extensions.github.io/raster/v1.0.0/schema.json"
+  ],
   "description": "Copernicus European Ground Motion Service Level 3 velocity grid filename (extension optional).",
   "fields": {
     "product": {
       "type": "string",
-      "enum": ["EGMS"],
+      "enum": [
+        "EGMS"
+      ],
       "description": "Constant service prefix"
     },
     "level": {
@@ -49,7 +53,10 @@
     },
     "extension": {
       "type": "string",
-      "enum": ["tif", "tiff"],
+      "enum": [
+        "tif",
+        "tiff"
+      ],
       "description": "File extension without leading dot"
     }
   },

@@ -4,7 +4,9 @@
   "schema_version": "0.0.0",
   "status": "current",
   "stac_version": "1.1.0",
-  "stac_extensions": ["https://stac-extensions.github.io/vector/v1.0.0/schema.json"],
+  "stac_extensions": [
+    "https://stac-extensions.github.io/vector/v1.0.0/schema.json"
+  ],
   "description": "Copernicus Urban Atlas 2021 Digital Height Model (DHM) vector filename schema.",
   "fields": {
     "area_code": {
@@ -19,16 +21,22 @@
     },
     "product": {
       "type": "string",
-      "enum": ["UA"],
+      "enum": [
+        "UA"
+      ],
       "description": "Product code"
     },
     "type": {
       "type": "string",
-      "enum": ["V"],
+      "enum": [
+        "V"
+      ],
       "description": "Data type vector",
       "stac_map": {
         "values": {
-          "V": {"type": "vector"}
+          "V": {
+            "type": "vector"
+          }
         }
       }
     },
@@ -39,20 +47,24 @@
     },
     "variable": {
       "type": "string",
-      "enum": ["DHM"],
+      "enum": [
+        "DHM"
+      ],
       "description": "Product type (Digital Height Model)"
     },
     "extension": {
       "type": "string",
-      "enum": ["shp"],
+      "enum": [
+        "shp"
+      ],
       "description": "Vector file extension without leading dot"
     }
   },
   "template": "{area_code}_{city}_{product}{reference_year}_{variable}[.{extension}]",
   "examples": [
-    "DE074Lx_GÖRLITZ_UA2021_DHM.shp",
-    "DE510Lx_LÜBECK_UA2021_DHM.shp",
-    "DK001Lx_KØBENHAVN_UA2021_DHM.shp",
+    "DE074Lx_G\u00d6RLITZ_UA2021_DHM.shp",
+    "DE510Lx_L\u00dcBECK_UA2021_DHM.shp",
+    "DK001Lx_K\u00d8BENHAVN_UA2021_DHM.shp",
     "ES012Lx_VITORIA_GASTEIZ_UA2021_DHM.shp",
     "ES031Lx_LUGO_UA2021_DHM.shp"
   ]

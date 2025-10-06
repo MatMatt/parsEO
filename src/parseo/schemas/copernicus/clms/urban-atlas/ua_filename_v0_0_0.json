@@ -4,22 +4,34 @@
   "schema_version": "0.0.0",
   "status": "current",
   "stac_version": "1.1.0",
-  "stac_extensions": ["https://stac-extensions.github.io/vector/v1.0.0/schema.json", "https://stac-extensions.github.io/raster/v1.0.0/schema.json"],
+  "stac_extensions": [
+    "https://stac-extensions.github.io/vector/v1.0.0/schema.json",
+    "https://stac-extensions.github.io/raster/v1.0.0/schema.json"
+  ],
   "description": "Copernicus Urban Atlas filename schema covering status and change layers (extension optional).",
   "fields": {
     "programme": {
       "type": "string",
-      "enum": ["CLMS"],
+      "enum": [
+        "CLMS"
+      ],
       "description": "Constant programme prefix"
     },
     "product": {
       "type": "string",
-      "enum": ["UA"],
+      "enum": [
+        "UA"
+      ],
       "description": "Product code (Urban Atlas)"
     },
     "variable": {
       "type": "string",
-      "enum": ["LCU", "LCUC", "BBH", "GUA"],
+      "enum": [
+        "LCU",
+        "LCUC",
+        "BBH",
+        "GUA"
+      ],
       "description": "Urban Atlas sub-theme identifier"
     },
     "survey": {
@@ -29,12 +41,19 @@
     },
     "type": {
       "type": "string",
-      "enum": ["V","R"],
+      "enum": [
+        "V",
+        "R"
+      ],
       "description": "Data type raster or vector",
       "stac_map": {
         "values": {
-          "V": {"type": "vector"},
-          "R": {"type": "raster"}
+          "V": {
+            "type": "vector"
+          },
+          "R": {
+            "type": "raster"
+          }
         }
       }
     },

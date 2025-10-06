@@ -12,7 +12,10 @@
   "fields": {
     "project": {
       "type": "string",
-      "enum": ["CLC", "U"],
+      "enum": [
+        "CLC",
+        "U"
+      ],
       "description": "Project code"
     },
     "reference_year": {
@@ -37,7 +40,9 @@
     },
     "extension": {
       "type": "string",
-      "enum": ["tif"],
+      "enum": [
+        "tif"
+      ],
       "description": "File extension without leading dot"
     }
   },

@@ -4,26 +4,37 @@
   "schema_version": "0.0.1",
   "status": "current",
   "stac_version": "1.1.0",
-  "stac_extensions": ["https://stac-extensions.github.io/raster/v1.0.0/schema.json", "https://stac-extensions.github.io/eo/v1.0.0/schema.json"],
+  "stac_extensions": [
+    "https://stac-extensions.github.io/raster/v1.0.0/schema.json",
+    "https://stac-extensions.github.io/eo/v1.0.0/schema.json"
+  ],
   "description": "CLMS CLC+ raster product filename (extension optional).",
   "fields": {
     "programme": {
       "type": "string",
-      "enum": ["CLMS"],
+      "enum": [
+        "CLMS"
+      ],
       "description": "Copernicus Land Monitoring Service programme identifier"
     },
     "product": {
       "type": "string",
-      "enum": ["CLCPLUS"],
+      "enum": [
+        "CLCPLUS"
+      ],
       "description": "Product family identifier"
     },
     "type": {
       "type": "string",
-      "enum": ["RAS"],
+      "enum": [
+        "RAS"
+      ],
       "description": "Data class code (raster)",
       "stac_map": {
         "values": {
-          "RAS": {"type": "raster"}
+          "RAS": {
+            "type": "raster"
+          }
         }
       }
     },
@@ -59,7 +70,9 @@
     },
     "extension": {
       "type": "string",
-      "enum": ["tif"],
+      "enum": [
+        "tif"
+      ],
       "description": "File extension without leading dot"
     }
   },
