@@ -39,7 +39,7 @@
       ],
       "description": "Pixel spacing"
     },
-    "mgrs_tile": {
+    "tile_id": {
       "type": "string",
       "pattern": "^T\\d{2}[C-HJ-NP-X][A-Z]{2}$",
       "description": "MGRS tile identifier"
@@ -86,7 +86,7 @@
       "description": "File extension without leading dot"
     }
   },
-  "template": "{programme}_{project}_{product}_{pixel_spacing}_{mgrs_tile}_{sensing_datetime}_{platform}_{version}_{variable}[.{extension}]",
+  "template": "{programme}_{project}_{product}_{pixel_spacing}_{tile_id}_{sensing_datetime}_{platform}_{version}_{variable}[.{extension}]",
   "examples": [
     "CLMS_WSI_WIC_020m_T31TCH_20160720T105547_S2A_V100_WIC-QA.tif",
     "CLMS_WSI_WIC_060m_T34UEG_20170214T044301_S1A_V100_WIC.tif"

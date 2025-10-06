@@ -85,7 +85,7 @@ fields = {
     "sensing_datetime": "20241123T224759",
     "processing_baseline": "N0511",
     "relative_orbit": "R101",
-    "mgrs_tile": "T03VUL",  # MGRS tile (TxxYYY, e.g. T32TNS)
+    "tile_id": "T03VUL",  # MGRS tile (TxxYYY, e.g. T32TNS)
     "generation_datetime": "20241123T230829",
     "extension": "SAFE",
 }

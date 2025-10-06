@@ -20,7 +20,7 @@ def test_assemble_missing_field_template_schema():
         "project": "WSI",
         "product": "FSC",
         "pixel_spacing": "020m",
-        "mgrs_tile": "T32TNS",
+        "tile_id": "T32TNS",
         "sensing_datetime": "20211018T103021",
         # "platform" is intentionally omitted
         "version": "V100",
@@ -38,7 +38,7 @@ def test_assemble_auto_missing_optional_fields():
         "project": "WSI",
         "product": "WIC",
         "pixel_spacing": "020m",
-        "mgrs_tile": "T33WXP",
+        "tile_id": "T33WXP",
         "sensing_datetime": "20201024T103021",
         "platform": "S2B",
         "version": "V100",
@@ -79,7 +79,7 @@ def test_assemble_with_family_s2():
         "sensing_datetime": "20241123T224759",
         "processing_baseline": "N0511",
         "relative_orbit": "R101",
-        "mgrs_tile": "T03VUL",
+        "tile_id": "T03VUL",
         "generation_datetime": "20241123T230829",
         "extension": "SAFE",
     }
@@ -204,14 +204,14 @@ def test_assemble_landsat_from_stac_fields():
 
 
 
-def test_assemble_clms_hr_vpp_from_mgrs_tile():
+def test_assemble_clms_hr_vpp_from_tile_id_mgrs():
     fields = {
         "product": "VPP",
         "reference_year": "2017",
         "platform": "Sentinel-2",
         "constellation": "Sentinel-2",
         "instruments": ["MSI"],
-        "mgrs_tile": "T32TPR",
+        "tile_id": "T32TPR",
         "resolution": "010m",
         "version": "V101",
         "season": "s1",

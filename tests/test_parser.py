@@ -400,7 +400,7 @@ def test_parse_sentinel2_epsg_lookup():
 
     assert result.valid
     assert result.match_family == "S2"
-    assert result.fields["mgrs_tile"] == "T03VUL"
+    assert result.fields["tile_id"] == "T03VUL"
     assert result.fields["epsg_code"] == "32603"
 
 
@@ -430,15 +430,15 @@ def test_parse_clms_hr_vpp_invalid_variable_reports_variable_field():
     assert "platform" not in message
 
 
-def test_parse_clms_hr_vpp_mgrs_tile():
+def test_parse_clms_hr_vpp_tile_id_mgrs():
     name = "VPP_2017_S2_T32TPR-010m_V101_s1_AMPL.tif"
     result = parse_auto(name)
 
     assert result.valid
     assert result.match_family == "VPP"
     assert result.fields["tile"] == "T32TPR"
-    assert result.fields["mgrs_tile"] == "T32TPR"
-    assert "tile_id" not in result.fields
+    assert result.fields["tile_id"] == "T32TPR"
+    assert "mgrs_tile" not in result.fields
 
 
 def test_parse_clms_hr_vpp_tile_id():
