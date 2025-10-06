@@ -365,6 +365,7 @@ def test_parse_sentinel2_dash_reports_correct_field():
     assert "generation_datetime" in message
     assert "pattern" in message
     assert "M01" not in message
+    assert "schema family 'S2'" in message
 
 
 def test_parse_clms_hr_vpp_mgrs_tile():
