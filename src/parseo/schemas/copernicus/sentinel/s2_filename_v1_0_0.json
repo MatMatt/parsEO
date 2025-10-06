@@ -37,7 +37,7 @@
       "pattern": "^R\\d{3}$",
       "description": "Relative orbit number"
     },
-    "mgrs_tile": {
+    "tile_id": {
       "type": "string",
       "pattern": "^T\\d{2}[A-Z]{3}$",
       "description": "MGRS tile identifier"
@@ -53,7 +53,7 @@
       "description": "File extension without leading dot"
     }
   },
-  "template": "{platform}_{instrument}{processing_level}_{sensing_datetime}_{processing_baseline}_{relative_orbit}_{mgrs_tile}_{generation_datetime}[.{extension}]",
+  "template": "{platform}_{instrument}{processing_level}_{sensing_datetime}_{processing_baseline}_{relative_orbit}_{tile_id}_{generation_datetime}[.{extension}]",
   "examples": [
     "S2B_MSIL2A_20241123T224759_N0511_R101_T03VUL_20241123T230829.SAFE",
     "S2A_MSIL1C_20230715T103021_N0400_R052_T32TNS_20230715T103555",

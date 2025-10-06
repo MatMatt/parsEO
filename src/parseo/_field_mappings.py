@@ -79,7 +79,12 @@ def get_schema_field_mappings(schema: Mapping[str, Any]) -> Dict[str, FieldMappi
 
 def _augment_with_tile_variants(fields: Dict[str, Any]) -> Dict[str, Any]:
     enriched = dict(fields)
-    for candidate in ("tile", "tile_id", "mgrs_tile"):
+
+    mgrs_value = enriched.get("mgrs_tile")
+    if isinstance(mgrs_value, str) and mgrs_value and "tile_id" not in enriched:
+        enriched["tile_id"] = mgrs_value
+
+    for candidate in ("tile", "tile_id"):
         value = enriched.get(candidate)
         if not isinstance(value, str):
             continue
@@ -91,14 +96,15 @@ def _augment_with_tile_variants(fields: Dict[str, Any]) -> Dict[str, Any]:
         normalized = normalize_tile(value)
         enriched[candidate] = normalized
 
-        if system is TileSystem.MGRS and "mgrs_tile" not in enriched:
-            enriched["mgrs_tile"] = normalized
+        if system is TileSystem.MGRS and "tile_id" not in enriched:
+            enriched["tile_id"] = normalized
         if system is TileSystem.EEA:
             if "tile_id" not in enriched:
                 enriched["tile_id"] = normalized
             if "epsg_code" not in enriched:
                 enriched["epsg_code"] = "03035"
 
+    enriched.pop("mgrs_tile", None)
     return enriched
 
 
@@ -109,19 +115,20 @@ def _backfill_tile_tokens(
     specs = schema.get("fields", {})
 
     if "tile" in specs and "tile" not in translated:
-        for key in ("mgrs_tile", "tile_id"):
+        for key in ("tile_id", "mgrs_tile"):
             value = translated.get(key)
             if isinstance(value, str) and value:
                 translated["tile"] = normalize_tile(value)
                 break
 
     if "tile_id" in specs and "tile_id" not in translated:
-        for key in ("mgrs_tile", "tile"):
+        for key in ("tile", "mgrs_tile"):
             value = translated.get(key)
             if isinstance(value, str) and value:
                 translated["tile_id"] = normalize_tile(value)
                 break
 
+    translated.pop("mgrs_tile", None)
     return translated
 
 
@@ -151,8 +158,12 @@ def apply_schema_mappings(
     schema_id = str(schema.get("schema_id", "")).lower()
 
     if "epsg_code" not in enriched:
-        tile = enriched.get("mgrs_tile")
-        if tile and "sentinel:s2" in schema_id:
+        tile = enriched.get("tile_id")
+        if (
+            tile
+            and "sentinel:s2" in schema_id
+            and detect_tile_system(str(tile)) is TileSystem.MGRS
+        ):
             epsg = mgrs_tile_to_epsg(str(tile))
             if epsg:
                 enriched["epsg_code"] = epsg
