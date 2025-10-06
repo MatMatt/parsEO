@@ -37,7 +37,15 @@ def _build_arg_parser() -> argparse.ArgumentParser:
     p_parse.add_argument("filename")
 
     # list-schemas
-    sp.add_parser("list-schemas", help="List available schema families")
+    p_list = sp.add_parser("list-schemas", help="List available schema families")
+    p_list.add_argument(
+        "--family",
+        help="Only include schemas belonging to this mission family (e.g. 'S2').",
+    )
+    p_list.add_argument(
+        "--status",
+        help="Only include schemas whose lifecycle status matches this value (case-insensitive).",
+    )
 
     # schema-info
     p_info = sp.add_parser("schema-info", help="Show details for a mission family")
@@ -199,13 +207,27 @@ def main(argv: Union[List[str], None] = None) -> int:
 
     if args.cmd == "list-schemas":
         rows: list[tuple[str, str, str, str]] = []
-        for fam in list_schema_families():
-            for info in list_schema_versions(fam):
+        families: list[str]
+        if args.family:
+            families = [args.family]
+        else:
+            families = list(list_schema_families())
+        status_filter = args.status.lower() if args.status else None
+        for fam in families:
+            try:
+                infos = list_schema_versions(fam)
+            except KeyError as exc:
+                msg = exc.args[0] if exc.args else str(exc)
+                raise SystemExit(msg)
+            for info in infos:
+                status = info.get("status") or ""
+                if status_filter and status.lower() != status_filter:
+                    continue
                 rows.append(
                     (
                         fam,
                         info["version"],
-                        info.get("status") or "",
+                        status,
                         info["file"],
                     )
                 )
@@ -219,6 +241,18 @@ def main(argv: Union[List[str], None] = None) -> int:
             print(line_fmt.format(*headers))
             for row in rows:
                 print(line_fmt.format(*row))
+        else:
+            if args.family and not status_filter:
+                # list_schema_versions returned empty but family existed.
+                print(f"No schemas found for family '{args.family}'.")
+            elif args.family and status_filter:
+                print(
+                    f"No schemas found for family '{args.family}' with status '{args.status}'."
+                )
+            elif status_filter:
+                print(f"No schemas found with status '{args.status}'.")
+            else:
+                print("No schemas found.")
         return 0
 
     if args.cmd == "schema-info":
