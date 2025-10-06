@@ -198,7 +198,8 @@ Use `oneOf` to express mutually exclusive validation branches for a single field
   "type": "string",
   "oneOf": [
     {"enum": ["A", "B", "C"]},
-    {"pattern": "^X\d{2}$"}
+    {"pattern": "^X\d{2}$"},
+    {"pattern": "^z\d{4}$"}
   ],
   "description": "Legacy letters or experimental codes"
 }
