@@ -4,12 +4,31 @@
   "schema_version": "0.0.0",
   "status": "current",
   "stac_version": "1.1.0",
-  "stac_extensions": ["https://stac-extensions.github.io/raster/v1.0.0/schema.json", "https://stac-extensions.github.io/eo/v1.0.0/schema.json"],
+  "stac_extensions": [
+    "https://stac-extensions.github.io/raster/v1.0.0/schema.json",
+    "https://stac-extensions.github.io/eo/v1.0.0/schema.json"
+  ],
   "description": "CLMS HR-VPP Seasonal Trajectories Plant Phenology Index product filename (extension optional).",
   "fields": {
-    "product": {"type": "string", "enum": ["ST"], "description": "Constant prefix"},
-    "timestamp": {"type": "string", "pattern": "^\\d{8}T\\d{6}$", "description": "Acquisition timestamp (YYYYMMDDTHHMMSS)"},
-    "sensor": {"type": "string", "enum": ["S2"], "description": "Sensor platform"},
+    "product": {
+      "type": "string",
+      "enum": [
+        "ST"
+      ],
+      "description": "Constant prefix"
+    },
+    "timestamp": {
+      "type": "string",
+      "pattern": "^\\d{8}T\\d{6}$",
+      "description": "Acquisition timestamp (YYYYMMDDTHHMMSS)"
+    },
+    "sensor": {
+      "type": "string",
+      "enum": [
+        "S2"
+      ],
+      "description": "Sensor platform"
+    },
     "tile_id": {
       "description": "Regional LAEA grid tile or Sentinel-2 MGRS tile identifier (2- or 3-digit coordinates)",
       "oneOf": [
@@ -30,14 +49,31 @@
       "pattern": "^\\d{4,5}$",
       "description": "EPSG code of the product grid (unpadded values are zero-filled on output)"
     },
-    "resolution": {"type": "string", "pattern": "^\\d{3}m$", "description": "Spatial resolution"},
-    "version": {"type": "string", "pattern": "^V\\d{3}$", "description": "Product version"},
+    "resolution": {
+      "type": "string",
+      "pattern": "^\\d{3}m$",
+      "description": "Spatial resolution"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^V\\d{3}$",
+      "description": "Product version"
+    },
     "variable": {
       "type": "string",
-      "enum": ["PPI", "QFLAG"],
+      "enum": [
+        "PPI",
+        "QFLAG"
+      ],
       "description": "Product code"
     },
-    "extension": {"type": "string", "enum": ["tif"], "description": "File extension without leading dot"}
+    "extension": {
+      "type": "string",
+      "enum": [
+        "tif"
+      ],
+      "description": "File extension without leading dot"
+    }
   },
   "template": "{product}_{timestamp}_{sensor}_{tile_id}[-{epsg_code}]-{resolution}_{version}_{variable}[.{extension}]",
   "examples": [

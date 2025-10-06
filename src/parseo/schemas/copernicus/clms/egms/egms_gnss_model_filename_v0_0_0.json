@@ -8,12 +8,16 @@
   "fields": {
     "product": {
       "type": "string",
-      "enum": ["EGMS"],
+      "enum": [
+        "EGMS"
+      ],
       "description": "Constant service prefix"
     },
     "variable": {
       "type": "string",
-      "enum": ["AEPND"],
+      "enum": [
+        "AEPND"
+      ],
       "description": "Product identifier"
     },
     "issue_year": {
@@ -28,7 +32,9 @@
     },
     "extension": {
       "type": "string",
-      "enum": ["csv"],
+      "enum": [
+        "csv"
+      ],
       "description": "File extension without leading dot"
     }
   },

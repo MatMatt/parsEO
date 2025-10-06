@@ -14,7 +14,10 @@
     },
     "product": {
       "type": "string",
-      "enum": ["CLC", "CHA"],
+      "enum": [
+        "CLC",
+        "CHA"
+      ],
       "description": "Layer theme: CLC for status layers, CHA for change layers."
     },
     "reference_code": {
