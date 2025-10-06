@@ -14,6 +14,7 @@ from parseo.assembler import assemble
 from parseo.assembler import assemble_auto
 from parseo.parser import ParseError
 from parseo.parser import describe_schema  # parser helpers
+from parseo.parser import parse
 from parseo.parser import parse_auto
 from parseo.schema_registry import discover_families
 from parseo.stac_http import list_collections_http
@@ -38,6 +39,10 @@ def _build_arg_parser() -> argparse.ArgumentParser:
     p_parse.add_argument(
         "--output",
         help="Write the JSON result to this file instead of stdout. Use '-' for stdout.",
+    )
+    p_parse.add_argument(
+        "--schema",
+        help="Path to a schema JSON file to parse with instead of auto-detection.",
     )
 
     # list-schemas
@@ -214,7 +219,10 @@ def main(argv: Union[List[str], None] = None) -> int:
 
     if args.cmd == "parse":
         try:
-            res = parse_auto(args.filename)
+            if args.schema:
+                res = parse(args.filename, schema_path=args.schema)
+            else:
+                res = parse_auto(args.filename)
         except ParseError as exc:
             hint = ""
             family = getattr(exc, "match_family", None)
