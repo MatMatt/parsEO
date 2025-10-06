@@ -189,6 +189,23 @@ The keyword `type` is currently set to "string" by default, and used as best pra
 -   Use `enum` for short, controlled vocabularies such as file extensions or processing modes (`["A","B"]`). It keeps validation strict and self-documenting.
 -   Use `pattern` for structured tokens like timestamps (`^\d{8}T\d{6}$`), version identifiers (`^V\d{3}$`), or grid identifiers (`^h\d{2}v\d{2}$`).
 
+#### `oneOf`
+
+Use `oneOf` to express mutually exclusive validation branches for a single field. Each branch can provide its own JSON Schema keywords, enabling concise modelling of tokens that admit multiple formats. For example, a `variant` token may allow either a fixed set of legacy values or a future-proof pattern:
+
+``` json
+"variant": {
+  "type": "string",
+  "oneOf": [
+    {"enum": ["A", "B", "C"]},
+    {"pattern": "^X\d{2}$"}
+  ],
+  "description": "Legacy letters or experimental codes"
+}
+```
+
+When `parseo parse` runs, the value is checked against each branch in order until one succeeds. `parseo assemble` accepts any value satisfying at least one branch, allowing schemas to stay expressive without duplicating fields.
+
 #### `stack_map`
 
 Functionality to connect filename tokens to STAC properties in case of incompatibility. In the following example `parseo parse` matches the filename field `prefix` but returns the STAC compliant `platform` and `instrument`. `parseo assemble` must be provided with `platform` and `instrument` and converts it to the correct `prefix` as defined by the filename `template`.
