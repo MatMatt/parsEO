@@ -7,6 +7,7 @@ from importlib.resources import as_file
 from importlib.resources import files
 from pathlib import Path
 import re
+from typing import Any
 from typing import Dict
 from typing import Iterator
 from typing import Optional
@@ -51,6 +52,7 @@ def _family_tokens_from_name(family: str) -> tuple[str, ...]:
 class _FamilyInfo:
     """Metadata about a mission family discovered from schema files."""
 
+    schema_id: str
     tokens: tuple[str, ...]
     schema_path: Path
     version: Optional[str] = None
@@ -62,7 +64,7 @@ class _FamilyInfo:
 def _discover_family_info(pkg: str) -> Dict[str, _FamilyInfo]:
     """Scan schema JSON files to discover mission families and versions."""
 
-    families: Dict[str, Dict[str, tuple[Path, Optional[str]]]] = {}
+    families: Dict[str, dict[str, Any]] = {}
     for path in _get_schema_paths(pkg):
         if "filename_v" not in path.name:
             continue
@@ -76,12 +78,27 @@ def _discover_family_info(pkg: str) -> Dict[str, _FamilyInfo]:
         if not isinstance(schema_id, str) or not isinstance(version, str):
             continue
         family = schema_id.split(":")[-1].upper()
-        fam_versions = families.setdefault(family, {})
-        fam_versions[version] = (path, status)
+        fam_entry = families.setdefault(
+            family,
+            {
+                "schema_id": schema_id,
+                "versions": {},
+            },
+        )
+        if not isinstance(fam_entry.get("schema_id"), str):
+            fam_entry["schema_id"] = schema_id
+        versions = fam_entry.setdefault("versions", {})
+        if not isinstance(versions, dict):
+            versions = {}
+            fam_entry["versions"] = versions
+        versions[version] = (path, status)
 
     info: Dict[str, _FamilyInfo] = {}
 
-    for family, versions in families.items():
+    for family, payload in families.items():
+        versions = payload.get("versions", {})
+        if not isinstance(versions, dict):
+            continue
         current_version = None
         current_path = None
         current_status = None
@@ -97,7 +114,11 @@ def _discover_family_info(pkg: str) -> Dict[str, _FamilyInfo]:
                 f"No schema version marked as 'current' for family {family}. "
                 f"Available versions: {available}"
             )
+        schema_id = payload.get("schema_id")
+        if not isinstance(schema_id, str):
+            continue
         info[family] = _FamilyInfo(
+            schema_id=schema_id,
             tokens=_family_tokens_from_name(family),
             schema_path=current_path,
             version=current_version,
@@ -114,6 +135,7 @@ def discover_families(pkg: str = __package__) -> Dict[str, dict]:
     out: Dict[str, dict] = {}
     for fam, meta in info.items():
         out[fam] = {
+            "schema_id": meta.schema_id,
             "current": meta.version,
             "path": meta.schema_path,
             "versions": {

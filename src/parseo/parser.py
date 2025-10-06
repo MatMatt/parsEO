@@ -211,11 +211,25 @@ def list_schemas(pkg: str = __package__) -> list[str]:
     return list_schema_families(pkg)
 
 
-def describe_schema(family: str, pkg: str = __package__) -> dict[str, Any]:
-    """Return schema metadata and field descriptions for ``family``."""
+def describe_schema(
+    family: str, version: Optional[str] = None, pkg: str = __package__
+) -> dict[str, Any]:
+    """Return schema metadata and field descriptions for ``family``.
+
+    Parameters
+    ----------
+    family:
+        Mission family name (case-insensitive).
+    version:
+        Optional semantic version. When omitted, the schema marked as
+        ``"current"`` for the family is used.
+    pkg:
+        Package that hosts the schemas. Defaults to the installed
+        :mod:`parseo` package.
+    """
 
     try:
-        schema_path = get_schema_path(family, pkg=pkg)
+        schema_path = get_schema_path(family, version=version, pkg=pkg)
     except KeyError as e:
         raise KeyError(str(e))
 
@@ -231,6 +245,8 @@ def describe_schema(family: str, pkg: str = __package__) -> dict[str, Any]:
 
     out: Dict[str, Any] = {
         "schema_id": schema.get("schema_id"),
+        "schema_version": schema.get("schema_version"),
+        "status": schema.get("status"),
         "description": schema.get("description"),
         "fields": fields,
     }

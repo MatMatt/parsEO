@@ -14,8 +14,7 @@ from parseo.assembler import assemble
 from parseo.assembler import assemble_auto
 from parseo.parser import describe_schema  # parser helpers
 from parseo.parser import parse_auto
-from parseo.schema_registry import list_schema_families
-from parseo.schema_registry import list_schema_versions
+from parseo.schema_registry import discover_families
 from parseo.stac_http import list_collections_http
 from parseo.stac_http import sample_collection_filenames
 
@@ -37,11 +36,23 @@ def _build_arg_parser() -> argparse.ArgumentParser:
     p_parse.add_argument("filename")
 
     # list-schemas
-    sp.add_parser("list-schemas", help="List available schema families")
+    p_list = sp.add_parser("list-schemas", help="List available schema families")
+    p_list.add_argument(
+        "--family",
+        help="Only include schemas belonging to this mission family (e.g. 'S2').",
+    )
+    p_list.add_argument(
+        "--status",
+        help="Only include schemas whose lifecycle status matches this value (case-insensitive).",
+    )
 
     # schema-info
     p_info = sp.add_parser("schema-info", help="Show details for a mission family")
     p_info.add_argument("family", help="Mission family name, e.g. 'S2'")
+    p_info.add_argument(
+        "--version",
+        help="Inspect a specific schema version (defaults to the current version).",
+    )
 
     # stac-sample
     p_stac = sp.add_parser(
@@ -199,18 +210,49 @@ def main(argv: Union[List[str], None] = None) -> int:
 
     if args.cmd == "list-schemas":
         rows: list[tuple[str, str, str, str]] = []
-        for fam in list_schema_families():
-            for info in list_schema_versions(fam):
-                rows.append(
-                    (
-                        fam,
-                        info["version"],
-                        info.get("status") or "",
-                        info["file"],
-                    )
-                )
+        catalog = discover_families()
+        status_filter = args.status.lower() if args.status else None
+        prefix_filter: str | None = None
+        exact_family: str | None = None
+        if args.family:
+            if ":" in args.family:
+                prefix_filter = args.family.lower()
+            else:
+                fam_upper = args.family.upper()
+                if fam_upper in catalog:
+                    exact_family = fam_upper
+                else:
+                    prefix_filter = args.family.lower()
+        for fam in sorted(catalog):
+            meta = catalog[fam]
+            schema_id = meta.get("schema_id")
+            if not isinstance(schema_id, str):
+                continue
+            if prefix_filter and not schema_id.lower().startswith(prefix_filter):
+                continue
+            if exact_family and fam != exact_family:
+                continue
+            versions = meta.get("versions", {})
+            if not isinstance(versions, dict):
+                continue
+            for ver in sorted(versions):
+                data = versions[ver]
+                status = ""
+                path_str = ""
+                if isinstance(data, dict):
+                    status = str(data.get("status") or "")
+                    path = data.get("path")
+                    path_str = str(path) if path is not None else ""
+                elif isinstance(data, tuple) and len(data) == 2:
+                    path, status_val = data
+                    status = status_val or ""
+                    path_str = str(path)
+                if status_filter and status.lower() != status_filter:
+                    continue
+                rows.append((schema_id, ver, status, path_str))
         if rows:
-            headers = ("FAMILY", "VERSION", "STATUS", "FILE")
+            rows.sort(key=lambda r: (r[0], r[1]))
+            headers = ("SCHEMA_ID", "VERSION", "STATUS", "FILE")
             widths = [len(h) for h in headers]
             for row in rows:
                 for i in range(3):
@@ -219,11 +261,24 @@ def main(argv: Union[List[str], None] = None) -> int:
             print(line_fmt.format(*headers))
             for row in rows:
                 print(line_fmt.format(*row))
+        else:
+            if args.family and not status_filter:
+                target = "family" if exact_family else "prefix"
+                print(f"No schemas found for {target} '{args.family}'.")
+            elif args.family and status_filter:
+                target = "family" if exact_family else "prefix"
+                print(
+                    f"No schemas found for {target} '{args.family}' with status '{args.status}'."
+                )
+            elif status_filter:
+                print(f"No schemas found with status '{args.status}'.")
+            else:
+                print("No schemas found.")
         return 0
 
     if args.cmd == "schema-info":
         try:
-            info = describe_schema(args.family)
+            info = describe_schema(args.family, version=args.version)
         except KeyError as e:
             raise SystemExit(str(e))
         print(json.dumps(info, indent=2, ensure_ascii=False))
