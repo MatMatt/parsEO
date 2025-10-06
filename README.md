@@ -128,13 +128,6 @@ The same functionality is exposed through the CLI.
 # Parse a filename
 parseo parse S2B_MSIL2A_20241123T224759_N0511_R101_T03VUL_20241123T230829.SAFE
 
-# Parse a filename with an explicit schema
-parseo parse --schema src/parseo/schemas/copernicus/sentinel/s2/s2_filename_v1_0_0.json \
-  S2B_MSIL2A_20241123T224759_N0511_R101_T03VUL_20241123T230829.SAFE
-
-# Assemble using a JSON document with the required fields
-cat fields.json | parseo assemble --family S2 --fields-json -
-
 # Parse a Copernicus Land Monitoring Service (CLMS) filename
 parseo parse ST_20240101T123045_S2_E15N45-03035-010m_V100_PPI.tif
 
@@ -163,7 +156,6 @@ parseo assemble
 ```
 
 ### Discover available schemas
-
 
 List every schema that ships with parsEO, including its fully qualified `schema_id`, semantic version, lifecycle status, and file location:
 
