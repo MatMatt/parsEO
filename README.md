@@ -137,9 +137,17 @@ parseo parse ST_20240101T123045_S2_E15N45-03035-010m_V100_PPI.tif
 # Parse and write the JSON response to a file
 parseo parse ST_20240101T123045_S2_E15N45-03035-010m_V100_PPI.tif --output result.json
 
+# Assemble from the saved JSON document. The CLI automatically
+# extracts the `fields` entry produced by `parseo parse`.
+cat result.json | parseo assemble --family copernicus:clms:hr-vpp:st --fields-json -
+
+# Pipe the parse result directly into assemble
+parseo parse ST_20240101T123045_S2_E15N45-03035-010m_V100_PPI.tif \
+  | parseo assemble --family copernicus:clms:hr-vpp:st
+
 # Assemble the same CLMS filename from key=value pairs
 parseo assemble
-  product=ST 
+  product=ST
   timestamp=20240101T123045 
   sensor=S2
   tile_id=E15N45

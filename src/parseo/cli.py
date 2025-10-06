@@ -146,6 +146,20 @@ def _stdin_text() -> str:
     return ""
 
 
+def _normalize_fields_payload(payload: Any, *, source: str) -> Dict[str, Any]:
+    """Return a dictionary of fields from an arbitrary JSON payload."""
+    if isinstance(payload, dict):
+        if "fields" in payload:
+            fields = payload["fields"]
+            if not isinstance(fields, dict):
+                raise SystemExit(
+                    f"{source} contains 'fields' but it is not a JSON object."
+                )
+            return fields
+        return payload
+    raise SystemExit(f"{source} must decode to a JSON object.")
+
+
 def _resolve_fields(args) -> Dict[str, Any]:
     """
     Merge sources in priority:
@@ -160,23 +174,26 @@ def _resolve_fields(args) -> Dict[str, Any]:
             if not raw.strip():
                 raise SystemExit("--fields-json '-' set but stdin is empty.")
             try:
-                return json.loads(raw)
+                payload = json.loads(raw)
             except json.JSONDecodeError as e:
                 raise SystemExit(f"--fields-json '-' is not valid JSON: {e}")
+            return _normalize_fields_payload(payload, source="--fields-json '-'")
         else:
             try:
-                return json.loads(args.fields_json)
+                payload = json.loads(args.fields_json)
             except json.JSONDecodeError as e:
                 raise SystemExit(f"--fields-json is not valid JSON: {e}")
+            return _normalize_fields_payload(payload, source="--fields-json")
 
     # 2) stdin JSON (only if no positional fields were given)
     if not args.fields:
         raw = _stdin_text()
         if raw.strip():
             try:
-                return json.loads(raw)
+                payload = json.loads(raw)
             except json.JSONDecodeError as e:
                 raise SystemExit(f"Stdin is not valid JSON: {e}")
+            return _normalize_fields_payload(payload, source="Stdin")
 
     # 3) positional k=v pairs
     if args.fields:

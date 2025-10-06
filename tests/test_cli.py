@@ -86,6 +86,57 @@ def test_fields_json_invalid_stdin(monkeypatch):
     assert "--fields-json '-' is not valid JSON" in str(exc.value)
 
 
+def test_fields_json_accepts_parse_output(capsys):
+    example, _ = _schema_example_args("ST")
+    payload = parse_auto(example)
+    fields_json = json.dumps(
+        {
+            "fields": payload.fields,
+            "version": payload.version,
+            "status": payload.status,
+            "match_family": payload.match_family,
+        }
+    )
+    assert (
+        cli.main(
+            [
+                "assemble",
+                "--family",
+                "copernicus:clms:hr-vpp:st",
+                "--fields-json",
+                fields_json,
+            ]
+        )
+        == 0
+    )
+    assembled = capsys.readouterr().out.strip()
+    assert assembled == example
+
+
+def test_stdin_accepts_parse_output(monkeypatch, capsys):
+    example, _ = _schema_example_args("ST")
+    payload = parse_auto(example)
+    parsed = json.dumps(
+        {
+            "valid": payload.valid,
+            "fields": payload.fields,
+            "version": payload.version,
+            "status": payload.status,
+            "match_family": payload.match_family,
+        }
+    )
+    sys.argv = [
+        "parseo",
+        "assemble",
+        "--family",
+        "copernicus:clms:hr-vpp:st",
+    ]
+    monkeypatch.setattr(sys, "stdin", io.StringIO(parsed))
+    assert cli.main() == 0
+    assembled = capsys.readouterr().out.strip()
+    assert assembled == example
+
+
 def test_list_schemas_exposes_known_families():
     fams = list_schema_families()
     assert "S2" in fams
