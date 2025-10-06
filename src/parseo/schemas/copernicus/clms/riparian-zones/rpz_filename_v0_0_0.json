@@ -9,7 +9,9 @@
   "fields": {
     "product": {
       "type": "string",
-      "enum": ["rpz"],
+      "enum": [
+        "rpz"
+      ],
       "description": "Product theme prefix"
     },
     "delivery_unit_id": {
@@ -19,7 +21,9 @@
     },
     "vriable": {
       "type": "string",
-      "enum": ["lclu"],
+      "enum": [
+        "lclu"
+      ],
       "description": "Product abbreviation"
     },
     "reference_years": {
@@ -34,7 +38,9 @@
     },
     "extension": {
       "type": "string",
-      "enum": ["shp"],
+      "enum": [
+        "shp"
+      ],
       "description": "File extension without leading dot"
     }
   },

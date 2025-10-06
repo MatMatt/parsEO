@@ -8,7 +8,9 @@
   "fields": {
     "product": {
       "type": "string",
-      "enum": ["EGMS"],
+      "enum": [
+        "EGMS"
+      ],
       "description": "Constant service prefix"
     },
     "level": {
@@ -53,7 +55,10 @@
     },
     "extension": {
       "type": "string",
-      "enum": ["csv", "zip"],
+      "enum": [
+        "csv",
+        "zip"
+      ],
       "description": "File extension without leading dot"
     }
   },
