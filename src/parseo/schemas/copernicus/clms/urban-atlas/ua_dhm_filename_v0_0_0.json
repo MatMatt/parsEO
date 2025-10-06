@@ -26,20 +26,6 @@
       ],
       "description": "Product code"
     },
-    "type": {
-      "type": "string",
-      "enum": [
-        "V"
-      ],
-      "description": "Data type vector",
-      "stac_map": {
-        "values": {
-          "V": {
-            "type": "vector"
-          }
-        }
-      }
-    },
     "reference_year": {
       "type": "string",
       "pattern": "^\\d{4}$",
