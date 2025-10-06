@@ -148,13 +148,14 @@ parseo assemble --family VPP \
 
 ### Discover available schemas
 
-List every schema that ships with parsEO, including the mission family, semantic version, lifecycle status, and file location:
+
+List every schema that ships with parsEO, including its fully qualified `schema_id`, semantic version, lifecycle status, and file location:
 
 ``` bash
 parseo list-schemas
 ```
 
-The command prints a table summarizing all discovered schemas, making it easy to confirm which versions are available before parsing or assembling filenames.
+The command prints a table summarizing all discovered schemas, making it easy to confirm which versions are available before parsing or assembling filenames. The first column shows the complete namespace (for example `copernicus:clms:hrl:vlcc`), so you can see exactly where a product sits inside the Copernicus hierarchy.
 
 List only the schemas that are marked as `current` with the built-in filter (works on every platform):
 
@@ -162,10 +163,12 @@ List only the schemas that are marked as `current` with the built-in filter (wor
 parseo list-schemas --status current
 ```
 
-To inspect a single family in the summary table, provide the family name explicitly:
+To inspect a single family in the summary table, provide the short family name explicitly. You can also pass a namespace prefix to see every schema beneath it:
 
 ``` bash
 parseo list-schemas --family S2
+parseo list-schemas --family copernicus
+parseo list-schemas --family copernicus:clms:hrl
 ```
 
 For the full schema metadata (fields, examples, etc.), use `schema-info`:
@@ -174,9 +177,17 @@ For the full schema metadata (fields, examples, etc.), use `schema-info`:
 parseo schema-info S2
 ```
 
+The JSON response includes the schema's semantic version and lifecycle status so
+you can immediately tell which release you are viewing. To inspect an archived
+version, provide the version number explicitly:
+
+``` bash
+parseo schema-info --version 1.0.0 CLC
+```
+
 ### Working with specific schema versions
 
-When multiple schema versions are present, parsEO chooses the one whose `status` is `"current"`. If none are marked current, the highest `schema_version` wins. You can always pin a schema by passing `schema_path` to `assemble` or `parse`.
+When multiple schema versions are present, parsEO chooses the one whose `status` is `"current"`. If none are marked current, the highest `schema_version` wins. You can inspect historical schemas with `parseo schema-info --version <x.y.z> <family>` and you can always pin a schema by passing `schema_path` to `assemble` or `parse`.
 
 ## Authoring new Schema
 

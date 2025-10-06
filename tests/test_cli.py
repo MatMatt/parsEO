@@ -84,13 +84,48 @@ def test_list_schemas_exposes_known_families():
 def test_cli_list_schemas_outputs_versions(capsys):
     assert cli.main(["list-schemas"]) == 0
     lines = capsys.readouterr().out.strip().splitlines()
-    assert lines[0].split() == ["FAMILY", "VERSION", "STATUS", "FILE"]
+    assert lines[0].split() == ["SCHEMA_ID", "VERSION", "STATUS", "FILE"]
     tokens = [line.split(maxsplit=3) for line in lines[1:]]
     entries = {t[0]: t for t in tokens}
-    assert entries["S1"][1] == "1.0.0"
-    assert entries["S2"][1] == "1.0.0"
-    assert entries["S1"][2] == "current"
-    assert entries["S2"][2] == "current"
+    assert entries["copernicus:sentinel:s1"][1] == "1.0.0"
+    assert entries["copernicus:sentinel:s2"][1] == "1.0.0"
+    assert entries["copernicus:sentinel:s1"][2] == "current"
+    assert entries["copernicus:sentinel:s2"][2] == "current"
+
+
+def test_cli_list_schemas_filters_status(capsys):
+    assert cli.main(["list-schemas", "--status", "current"]) == 0
+    lines = capsys.readouterr().out.strip().splitlines()
+    assert lines[0].split() == ["SCHEMA_ID", "VERSION", "STATUS", "FILE"]
+    statuses = {line.split(maxsplit=3)[2] for line in lines[1:]}
+    assert statuses == {"current"}
+
+
+def test_cli_list_schemas_filters_family(capsys):
+    assert cli.main(["list-schemas", "--family", "S2"]) == 0
+    lines = capsys.readouterr().out.strip().splitlines()
+    assert lines[0].split() == ["SCHEMA_ID", "VERSION", "STATUS", "FILE"]
+    schema_ids = {line.split(maxsplit=3)[0] for line in lines[1:]}
+    assert schema_ids == {"copernicus:sentinel:s2"}
+
+
+def test_cli_list_schemas_filters_prefix(capsys):
+    assert cli.main(["list-schemas", "--family", "copernicus:clms:hrl"]) == 0
+    lines = capsys.readouterr().out.strip().splitlines()
+    assert lines[0].split() == ["SCHEMA_ID", "VERSION", "STATUS", "FILE"]
+    schema_ids = {line.split(maxsplit=3)[0] for line in lines[1:]}
+    assert schema_ids
+    assert all(s.startswith("copernicus:clms:hrl") for s in schema_ids)
+    assert "copernicus:clms:hrl:vlcc" in schema_ids
+
+
+def test_cli_list_schemas_filters_top_level_prefix(capsys):
+    assert cli.main(["list-schemas", "--family", "copernicus"]) == 0
+    lines = capsys.readouterr().out.strip().splitlines()
+    assert lines[0].split() == ["SCHEMA_ID", "VERSION", "STATUS", "FILE"]
+    schema_ids = {line.split(maxsplit=3)[0] for line in lines[1:]}
+    assert schema_ids
+    assert all(s.startswith("copernicus") for s in schema_ids)
 
 
 def test_cli_list_schemas_filters_status(capsys):
@@ -114,12 +149,23 @@ def test_cli_schema_info(capsys):
     out = capsys.readouterr().out
     data = json.loads(out)
     assert data["schema_id"] == "copernicus:sentinel:s2"
+    assert data["schema_version"] == "1.0.0"
+    assert data["status"] == "current"
     assert "platform" in data["fields"]
     assert data["fields"]["platform"]["description"] == "Spacecraft unit"
     assert isinstance(data.get("template"), str)
     assert isinstance(data.get("examples"), list)
     assert data["examples"]
     assert all(isinstance(x, str) for x in data["examples"])
+
+
+def test_cli_schema_info_specific_version(capsys):
+    assert cli.main(["schema-info", "--version", "1.0.0", "CLC"]) == 0
+    out = capsys.readouterr().out
+    data = json.loads(out)
+    assert data["schema_id"] == "copernicus:clms:clc"
+    assert data["schema_version"] == "1.0.0"
+    assert data["status"] == "deprecated"
 
 def test_cli_stac_sample_custom_url(monkeypatch, capsys):
     calls = {}
