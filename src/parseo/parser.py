@@ -171,7 +171,7 @@ def _attempt_parse(
 ) -> tuple[Optional[ParseResult], Optional[ParseError], Optional[Exception]]:
     """Attempt to parse *name* once and return result with diagnostics."""
 
-    near_miss: Optional[ParseError] = None
+    near_miss: Optional[tuple[ParseError, int]] = None
     first_error: Optional[Exception] = None
 
     hinted_meta = info.get(product_hint) if product_hint else None
@@ -195,17 +195,20 @@ def _attempt_parse(
                 )
             mismatch = _explain_match_failure(name, schema)
             if mismatch:
-                field, expected, value = mismatch
+                field, expected, value, score = mismatch
                 display_family = to_display_family(canonical_family)
-                near_miss = ParseError(
+                candidate = ParseError(
                     field,
                     expected,
                     value,
                     schema_id=schema.get("schema_id"),
                     match_family=display_family,
                 )
+                if near_miss is None or score > near_miss[1]:
+                    near_miss = (candidate, score)
         except ParseError as err:
-            near_miss = err
+            if near_miss is None:
+                near_miss = (err, -1)
         except Exception:
             # If hinted schema is unreadable, fall back to brute force
             pass
@@ -247,21 +250,22 @@ def _attempt_parse(
                 None,
                 None,
             )
-        if near_miss is None:
-            mismatch = _explain_match_failure(name, schema)
-            if mismatch:
-                field, expected, value = mismatch
-                canonical_family = _family_from_path(p, info)
-                display_family = to_display_family(canonical_family or product_hint)
-                near_miss = ParseError(
-                    field,
-                    expected,
-                    value,
-                    schema_id=schema.get("schema_id"),
-                    match_family=display_family,
-                )
+        mismatch = _explain_match_failure(name, schema)
+        if mismatch:
+            field, expected, value, score = mismatch
+            canonical_family = _family_from_path(p, info)
+            display_family = to_display_family(canonical_family or product_hint)
+            candidate = ParseError(
+                field,
+                expected,
+                value,
+                schema_id=schema.get("schema_id"),
+                match_family=display_family,
+            )
+            if near_miss is None or score > near_miss[1]:
+                near_miss = (candidate, score)
 
-    return None, near_miss, first_error
+    return None, near_miss[0] if near_miss else None, first_error
 
 
 def _named_group_spans(pattern: str) -> Dict[str, tuple[int, int]]:
@@ -440,7 +444,9 @@ def _balanced_slice(pattern: str, end: int) -> str:
     return pattern[:j]
 
 
-def _explain_match_failure(name: str, schema: Dict) -> Optional[tuple[str, str, str]]:
+def _explain_match_failure(
+    name: str, schema: Dict
+) -> Optional[tuple[str, str, str, int]]:
     pattern = _pattern_from_schema(schema)
     fields = schema.get("fields", {})
     order = schema.get("fields_order", [])
@@ -493,7 +499,7 @@ def _explain_match_failure(name: str, schema: Dict) -> Optional[tuple[str, str, 
                 expected = f"pattern {spec['pattern']}"
             else:
                 expected = "a different value"
-            return target_field, expected, value
+            return target_field, expected, value, start_pos
     return None
 
 
@@ -602,7 +608,7 @@ def parse(
         display_family = to_display_family(family_hint) if family_hint else None
         mismatch = _explain_match_failure(name, schema)
         if mismatch:
-            field, expected, value = mismatch
+            field, expected, value, _score = mismatch
             raise ParseError(
                 field=field,
                 expected=expected,
