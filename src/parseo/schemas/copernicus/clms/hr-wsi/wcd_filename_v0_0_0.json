@@ -41,17 +41,19 @@
       "description": "Pixel spacing"
     },
     "tile_id": {
-      "description": "Regional LAEA grid tile or Sentinel-2 MGRS tile identifier (2- or 3-digit coordinates)",
+      "description": "Regional LAEA grid tile or MGRS tile identifier",
       "oneOf": [
         {
+          "title": "INSPIRE ETRS89-LAEA Grid",
           "type": "string",
           "pattern": "^[EW]\\d{2,3}[NS]\\d{2,3}$",
           "description": "Regional LAEA grid tile identifier (2- or 3-digit coordinates)"
         },
         {
+          "title": "MGRS",
           "type": "string",
           "pattern": "^T\\d{2}[C-HJ-NP-X][A-Z]{2}$",
-          "description": "Sentinel-2 MGRS tile identifier"
+          "description": "MGRS tile identifier (as used by Sentinel-2 products)"
         }
       ]
     },

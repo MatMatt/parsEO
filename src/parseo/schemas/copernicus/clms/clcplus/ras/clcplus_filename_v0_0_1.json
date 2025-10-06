@@ -49,9 +49,10 @@
       "description": "Spatial resolution expressed with leading 'R' and units"
     },
     "tile_id": {
+      "title": "INSPIRE ETRS89-LAEA Grid",
       "type": "string",
-      "pattern": "^[EW]\\d{2}[NS]\\d{2}$",
-      "description": "Tile identifier in the EEA 10m grid (easting/northing)"
+      "pattern": "^[EW]\\d{2,3}[NS]\\d{2,3}$",
+      "description": "Regional LAEA grid tile identifier (2- or 3-digit coordinates)"
     },
     "epsg_code": {
       "type": "string",

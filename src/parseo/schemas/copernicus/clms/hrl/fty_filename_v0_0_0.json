@@ -23,9 +23,10 @@
       "description": "Reference year"
     },
     "tile_id": {
+      "title": "INSPIRE ETRS89-LAEA Grid",
       "type": "string",
-      "pattern": "^[EW]\\d{3}[NS]\\d{3}$",
-      "description": "EEA, LAEA reference grid tile identifier"
+      "pattern": "^[EW]\\d{2,3}[NS]\\d{2,3}$",
+      "description": "Regional LAEA grid tile identifier (2- or 3-digit coordinates)"
     },
     "resolution": {
       "type": "string",
