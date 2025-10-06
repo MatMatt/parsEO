@@ -93,6 +93,22 @@ def test_cli_list_schemas_outputs_versions(capsys):
     assert entries["S2"][2] == "current"
 
 
+def test_cli_list_schemas_filters_status(capsys):
+    assert cli.main(["list-schemas", "--status", "current"]) == 0
+    lines = capsys.readouterr().out.strip().splitlines()
+    assert lines[0].split() == ["FAMILY", "VERSION", "STATUS", "FILE"]
+    statuses = {line.split(maxsplit=3)[2] for line in lines[1:]}
+    assert statuses == {"current"}
+
+
+def test_cli_list_schemas_filters_family(capsys):
+    assert cli.main(["list-schemas", "--family", "S2"]) == 0
+    lines = capsys.readouterr().out.strip().splitlines()
+    assert lines[0].split() == ["FAMILY", "VERSION", "STATUS", "FILE"]
+    families = {line.split(maxsplit=3)[0] for line in lines[1:]}
+    assert families == {"S2"}
+
+
 def test_cli_schema_info(capsys):
     assert cli.main(["schema-info", "S2"]) == 0
     out = capsys.readouterr().out

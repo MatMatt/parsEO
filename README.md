@@ -146,6 +146,34 @@ parseo assemble --family VPP \
   extension=tif
 ```
 
+### Discover available schemas
+
+List every schema that ships with parsEO, including the mission family, semantic version, lifecycle status, and file location:
+
+``` bash
+parseo list-schemas
+```
+
+The command prints a table summarizing all discovered schemas, making it easy to confirm which versions are available before parsing or assembling filenames.
+
+List only the schemas that are marked as `current` with the built-in filter (works on every platform):
+
+``` bash
+parseo list-schemas --status current
+```
+
+To inspect a single family in the summary table, provide the family name explicitly:
+
+``` bash
+parseo list-schemas --family S2
+```
+
+For the full schema metadata (fields, examples, etc.), use `schema-info`:
+
+``` bash
+parseo schema-info S2
+```
+
 ### Working with specific schema versions
 
 When multiple schema versions are present, parsEO chooses the one whose `status` is `"current"`. If none are marked current, the highest `schema_version` wins. You can always pin a schema by passing `schema_path` to `assemble` or `parse`.
