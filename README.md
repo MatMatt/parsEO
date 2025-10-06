@@ -150,49 +150,73 @@ parseo assemble \
 
 When multiple schema versions are present, parsEO chooses the one whose `status` is `"current"`. If none are marked current, the highest `schema_version` wins. You can always pin a schema by passing `schema_path` to `assemble` or `parse`.
 
-## Authoring new schemas
+## Authoring new Schema
 
 Adding a schema requires only a JSON document under `src/parseo/schemas/`. Start from an existing product schema or the skeleton in `template/`.
 
-1.  **Create the product directory** – `src/parseo/schemas/<family>/<mission>/<product>/` (only the family level is mandatory).
+-   **Create the product directory** – `src/parseo/schemas/<family>/<mission>/<product>/` (only the family level is mandatory).
 
-2.  **Write the versioned schema file** – `<product>_filename_vX_Y_Z.json` with required metadata (`schema_id`, `schema_version`, `status`, optional `stac_version`, `stac_extensions`, and `description`).
+-   **Write the versioned schema file** – `<product>_filename_vX_Y_Z.json` with required metadata (`schema_id`, `schema_version`, `status`, optional `stac_version`, `stac_extensions`, and `description`).
 
-3.  **Describe fields inline** – each entry inside `"fields"` combines JSON Schema keywords (`type`, `pattern`, `enum`, …) and optional documentation.
+-   **Maintain versions** – mark the latest schema as `"current"` and move older ones to `"deprecated"` (or similar). parsEO uses these flags to pick defaults.
 
-4.  **List required fields** – populate the top-level `"required"` array; everything else is optional.
+### Container Object `fields`
 
-5.  **Link to STAC metadata** – set `stac_map` to connect filename tokens to STAC properties. For patterns, capture groups (`$1`, `$2`, …) can be reused in the mapping.
+**`fields`** is a container object to define filename tokens and translation mechanisms from/to STAC. Each `property` combines JSON Schema keywords (`type`, `pattern`, `enum`, …) and optional documentation. The `property name` is the variable name used by the `template` container and unless a `stac_map` is applied also what is retrieved by `parseo parse` or fed into `parseo assemble`.
 
-6.  **Define the template** – provide a `"template"` string that arranges `{field}` placeholders. Optional components can be wrapped with square brackets, e.g. `[.{extension}]`.
+``` json
+"fields": { 
+  "property-1": {
+    "type": "string", 
+    "enum": ["A","B"], 
+    "description": "descripton of property 1"
+  },
+  "property-2": {
+    "type": "string", 
+    "pattern": "^(\d{8}T\d{6})$", 
+    "description": "descripton of property 2"
+  },
+  ...
+}
+```
 
-7.  **Add examples** – populate `"examples"` with valid filenames covering typical combinations of optional tokens.
+#### `type`
 
-8.  **Maintain versions** – mark the latest schema as `"current"` and move older ones to `"deprecated"` (or similar). parsEO uses these flags to pick defaults.
+The keyword `type` is currently set to "string" by default, and used as best practice.
 
-9.  **Test round-trips** – run `parseo parse <filename>` and `parseo assemble --schema <schema_path>` to confirm the schema behaves as expected.
+#### `enum` or `pattern`
 
-### Choosing `enum` vs. `pattern`
-
--   Use `enum` for short, controlled vocabularies such as file extensions or processing modes. It keeps validation strict and self-documenting.
+-   Use `enum` for short, controlled vocabularies such as file extensions or processing modes (`["A","B"]`). It keeps validation strict and self-documenting.
 -   Use `pattern` for structured tokens like timestamps (`^\d{8}T\d{6}$`), version identifiers (`^V\d{3}$`), or grid identifiers (`^h\d{2}v\d{2}$`).
 
-### Understanding `stac_map`
+#### `stack_map`
 
-`stack_map` is used to translate a combined name field into one or more STAC elements.
+Functionality to connect filename tokens to STAC properties in case of incompatibility. In the following example `parseo parse` matches the filename field `prefix` but returns the STAC compliant `platform` and `instrument`. `parseo assemble` must be provided with `platform` and `instrument` and converts it to the correct `prefix` as defined by the filename `template`.
 
-Example excerpt:
-
-``` jsonc
+``` json
 "prefix": {
   "type": "string",
   "pattern": "^(MOD|MYD|MCD)$",
   "stac_map": {
-    "MOD": {"platform": "Terra", "instrument": "MODIS"},
-    "MYD": {"platform": "Aqua", "instrument": "MODIS"},
-    "MCD": {"platform": "Combined", "instrument": "MODIS"}
+    "MOD": {
+      "platform": "Terra", 
+      "instrument": "MODIS"
+    },
+    "MYD": {
+      "platform": "Aqua", 
+      "instrument": "MODIS"
+    },
+    "MCD": {
+      "platform": "Combined", 
+      "instrument": "MODIS"
+    }
   }
-},
+}
+```
+
+The next example uses capture groups (`$1`, `$2`, …). While `tile` is matched in the filename `parseo parse` returns `tile`, `horizontal_grid`, and `vertical_grid` (and `parseo assemble` requires).
+
+``` json
 "tile": {
   "type": "string",
   "pattern": "^(h\d{2})(v\d{2})$",
@@ -204,6 +228,25 @@ Example excerpt:
 }
 ```
 
+#### Container Object `template`
+
+A filename is assembled/parsed based on the definition put into `template` container object. E.g.:
+
+``` json
+"template": "{variable}-C{reference_year}_R{resolution}_{tile_id}{epsg_code}_{version}[.{extension}]"
+```
+
+`fields` are added to the `template` using the `{property name}`. The template further decides for the fields are arranged and how they are separated from each other. Further it is possible to ad permanent elements as well, e.g. adding a prefix `C` to the `{reference_year} = C{reference_year}` to match e.g. 'C2012'. This can be particularly useful if you are interested in only parts of the field, e.g. by doping `EPSG{epsg_code}` you fetch only the code itself. This can also be a regex, e.g. `..._(S|C){reference_year}_...`.
+
+Optional filenames must be encapsulated in `[]`. E.g. `[.{extension}]`
+
+#### Container Object `examples` 
+
+Populate `"examples"` with valid filenames covering typical combinations of optional tokens. Test routines will run the examples to assess the proper functioning.
+
+### Test round-trips
+
+run `parseo parse <filename>` and `parseo assemble --schema <schema_path>` to confirm the schema behaves as expected.
 
 ## Contributing
 
