@@ -208,6 +208,19 @@ def test_parsing_fails_without_current(tmp_path, monkeypatch):
     schema_registry.clear_cache()
 
 
+def test_parse_wds_invalid_pixel_spacing_reports_correct_schema():
+    filename = "CLMS_WSI_WDS_061m_T32TMS_20210223T053503_S1A_V200_SSC-QA.tif"
+
+    with pytest.raises(parser.ParseError) as exc:
+        parse_auto(filename)
+
+    err = exc.value
+    assert err.field == "pixel_spacing"
+    assert "060m" in err.expected
+    assert err.match_family == "WDS"
+    assert err.schema_id == "copernicus:clms:hr-wsi:wds"
+
+
 def test_parse_urban_atlas_lcu():
     name = "CLMS_UA_LCU_S2021_V025ha_DK004L3_AALBORG_03035_V01_R00_20240212"
     result = parse_auto(name)
