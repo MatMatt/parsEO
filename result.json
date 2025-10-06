@@ -1,0 +1,17 @@
+{
+  "valid": true,
+  "fields": {
+    "product": "ST",
+    "timestamp": "20240101T123045",
+    "sensor": "S2",
+    "tile_id": "E15N45",
+    "epsg_code": "03035",
+    "resolution": "010m",
+    "version": "V100",
+    "variable": "PPI",
+    "extension": "tif"
+  },
+  "version": "0.0.0",
+  "status": "current",
+  "match_family": "ST"
+}
