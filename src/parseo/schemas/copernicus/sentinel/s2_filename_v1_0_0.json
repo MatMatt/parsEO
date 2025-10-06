@@ -38,9 +38,10 @@
       "description": "Relative orbit number"
     },
     "tile_id": {
+      "title": "MGRS",
       "type": "string",
-      "pattern": "^T\\d{2}[A-Z]{3}$",
-      "description": "MGRS tile identifier"
+      "pattern": "^T\\d{2}[C-HJ-NP-X][A-Z]{2}$",
+      "description": "MGRS tile identifier (as used by Sentinel-2 products)"
     },
     "generation_datetime": {
       "type": "string",

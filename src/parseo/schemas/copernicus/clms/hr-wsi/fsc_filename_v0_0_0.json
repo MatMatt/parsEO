@@ -39,9 +39,10 @@
       "description": "Pixel spacing"
     },
     "tile_id": {
+      "title": "MGRS",
       "type": "string",
       "pattern": "^T\\d{2}[C-HJ-NP-X][A-Z]{2}$",
-      "description": "MGRS tile identifier"
+      "description": "MGRS tile identifier (as used by Sentinel-2 products)"
     },
     "sensing_datetime": {
       "type": "string",

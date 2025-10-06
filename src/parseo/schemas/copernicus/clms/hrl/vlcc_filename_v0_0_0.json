@@ -47,9 +47,21 @@
       "description": "Spatial resolution"
     },
     "tile_id": {
-      "type": "string",
-      "pattern": "^(?:[EW]\\d{2}[NS]\\d{2}|[A-Z]{2})$",
-      "description": "Tile identifier in the EEA 10m grid (easting/northing) or two-letter geographic code"
+      "description": "Tile identifier in the EEA 10m grid (easting/northing) or two-letter geographic code",
+      "oneOf": [
+        {
+          "title": "INSPIRE ETRS89-LAEA Grid",
+          "type": "string",
+          "pattern": "^[EW]\\d{2,3}[NS]\\d{2,3}$",
+          "description": "Regional LAEA grid tile identifier (2- or 3-digit coordinates)"
+        },
+        {
+          "title": "Geographic code",
+          "type": "string",
+          "pattern": "^[A-Z]{2}$",
+          "description": "Two-letter geographic code used by VLCC vector products"
+        }
+      ]
     },
     "epsg_code": {
       "type": "string",
