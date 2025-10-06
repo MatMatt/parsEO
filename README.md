@@ -148,6 +148,7 @@ parseo assemble --family VPP \
 
 ### Discover available schemas
 
+
 List every schema that ships with parsEO, including its fully qualified `schema_id`, semantic version, lifecycle status, and file location:
 
 ``` bash

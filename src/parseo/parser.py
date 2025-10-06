@@ -10,6 +10,7 @@ import re
 from typing import Any
 from typing import Dict
 from typing import Iterable
+from typing import Iterator
 from typing import Optional
 from typing import Union
 
@@ -19,6 +20,7 @@ from .schema_registry import _get_schema_paths
 from .schema_registry import _load_json_from_path
 from .schema_registry import get_schema_path
 from .schema_registry import list_schema_families
+from .schema_registry import to_display_family
 from .template import _field_regex
 from .template import compile_template
 
@@ -43,11 +45,21 @@ class ParseError(Exception):
     field: str
     expected: str
     value: str
+    schema_id: Optional[str] = None
+    match_family: Optional[str] = None
 
     def __str__(self) -> str:  # pragma: no cover - trivial
-        return (
+        base = (
             f"Invalid value '{self.value}' for field '{self.field}': expected {self.expected}"
         )
+        extras = []
+        if self.match_family:
+            extras.append(f"schema family '{self.match_family}'")
+        if self.schema_id:
+            extras.append(f"schema '{self.schema_id}'")
+        if extras:
+            base = f"{base} (nearest match: {', '.join(extras)})"
+        return base
 
 
 # ---------------------------
@@ -91,6 +103,34 @@ def _match_filename(name: str, schema: Dict) -> Optional[re.Match]:
     return rx.match(name)
 
 
+def _generate_name_variants(name: str) -> Iterator[str]:
+    """Yield name variants accounting for known inconsistencies."""
+
+    yield name
+
+
+def _family_from_path(path: Path, info: Dict[str, Any]) -> Optional[str]:
+    for fam_name, meta in info.items():
+        if getattr(meta, "schema_path", None) == path:
+            return fam_name
+        versions = getattr(meta, "versions", {})
+        for ver_path, _status in getattr(versions, "values", lambda: [])():
+            if ver_path == path:
+                return fam_name
+    return None
+
+
+def _guess_product_family(name: str, info: Dict[str, Any]) -> Optional[str]:
+    """Return a schema family hint derived from *name*."""
+
+    upper_name = name.upper()
+    for fam, meta in info.items():
+        tokens = getattr(meta, "tokens", ())
+        if any(upper_name.startswith(tok) for tok in tokens):
+            return fam
+    return None
+
+
 def _normalize_epsg_fields(fields: Dict[str, Any]) -> Dict[str, Any]:
     """Normalize EPSG-related fields to consistently use 5-digit codes."""
 
@@ -121,6 +161,107 @@ def _extract_fields(name: str, schema: Dict) -> Dict[str, str]:
 
 def _try_validate(name: str, schema: Dict) -> bool:
     return _match_filename(name, schema) is not None
+
+
+def _attempt_parse(
+    name: str,
+    info: Dict[str, Any],
+    candidates: Iterable[Path],
+    product_hint: Optional[str],
+) -> tuple[Optional[ParseResult], Optional[ParseError], Optional[Exception]]:
+    """Attempt to parse *name* once and return result with diagnostics."""
+
+    near_miss: Optional[ParseError] = None
+    first_error: Optional[Exception] = None
+
+    hinted_meta = info.get(product_hint) if product_hint else None
+    hinted = hinted_meta.schema_path if hinted_meta else None
+    if hinted and hinted.exists():
+        try:
+            schema = _load_json_from_path(hinted)
+            canonical_family = product_hint or _family_from_path(hinted, info)
+            if _try_validate(name, schema):
+                display_family = to_display_family(canonical_family)
+                return (
+                    ParseResult(
+                        valid=True,
+                        fields=_extract_fields(name, schema),
+                        version=hinted_meta.version if hinted_meta else None,
+                        status=hinted_meta.status if hinted_meta else None,
+                        match_family=display_family,
+                    ),
+                    None,
+                    None,
+                )
+            mismatch = _explain_match_failure(name, schema)
+            if mismatch:
+                field, expected, value = mismatch
+                display_family = to_display_family(canonical_family)
+                near_miss = ParseError(
+                    field,
+                    expected,
+                    value,
+                    schema_id=schema.get("schema_id"),
+                    match_family=display_family,
+                )
+        except ParseError as err:
+            near_miss = err
+        except Exception:
+            # If hinted schema is unreadable, fall back to brute force
+            pass
+
+    for p in candidates:
+        try:
+            schema = _load_json_from_path(p)
+        except Exception as exc:
+            if first_error is None:
+                first_error = exc
+            continue
+        if _try_validate(name, schema):
+            matched_family = None
+            version = None
+            status = None
+            for fam_name, meta in info.items():
+                if meta.schema_path == p:
+                    matched_family = fam_name
+                    version = meta.version
+                    status = meta.status
+                    break
+                for ver, (path, st) in meta.versions.items():
+                    if path == p:
+                        matched_family = fam_name
+                        version = ver
+                        status = st
+                        break
+                if matched_family:
+                    break
+            display_family = to_display_family(matched_family or product_hint)
+            return (
+                ParseResult(
+                    valid=True,
+                    fields=_extract_fields(name, schema),
+                    version=version,
+                    status=status,
+                    match_family=display_family,
+                ),
+                None,
+                None,
+            )
+        if near_miss is None:
+            mismatch = _explain_match_failure(name, schema)
+            if mismatch:
+                field, expected, value = mismatch
+                canonical_family = _family_from_path(p, info)
+                display_family = to_display_family(canonical_family or product_hint)
+                near_miss = ParseError(
+                    field,
+                    expected,
+                    value,
+                    schema_id=schema.get("schema_id"),
+                    match_family=display_family,
+                )
+
+    return None, near_miss, first_error
 
 
 def _named_group_spans(pattern: str) -> Dict[str, tuple[int, int]]:
@@ -171,25 +312,44 @@ def _explain_match_failure(name: str, schema: Dict) -> Optional[tuple[str, str, 
         return None
     spans = _named_group_spans(pattern)
     for i, field in enumerate(order):
-        next_start = spans[order[i + 1]][0] if i + 1 < len(order) else len(pattern) - 1
-        prefix_pat = pattern[:next_start] + ".*$"
+        next_end = spans[order[i + 1]][1] if i + 1 < len(order) else len(pattern)
+        prefix_pat = pattern[:next_end] + ".*$"
         if not _compile_pattern(prefix_pat).match(name):
             before_pat = pattern[:spans[field][0]]
             m_before = _compile_pattern(before_pat).match(name)
             start_pos = len(m_before.group(0)) if m_before else 0
-            spec = fields.get(field, {})
+            target_field = field
+            spec = fields.get(target_field, {})
             field_rx = re.compile(_field_regex(spec))
             m_field = field_rx.match(name[start_pos:])
+            if m_field and i + 1 < len(order):
+                next_field = order[i + 1]
+                next_spec = fields.get(next_field, {})
+                before_next = pattern[:spans[next_field][0]]
+                m_before_next = _compile_pattern(before_next).match(name)
+                if m_before_next:
+                    start_pos = len(m_before_next.group(0))
+                else:
+                    current_end = pattern[:spans[field][1]]
+                    m_current_end = _compile_pattern(current_end).match(name)
+                    start_pos = len(m_current_end.group(0)) if m_current_end else start_pos
+                target_field = next_field
+                spec = next_spec
+                field_rx = re.compile(_field_regex(spec))
+                m_field = field_rx.match(name[start_pos:])
+                if m_field:
+                    # Both the current and subsequent field values satisfy
+                    # their specifications; defer to later iterations.
+                    continue
             if m_field:
-                # Field value itself satisfies the specification; mismatch must
-                # stem from a later constant segment, so we cannot attribute
-                # it to this field.
-                return None
+                # No informative mismatch could be identified.
+                continue
             end_pos = len(name)
             for sep in ["_", ".", "-"]:
                 idx = name.find(sep, start_pos)
                 if idx != -1:
-                    end_pos = min(end_pos, idx)
+                    boundary = idx if idx > start_pos else idx + 1
+                    end_pos = min(end_pos, boundary)
             value = name[start_pos:end_pos]
             if "enum" in spec:
                 expected = f"one of {spec['enum']}"
@@ -197,7 +357,7 @@ def _explain_match_failure(name: str, schema: Dict) -> Optional[tuple[str, str, 
                 expected = f"pattern {spec['pattern']}"
             else:
                 expected = "a different value"
-            return field, expected, value
+            return target_field, expected, value
     return None
 
 
@@ -271,85 +431,25 @@ def parse_auto(name: str) -> ParseResult:
     """
     pkg = __package__  # e.g., "parseo"
     info = _discover_family_info(pkg)
-
-    # Quick family hint based on discovered tokens
-    product_hint = None
-    u = name.upper()
-    for fam, meta in info.items():
-        if any(u.startswith(tok) for tok in meta.tokens):
-            product_hint = fam
-            break
-
-    near_miss: Optional[ParseError] = None
-
-    # Try hinted schema first (if any)
-    hinted_meta = info.get(product_hint) if product_hint else None
-    hinted = hinted_meta.schema_path if hinted_meta else None
-    if hinted and hinted.exists():
-        try:
-            schema = _load_json_from_path(hinted)
-            if _try_validate(name, schema):
-                return ParseResult(
-                    valid=True,
-                    fields=_extract_fields(name, schema),
-                    version=hinted_meta.version if hinted_meta else None,
-                    status=hinted_meta.status if hinted_meta else None,
-                    match_family=product_hint,
-                )
-            mismatch = _explain_match_failure(name, schema)
-            if mismatch:
-                field, expected, value = mismatch
-                near_miss = ParseError(field, expected, value)
-        except ParseError as err:
-            near_miss = err
-        except Exception:
-            # If hinted schema is unreadable, fall back to brute force
-            pass
-
-    # Fallback: brute-force across all schemas (recursive)
     candidates = _get_schema_paths(pkg)
     if not candidates:
         # No schema files packaged at all
         raise FileNotFoundError(f"No schemas packaged under {pkg}/{SCHEMAS_ROOT}.")
 
+    near_miss: Optional[ParseError] = None
     first_error: Optional[Exception] = None
-    for p in candidates:
-        try:
-            schema = _load_json_from_path(p)
-        except Exception as e:
-            if first_error is None:
-                first_error = e
-            continue
-        if _try_validate(name, schema):
-            matched_family = None
-            version = None
-            status = None
-            for fam_name, meta in info.items():
-                if meta.schema_path == p:
-                    matched_family = fam_name
-                    version = meta.version
-                    status = meta.status
-                    break
-                for ver, (path, st) in meta.versions.items():
-                    if path == p:
-                        matched_family = fam_name
-                        version = ver
-                        status = st
-                        break
-                if matched_family:
-                    break
-            return ParseResult(
-                valid=True,
-                fields=_extract_fields(name, schema),
-                version=version,
-                status=status,
-                match_family=matched_family or product_hint,
-            )
-        if near_miss is None:
-            mismatch = _explain_match_failure(name, schema)
-            if mismatch:
-                field, expected, value = mismatch
-                near_miss = ParseError(field, expected, value)
+
+    for candidate_name in _generate_name_variants(name):
+        product_hint = _guess_product_family(candidate_name, info)
+        result, attempt_near_miss, attempt_first_error = _attempt_parse(
+            candidate_name, info, candidates, product_hint
+        )
+        if result is not None:
+            return result
+        if near_miss is None and attempt_near_miss is not None:
+            near_miss = attempt_near_miss
+        if first_error is None and attempt_first_error is not None:
+            first_error = attempt_first_error
 
     # Nothing matched — provide a helpful error listing what we saw
     with as_file(files(pkg).joinpath(SCHEMAS_ROOT)) as rp:

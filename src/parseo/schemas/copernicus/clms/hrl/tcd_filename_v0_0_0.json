@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "schema_id": "copernicus:clms:hrl:tree-cover-density",
+  "schema_id": "copernicus:clms:hrl:tcd",
   "schema_version": "0.0.0",
   "status": "current",
   "stac_version": "1.1.0",

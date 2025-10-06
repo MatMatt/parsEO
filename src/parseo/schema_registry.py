@@ -17,6 +17,25 @@ from ._json import load_json
 
 SCHEMAS_ROOT = "schemas"
 
+_FAMILY_ALIASES: Dict[str, str] = {
+    "IMP": "IMPERVIOUSNESS",
+    "SWF": "SMALL-WOODY-FEATURES",
+    "VI": "VEGETATION-INDEX",
+}
+
+_FAMILY_SYNONYMS: Dict[str, str] = {v: k for k, v in _FAMILY_ALIASES.items()}
+
+
+def _normalize_family_name(family: str) -> str:
+    fam = family.upper()
+    return _FAMILY_SYNONYMS.get(fam, fam)
+
+
+def to_display_family(family: Optional[str]) -> Optional[str]:
+    if family is None:
+        return None
+    return _FAMILY_ALIASES.get(family, family)
+
 
 @lru_cache(maxsize=256)
 def _load_json_from_path(path: Path) -> Dict:
@@ -147,12 +166,20 @@ def discover_families(pkg: str = __package__) -> Dict[str, dict]:
 
 def list_schema_families(pkg: str = __package__) -> list[str]:
     """Return a sorted list of available mission families."""
-    return sorted(discover_families(pkg).keys())
+
+    families = discover_families(pkg)
+    names = set(families.keys())
+    for canonical in list(names):
+        display = to_display_family(canonical)
+        if display and display != canonical:
+            names.add(display)
+    return sorted(names)
 
 
 def list_schema_versions(family: str, pkg: str = __package__) -> list[dict]:
     """Return version descriptors for *family*."""
-    fam = family.upper()
+
+    fam = _normalize_family_name(family)
     info = discover_families(pkg)
     meta = info.get(fam)
     if meta is None:
@@ -178,7 +205,7 @@ def get_schema_path(
     If *version* is ``None`` the schema version marked as ``current`` is used.
     """
 
-    fam = family.upper()
+    fam = _normalize_family_name(family)
     info = _discover_family_info(pkg)
     meta = info.get(fam)
     if meta is None:
