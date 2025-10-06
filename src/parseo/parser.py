@@ -304,6 +304,142 @@ def _named_group_spans(pattern: str) -> Dict[str, tuple[int, int]]:
     return spans
 
 
+def _balanced_prefix(pattern: str, index: int) -> str:
+    """Return the longest balanced prefix of *pattern* up to *index*."""
+
+    index = min(index, len(pattern))
+    in_class = False
+    depth = 0
+    last_balanced = 0
+    i = 0
+    while i < index:
+        ch = pattern[i]
+        if ch == "\\":
+            i += 2
+            if depth == 0:
+                last_balanced = min(i, index)
+            continue
+        if in_class:
+            if ch == "]":
+                in_class = False
+            i += 1
+            if depth == 0:
+                last_balanced = min(i, index)
+            continue
+        if ch == "[":
+            in_class = True
+            i += 1
+            continue
+        if ch == "(":
+            depth += 1
+            i += 1
+            continue
+        if ch == ")":
+            if depth > 0:
+                depth -= 1
+            i += 1
+            if depth == 0:
+                last_balanced = min(i, index)
+            continue
+        i += 1
+        if depth == 0:
+            last_balanced = min(i, index)
+
+    return pattern[:last_balanced]
+
+
+def _balanced_slice(pattern: str, end: int) -> str:
+    """Return a balanced slice of *pattern* that includes *end*."""
+
+    end = min(end, len(pattern))
+    # Track parenthesis depth up to ``end``.
+    stack: list[str] = []
+    in_class = False
+    i = 0
+    while i < end:
+        ch = pattern[i]
+        if ch == "\\":
+            i += 2
+            continue
+        if in_class:
+            if ch == "]":
+                in_class = False
+            i += 1
+            continue
+        if ch == "[":
+            in_class = True
+            i += 1
+            continue
+        if ch == "(":
+            stack.append("(")
+            i += 1
+            continue
+        if ch == ")":
+            if stack:
+                stack.pop()
+            i += 1
+            continue
+        i += 1
+
+    j = end
+    in_class_after = in_class
+    stack_after = list(stack)
+    while stack_after and j < len(pattern):
+        ch = pattern[j]
+        if ch == "\\":
+            j += 2
+            continue
+        if in_class_after:
+            if ch == "]":
+                in_class_after = False
+            j += 1
+            continue
+        if ch == "[":
+            in_class_after = True
+            j += 1
+            continue
+        if ch == "(":
+            stack_after.append("(")
+            j += 1
+            continue
+        if ch == ")":
+            stack_after.pop()
+            j += 1
+            continue
+        j += 1
+
+    # Include trailing quantifiers that modify the just-closed group.
+    while j < len(pattern):
+        ch = pattern[j]
+        if ch in "?*+":
+            j += 1
+            continue
+        if ch == "{":
+            depth = 1
+            k = j + 1
+            while k < len(pattern) and depth:
+                nxt = pattern[k]
+                if nxt == "\\":
+                    k += 2
+                    continue
+                if nxt == "{":
+                    depth += 1
+                    k += 1
+                    continue
+                if nxt == "}":
+                    depth -= 1
+                    k += 1
+                    continue
+                k += 1
+            j = k
+            if j < len(pattern) and pattern[j] == "?":
+                j += 1
+            continue
+        break
+
+    return pattern[:j]
+
+
 def _explain_match_failure(name: str, schema: Dict) -> Optional[tuple[str, str, str]]:
     pattern = _pattern_from_schema(schema)
     fields = schema.get("fields", {})
@@ -313,9 +449,9 @@ def _explain_match_failure(name: str, schema: Dict) -> Optional[tuple[str, str, 
     spans = _named_group_spans(pattern)
     for i, field in enumerate(order):
         next_end = spans[order[i + 1]][1] if i + 1 < len(order) else len(pattern)
-        prefix_pat = pattern[:next_end] + ".*$"
+        prefix_pat = _balanced_slice(pattern, next_end) + ".*$"
         if not _compile_pattern(prefix_pat).match(name):
-            before_pat = pattern[:spans[field][0]]
+            before_pat = _balanced_prefix(pattern, spans[field][0])
             m_before = _compile_pattern(before_pat).match(name)
             start_pos = len(m_before.group(0)) if m_before else 0
             target_field = field
@@ -325,12 +461,12 @@ def _explain_match_failure(name: str, schema: Dict) -> Optional[tuple[str, str, 
             if m_field and i + 1 < len(order):
                 next_field = order[i + 1]
                 next_spec = fields.get(next_field, {})
-                before_next = pattern[:spans[next_field][0]]
+                before_next = _balanced_prefix(pattern, spans[next_field][0])
                 m_before_next = _compile_pattern(before_next).match(name)
                 if m_before_next:
                     start_pos = len(m_before_next.group(0))
                 else:
-                    current_end = pattern[:spans[field][1]]
+                    current_end = _balanced_slice(pattern, spans[field][1])
                     m_current_end = _compile_pattern(current_end).match(name)
                     start_pos = len(m_current_end.group(0)) if m_current_end else start_pos
                 target_field = next_field

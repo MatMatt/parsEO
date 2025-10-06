@@ -368,6 +368,19 @@ def test_parse_sentinel2_dash_reports_correct_field():
     assert "schema family 'S2'" in message
 
 
+def test_parse_clms_hr_vpp_invalid_variable_reports_variable_field():
+    name = "ST_20240101T123045_S2_E15N45-03035-010m_V100_PI.tif"
+
+    with pytest.raises(parser.ParseError) as exc:
+        parse_auto(name)
+
+    message = str(exc.value)
+    assert "variable" in message
+    assert "PPI" in message or "QFLAG" in message
+    assert "schema family 'ST'" in message
+    assert "platform" not in message
+
+
 def test_parse_clms_hr_vpp_mgrs_tile():
     name = "VPP_2017_S2_T32TPR-010m_V101_s1_AMPL.tif"
     result = parse_auto(name)

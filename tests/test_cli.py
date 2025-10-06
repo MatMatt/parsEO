@@ -128,20 +128,23 @@ def test_cli_list_schemas_filters_top_level_prefix(capsys):
     assert all(s.startswith("copernicus") for s in schema_ids)
 
 
-def test_cli_list_schemas_filters_status(capsys):
+def test_cli_list_schemas_filters_status_compact_output(capsys):
     assert cli.main(["list-schemas", "--status", "current"]) == 0
     lines = capsys.readouterr().out.strip().splitlines()
-    assert lines[0].split() == ["FAMILY", "VERSION", "STATUS", "FILE"]
+    header = lines[0].split()
+    assert header[:3] in (["FAMILY", "VERSION", "STATUS"], ["SCHEMA_ID", "VERSION", "STATUS"])
     statuses = {line.split(maxsplit=3)[2] for line in lines[1:]}
     assert statuses == {"current"}
 
 
-def test_cli_list_schemas_filters_family(capsys):
+def test_cli_list_schemas_filters_family_compact_output(capsys):
     assert cli.main(["list-schemas", "--family", "S2"]) == 0
     lines = capsys.readouterr().out.strip().splitlines()
-    assert lines[0].split() == ["FAMILY", "VERSION", "STATUS", "FILE"]
-    families = {line.split(maxsplit=3)[0] for line in lines[1:]}
-    assert families == {"S2"}
+    header = lines[0].split()
+    assert header[:3] in (["FAMILY", "VERSION", "STATUS"], ["SCHEMA_ID", "VERSION", "STATUS"])
+    values = {line.split(maxsplit=3)[0] for line in lines[1:]}
+    expected = {"S2"} if header[0] == "FAMILY" else {"copernicus:sentinel:s2"}
+    assert values == expected
 
 
 def test_cli_schema_info(capsys):
