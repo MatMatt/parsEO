@@ -355,6 +355,16 @@ def test_parse_sentinel2_epsg_lookup():
     assert result.fields["epsg_code"] == "32603"
 
 
+def test_parse_sentinel2_dash_reports_correct_field():
+    name = "S2B_MSIL2A_20241123T224759_N0511_R101_T03VUL-20241123T230829.SAFE"
+
+    with pytest.raises(parser.ParseError) as exc:
+        parse_auto(name)
+
+    message = str(exc.value)
+    assert "generation_datetime" in message
+    assert "pattern" in message
+    assert "M01" not in message
 
 
 def test_parse_clms_hr_vpp_mgrs_tile():
