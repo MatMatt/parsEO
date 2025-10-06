@@ -12,6 +12,7 @@ from typing import Union
 from parseo import __version__
 from parseo.assembler import assemble
 from parseo.assembler import assemble_auto
+from parseo.parser import ParseError
 from parseo.parser import describe_schema  # parser helpers
 from parseo.parser import parse_auto
 from parseo.schema_registry import list_schema_families
@@ -188,7 +189,16 @@ def main(argv: Union[List[str], None] = None) -> int:
     args = ap.parse_args(argv)
 
     if args.cmd == "parse":
-        res = parse_auto(args.filename)
+        try:
+            res = parse_auto(args.filename)
+        except ParseError as exc:
+            hint = ""
+            family = getattr(exc, "match_family", None)
+            if family:
+                hint = (
+                    f"\nHint: use `parseo schema-info {family}` to inspect the schema."
+                )
+            raise SystemExit(f"{exc}{hint}")
         out = {
             "valid": bool(getattr(res, "valid", False)),
             "fields": getattr(res, "fields", None),

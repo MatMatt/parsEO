@@ -20,6 +20,7 @@ from .schema_registry import _get_schema_paths
 from .schema_registry import _load_json_from_path
 from .schema_registry import get_schema_path
 from .schema_registry import list_schema_families
+from .schema_registry import to_display_family
 from .template import _field_regex
 from .template import compile_template
 
@@ -44,11 +45,21 @@ class ParseError(Exception):
     field: str
     expected: str
     value: str
+    schema_id: Optional[str] = None
+    match_family: Optional[str] = None
 
     def __str__(self) -> str:  # pragma: no cover - trivial
-        return (
+        base = (
             f"Invalid value '{self.value}' for field '{self.field}': expected {self.expected}"
         )
+        extras = []
+        if self.match_family:
+            extras.append(f"schema family '{self.match_family}'")
+        if self.schema_id:
+            extras.append(f"schema '{self.schema_id}'")
+        if extras:
+            base = f"{base} (nearest match: {', '.join(extras)})"
+        return base
 
 
 # ---------------------------
@@ -96,6 +107,17 @@ def _generate_name_variants(name: str) -> Iterator[str]:
     """Yield name variants accounting for known inconsistencies."""
 
     yield name
+
+
+def _family_from_path(path: Path, info: Dict[str, Any]) -> Optional[str]:
+    for fam_name, meta in info.items():
+        if getattr(meta, "schema_path", None) == path:
+            return fam_name
+        versions = getattr(meta, "versions", {})
+        for ver_path, _status in getattr(versions, "values", lambda: [])():
+            if ver_path == path:
+                return fam_name
+    return None
 
 
 def _guess_product_family(name: str, info: Dict[str, Any]) -> Optional[str]:
@@ -157,14 +179,16 @@ def _attempt_parse(
     if hinted and hinted.exists():
         try:
             schema = _load_json_from_path(hinted)
+            canonical_family = product_hint or _family_from_path(hinted, info)
             if _try_validate(name, schema):
+                display_family = to_display_family(canonical_family)
                 return (
                     ParseResult(
                         valid=True,
                         fields=_extract_fields(name, schema),
                         version=hinted_meta.version if hinted_meta else None,
                         status=hinted_meta.status if hinted_meta else None,
-                        match_family=product_hint,
+                        match_family=display_family,
                     ),
                     None,
                     None,
@@ -172,7 +196,14 @@ def _attempt_parse(
             mismatch = _explain_match_failure(name, schema)
             if mismatch:
                 field, expected, value = mismatch
-                near_miss = ParseError(field, expected, value)
+                display_family = to_display_family(canonical_family)
+                near_miss = ParseError(
+                    field,
+                    expected,
+                    value,
+                    schema_id=schema.get("schema_id"),
+                    match_family=display_family,
+                )
         except ParseError as err:
             near_miss = err
         except Exception:
@@ -204,13 +235,14 @@ def _attempt_parse(
                         break
                 if matched_family:
                     break
+            display_family = to_display_family(matched_family or product_hint)
             return (
                 ParseResult(
                     valid=True,
                     fields=_extract_fields(name, schema),
                     version=version,
                     status=status,
-                    match_family=matched_family or product_hint,
+                    match_family=display_family,
                 ),
                 None,
                 None,
@@ -219,7 +251,15 @@ def _attempt_parse(
             mismatch = _explain_match_failure(name, schema)
             if mismatch:
                 field, expected, value = mismatch
-                near_miss = ParseError(field, expected, value)
+                canonical_family = _family_from_path(p, info)
+                display_family = to_display_family(canonical_family or product_hint)
+                near_miss = ParseError(
+                    field,
+                    expected,
+                    value,
+                    schema_id=schema.get("schema_id"),
+                    match_family=display_family,
+                )
 
     return None, near_miss, first_error
 
