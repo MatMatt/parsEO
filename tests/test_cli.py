@@ -18,6 +18,17 @@ def _schema_example_args(family: str) -> tuple[str, list[str]]:
     return example, args
 
 
+def test_cli_parse_writes_output_file(tmp_path, capsys):
+    example, _ = _schema_example_args("S2")
+    target = tmp_path / "result.json"
+    assert cli.main(["parse", example, "--output", str(target)]) == 0
+    captured = capsys.readouterr()
+    assert captured.out == ""
+    data = json.loads(target.read_text(encoding="utf-8"))
+    assert data["valid"] is True
+    assert data["fields"] == parse_auto(example).fields
+
+
 def test_cli_reports_version(capsys):
     with pytest.raises(SystemExit) as exc:
         cli.main(["--version"])

@@ -134,6 +134,9 @@ cat fields.json | parseo assemble --family S2 --fields-json -
 # Parse a Copernicus Land Monitoring Service (CLMS) filename
 parseo parse ST_20240101T123045_S2_E15N45-03035-010m_V100_PPI.tif
 
+# Parse and write the JSON response to a file
+parseo parse ST_20240101T123045_S2_E15N45-03035-010m_V100_PPI.tif --output result.json
+
 # Assemble the same CLMS filename from key=value pairs
 parseo assemble --family VPP \
   prefix=ST \

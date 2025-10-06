@@ -35,6 +35,10 @@ def _build_arg_parser() -> argparse.ArgumentParser:
     # parse
     p_parse = sp.add_parser("parse", help="Parse a filename")
     p_parse.add_argument("filename")
+    p_parse.add_argument(
+        "--output",
+        help="Write the JSON result to this file instead of stdout. Use '-' for stdout.",
+    )
 
     # list-schemas
     p_list = sp.add_parser("list-schemas", help="List available schema families")
@@ -215,7 +219,15 @@ def main(argv: Union[List[str], None] = None) -> int:
         mfam = getattr(res, "match_family", None)
         if mfam:
             out["match_family"] = mfam
-        print(json.dumps(out, indent=2, ensure_ascii=False))
+        payload = json.dumps(out, indent=2, ensure_ascii=False)
+        if args.output and args.output != "-":
+            try:
+                with open(args.output, "w", encoding="utf-8") as fh:
+                    fh.write(f"{payload}\n")
+            except OSError as exc:
+                raise SystemExit(f"Failed to write to '{args.output}': {exc}") from exc
+        else:
+            print(payload)
         return 0
 
     if args.cmd == "list-schemas":
